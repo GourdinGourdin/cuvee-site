@@ -8,6 +8,7 @@ import '@fontsource-variable/outfit/wght.css';
 import '@fontsource-variable/josefin-sans/wght.css';
 import '@fontsource/mr-dafoe/400.css';
 import '../styles/global.css';
+import '../styles/maison.css';
 import frauncesWoff2 from '@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2?url';
 import sourceSansWoff2 from '@fontsource-variable/source-sans-3/files/source-sans-3-latin-wght-normal.woff2?url';
 import { site } from '../data/site';
@@ -68,7 +69,7 @@ const imageOg = new URL('/og-image.png', Astro.site);
     <link rel="preload" href={frauncesWoff2} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={sourceSansWoff2} as="font" type="font/woff2" crossorigin />
   </head>
-  <body class="bg-creme font-sans text-encre antialiased">
+  <body class="maison bg-creme font-sans text-encre antialiased">
     <a href="#contenu" class="lien-evitement">Aller au contenu</a>
     <div class="progression" aria-hidden="true" data-progression></div>
     <slot />

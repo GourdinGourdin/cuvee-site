@@ -12,25 +12,24 @@ import Pistes from '../components/maison/Pistes.astro';
 import Appel from '../components/maison/Appel.astro';
 import PiedDePage from '../components/maison/PiedDePage.astro';
 import CtaMobile from '../components/CtaMobile.astro';
-import '../styles/maison.css';
+import IntroBouteille from '../components/intro/IntroBouteille.astro';
 ---
 <Base>
-  <div class="maison">
-    <EnTete />
-    <main id="contenu">
-      <Ouverture />
-      <Manifeste />
-      <Chapitres />
-      <Citation image="/media/cave-voutee.jpg" />
-      <Proposition />
-      <Semaine />
-      <Calculateur />
-      <Pistes />
-      <Appel />
-    </main>
-    <PiedDePage />
-    <CtaMobile />
-  </div>
+  <IntroBouteille />
+  <EnTete />
+  <main id="contenu">
+    <Ouverture />
+    <Manifeste />
+    <Chapitres />
+    <Citation image="/media/cave-voutee.jpg" />
+    <Proposition />
+    <Semaine />
+    <Calculateur />
+    <Pistes />
+    <Appel />
+  </main>
+  <PiedDePage />
+  <CtaMobile />
 </Base>
 
 <script>

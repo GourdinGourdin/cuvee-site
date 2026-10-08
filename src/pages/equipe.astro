@@ -1,20 +1,20 @@
 ---
 import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import EnTete from '../components/maison/EnTete.astro';
+import PiedDePage from '../components/maison/PiedDePage.astro';
 import CtaMobile from '../components/CtaMobile.astro';
 import PageEntete from '../components/PageEntete.astro';
 import Equipe from '../components/Equipe.astro';
 import PagePourquoi from '../components/PagePourquoi.astro';
 ---
 <Base titre="L’équipe · Cuvée" description="Qui construit Cuvée, et pourquoi : l’équipe derrière l’assistant de cave pour bars à vin et caves à manger.">
-  <Header />
+  <EnTete />
   <main id="contenu">
     <PageEntete surtitre="L’équipe" titre="Qui construit <em>Cuvée</em>." chapo="Un projet porté par des personnes, pas par un logo. Voici qui nous sommes et ce qui nous pousse." />
     <Equipe />
     <PagePourquoi />
   </main>
-  <Footer />
+  <PiedDePage />
   <CtaMobile />
 </Base>
 

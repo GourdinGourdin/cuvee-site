@@ -1,10 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import EnTete from '../components/maison/EnTete.astro';
+import PiedDePage from '../components/maison/PiedDePage.astro';
 ---
 <Base titre="Page introuvable · Cuvée" description="Cette page n’existe pas.">
-  <Header simple />
+  <EnTete />
   <main id="contenu" class="entete-page">
    <span class="entete-chiffre" aria-hidden="true">404</span>
    <div class="conteneur relative py-20 lg:py-28">
@@ -21,5 +21,5 @@ import Footer from '../components/Footer.astro';
     </div>
    </div>
   </main>
-  <Footer />
+  <PiedDePage />
 </Base>

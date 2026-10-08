@@ -1,19 +1,19 @@
 ---
 import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import EnTete from '../components/maison/EnTete.astro';
+import PiedDePage from '../components/maison/PiedDePage.astro';
 import CtaMobile from '../components/CtaMobile.astro';
 import PageEntete from '../components/PageEntete.astro';
 import PageCta from '../components/PageCta.astro';
 import Pilote from '../components/Pilote.astro';
 ---
 <Base titre="Le programme pilote · Cuvée" description="Rejoignez le programme pilote de Cuvée : conditions, ce que nous attendons des premiers lieux, et formulaire d’inscription.">
-  <Header />
+  <EnTete />
   <main id="contenu">
     <PageEntete surtitre="Programme pilote" titre="Construire Cuvée <em>avec les premiers lieux</em>." chapo="Nous cherchons quelques bars à vin et caves à manger indépendants pour essayer Cuvée, dire ce qui manque et façonner le produit." />
     <Pilote />
   </main>
-  <Footer />
+  <PiedDePage />
   <CtaMobile />
 </Base>
 

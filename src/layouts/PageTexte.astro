@@ -1,7 +1,7 @@
 ---
 import Base from './Base.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import EnTete from '../components/maison/EnTete.astro';
+import PiedDePage from '../components/maison/PiedDePage.astro';
 
 interface Props {
   titre: string;
@@ -11,7 +11,7 @@ interface Props {
 const { titre, description, surtitre } = Astro.props;
 ---
 <Base titre={`${titre} · Cuvée`} description={description}>
-  <Header simple />
+  <EnTete />
   <main id="contenu" class="conteneur py-14 lg:py-20">
     <div class="max-w-3xl">
       <p class="surtitre text-bordeaux" data-reveal>{surtitre}</p>
@@ -22,5 +22,5 @@ const { titre, description, surtitre } = Astro.props;
       </div>
     </div>
   </main>
-  <Footer />
+  <PiedDePage />
 </Base>
