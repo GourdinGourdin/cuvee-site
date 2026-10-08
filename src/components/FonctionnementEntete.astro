@@ -1,0 +1,97 @@
+---
+/** En-tête de /comment-ca-marche : grand titre révélé mot à mot + frise animée facture → cave → bon de commande reliés par un fil doré. */
+---
+<header class="fct-entete border-b border-filet bg-creme pt-14 pb-12 lg:pt-20 lg:pb-16">
+  <div class="conteneur">
+    <p class="surtitre flex items-center gap-3 text-bordeaux" data-reveal>
+      <span>Comment ça marche</span>
+      <span class="titre-filet h-px w-10 bg-dore" aria-hidden="true"></span>
+    </p>
+    <h1
+      id="page-titre"
+      class="mt-5 max-w-4xl text-[2.6rem] leading-[1.03] font-medium tracking-[-0.025em] sm:text-6xl lg:text-[5rem] [&_em]:text-bordeaux"
+      data-reveal-lignes
+    >
+      De la facture au bon de commande, <em>sans perdre la main</em>.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg leading-relaxed text-encre-douce sm:text-xl" data-reveal data-reveal-delai="3">
+      Cuvée lit vos factures, suit votre stock et prépare vos commandes. Vous relisez, vous corrigez, vous validez.
+    </p>
+
+    <svg
+      class="fct-frise mt-12 w-full max-w-4xl"
+      viewBox="0 0 600 170"
+      role="img"
+      aria-label="Schéma : une facture entre, la cave se met à jour, un bon de commande est préparé ; un fil doré relie les trois."
+    >
+      <!-- fil doré -->
+      <path class="fct-fil" d="M96 96 C 170 30, 230 30, 300 92 S 430 150, 504 88" pathLength="1" />
+      <!-- facture -->
+      <g class="fct-obj" style="--k:0">
+        <g transform="translate(40 24) rotate(-4 50 55)">
+          <rect width="100" height="120" rx="2" class="fct-papier" />
+          <path d="M14 22h46M14 40h72M14 54h72M14 68h72M14 82h40" class="fct-trait" />
+          <path d="M72 100l6 6 12-14" class="fct-ok" />
+        </g>
+      </g>
+      <!-- cave -->
+      <g class="fct-obj" style="--k:1">
+        <g transform="translate(250 22)">
+          <rect width="100" height="124" rx="2" class="fct-papier" />
+          <path d="M8 44h84M8 84h84M8 122h84" class="fct-trait" />
+          {
+            [0, 1, 2].flatMap((r) =>
+              [0, 1, 2, 3].map((c) => (
+                <g transform={`translate(${16 + c * 20} ${r * 40 + 8})`} class:list={['fct-btl', r === 1 && c === 2 && 'fct-dort']}>
+                  <rect x="3" y="12" width="9" height="20" rx="2.5" />
+                  <rect x="6" y="3" width="3" height="10" />
+                </g>
+              ))
+            )
+          }
+        </g>
+      </g>
+      <!-- bon de commande -->
+      <g class="fct-obj" style="--k:2">
+        <g transform="translate(460 20) rotate(3 50 55)">
+          <rect width="100" height="124" rx="2" class="fct-papier" />
+          <path d="M14 22h50M14 42h72M14 56h72M14 70h72" class="fct-trait" />
+          <g transform="translate(58 82) rotate(-10)">
+            <rect x="0" y="0" width="34" height="20" rx="1.5" class="fct-tampon" />
+            <path d="M9 10.5l5 5 11-11" class="fct-tampon-ok" />
+          </g>
+        </g>
+      </g>
+      <g class="fct-lib">
+        <text x="90" y="166" text-anchor="middle">Facture</text>
+        <text x="300" y="166" text-anchor="middle">Cave</text>
+        <text x="510" y="166" text-anchor="middle">Bon de commande</text>
+      </g>
+    </svg>
+  </div>
+</header>
+
+<style is:global>
+  .fct-frise { overflow: visible; display: block; }
+  .fct-papier { fill: var(--color-papier); stroke: var(--color-filet); stroke-width: 1.5; }
+  .fct-trait { fill: none; stroke: var(--color-bordure); stroke-width: 2; stroke-linecap: round; opacity: 0.55; }
+  .fct-ok { fill: none; stroke: var(--color-vert); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .fct-btl rect { fill: var(--color-bordeaux); opacity: 0.8; }
+  .fct-btl.fct-dort rect { fill: var(--color-dore); opacity: 1; }
+  .fct-tampon { fill: var(--color-vert-clair); stroke: var(--color-vert); stroke-width: 1.5; }
+  .fct-tampon-ok { fill: none; stroke: var(--color-vert); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .fct-lib text { font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; fill: var(--color-encre-douce); }
+  .fct-fil {
+    fill: none; stroke: var(--color-dore); stroke-width: 2.5; stroke-linecap: round;
+    stroke-dasharray: 1; stroke-dashoffset: 0;
+    animation: fct-trace 2.2s cubic-bezier(0.5, 0, 0.2, 1) 0.9s both;
+  }
+  .fct-obj { animation: fct-entre 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) calc(0.5s + var(--k) * 0.45s) both; }
+  .fct-btl.fct-dort { animation: fct-dort 3.2s ease-in-out 2.6s infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes fct-trace { from { stroke-dashoffset: 1; } }
+  @keyframes fct-entre { from { opacity: 0; transform: translateY(14px); } }
+  @keyframes fct-dort { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+  @media (prefers-reduced-motion: reduce) {
+    .fct-btl.fct-dort { animation: none; }
+  }
+</style>

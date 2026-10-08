@@ -67,6 +67,7 @@ const imageOg = new URL('/og-image.png', Astro.site);
   </head>
   <body class="bg-creme font-sans text-encre antialiased">
     <a href="#contenu" class="lien-evitement">Aller au contenu</a>
+    <div class="progression" aria-hidden="true" data-progression></div>
     <slot />
     <script>
       import '../scripts/animations.ts';

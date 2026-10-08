@@ -27,6 +27,25 @@ const check = (nom, ok, detail = '') => res.push(`${ok ? 'OK  ' : 'ÉCHEC'} ${no
     check(`Onglet « ${libelle} » actif sur ${chemin}`, actif.length === 1 && actif[0] === libelle, actif.join(','));
     check(`Un seul h1 sur ${chemin}`, (await p.locator('h1').count()) === 1);
   }
+  // Indicateur d'onglet glissant + en-tête compact
+  await p.goto(B + '/questions', { waitUntil: 'networkidle' });
+  await p.waitForTimeout(400);
+  const posIndic = async () => p.evaluate(() => { const i = document.querySelector('[data-indicateur]').getBoundingClientRect(); return { x: i.x, w: i.width }; });
+  const lienQ = await p.evaluate(() => { const r = document.querySelector('nav[data-nav-desktop] a[aria-current="page"]').getBoundingClientRect(); return { x: r.x, w: r.width }; });
+  const ind0 = await posIndic();
+  check('Indicateur aligné sur l’onglet actif', Math.abs(ind0.x - lienQ.x) < 2 && Math.abs(ind0.w - lienQ.w) < 2, JSON.stringify([ind0, lienQ]));
+  await p.hover('nav[data-nav-desktop] a:text-is("Équipe")');
+  await p.waitForTimeout(700);
+  const ind1 = await posIndic();
+  const lienE = await p.evaluate(() => { const r = [...document.querySelectorAll('nav[data-nav-desktop] a')].find((a) => a.textContent.trim() === 'Équipe').getBoundingClientRect(); return r.x; });
+  check('Indicateur suit le survol', Math.abs(ind1.x - lienE) < 2, `${ind1.x} vs ${lienE}`);
+  await p.mouse.move(700, 600);
+  await p.waitForTimeout(700);
+  check('Indicateur revient à l’onglet actif', Math.abs((await posIndic()).x - lienQ.x) < 2);
+  await p.evaluate(() => window.scrollTo({ top: 600, behavior: 'instant' })); await p.waitForTimeout(500);
+  check('En-tête compact après défilement', (await p.getAttribute('[data-entete]', 'data-compact')) === 'true');
+  check('Barre de lecture avancée', parseFloat(await p.evaluate(() => getComputedStyle(document.querySelector('[data-progression]')).getPropertyValue('--p'))) > 0);
+  await p.screenshot({ path: `${out}/desktop-entete-compact.png` });
   check('Bouton d’en-tête → /pilote#inscription', (await p.getAttribute('header a.btn-primaire', 'href')) === '/pilote#inscription');
   await p.goto(B + '/', { waitUntil: 'networkidle' });
   check('Aucun lien #inscription orphelin sur l’accueil', (await p.locator('a[href="#inscription"]').count()) === 0);
@@ -114,10 +133,21 @@ const check = (nom, ok, detail = '') => res.push(`${ok ? 'OK  ' : 'ÉCHEC'} ${no
   await p.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' })); await p.waitForTimeout(300);
   await p.click('[data-menu] summary');
   check('Menu mobile ouvert', await p.isVisible('[data-menu] nav'));
+  await p.waitForTimeout(900);
   await p.screenshot({ path: `${out}/mobile-menu.png` });
+  const boite = await p.evaluate(() => { const r = document.querySelector('.menu-panneau').getBoundingClientRect(); return [r.width, r.height, window.innerWidth, window.innerHeight]; });
+  check('Menu mobile plein écran', boite[0] === boite[2] && boite[1] === boite[3], boite.join('x'));
+  check('Menu mobile : défilement de page bloqué', await p.evaluate(() => getComputedStyle(document.documentElement).overflow === 'hidden'));
+  check('Menu mobile : focus sur le premier lien', await p.evaluate(() => document.activeElement?.hasAttribute('data-menu-lien')));
+  let piege = true;
+  for (let i = 0; i < 14; i++) { await p.keyboard.press('Tab'); piege = piege && (await p.evaluate(() => !!document.activeElement?.closest('[data-entete]'))); }
+  check('Menu mobile : focus piégé dans l’en-tête', piege);
+  await p.keyboard.press('Escape'); await p.waitForTimeout(200);
+  check('Menu mobile : Échap ferme et rend le focus au bouton', !(await p.isVisible('.menu-panneau')) && (await p.evaluate(() => document.activeElement?.tagName)) === 'SUMMARY');
+  await p.click('[data-menu] summary');
   await p.click('[data-menu] a[href="/questions"]'); await p.waitForURL('**/questions**'); await p.waitForTimeout(300);
   check('Menu mobile : navigation vers /questions', new URL(p.url()).pathname.startsWith('/questions'));
-  check('Menu mobile : onglet actif', (await p.locator('[data-menu] a[aria-current="page"]').textContent()).trim() === 'Questions');
+  check('Menu mobile : onglet actif', (await p.locator('[data-menu] a[aria-current="page"]').textContent()).includes('Questions'));
   const deb = await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   check('Pas de débordement horizontal (390 px)', deb <= 0, String(deb));
   for (const chemin of ['/', '/comment-ca-marche', '/pilote', '/equipe', '/questions']) {

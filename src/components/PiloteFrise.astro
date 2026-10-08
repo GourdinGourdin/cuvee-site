@@ -1,0 +1,57 @@
+---
+import { avecPlaceholders } from '../lib/texte';
+
+// TODO : étapes et durées à valider par l’équipe ; seules les étapes déjà décrites sur le site sont rédigées.
+const etapes = [
+  { rep: 'Étape 1', titre: 'Votre inscription', texte: 'Vous remplissez le bon ci-dessous, en deux minutes.', quand: '' },
+  { rep: 'Étape 2', titre: 'Un premier échange', texte: 'Nous faisons connaissance et vérifions que Cuvée peut vous être utile. Sinon, nous vous le disons avant de commencer.', quand: '[À COMPLÉTER : délai après l’inscription]' },
+  { rep: 'Étape 3', titre: 'La mise en place', texte: 'Nous connectons votre caisse, lisons quelques factures fournisseurs récentes et montons l’inventaire de départ, que vous relisez.', quand: '[À COMPLÉTER : durée de mise en place]' },
+  { rep: 'Étape 4', titre: 'Le pilote en service', texte: 'Vous utilisez Cuvée pendant le service. Rien d’engageant ne part sans votre validation.', quand: '[À COMPLÉTER : durée du pilote]' },
+  { rep: 'Étape 5', titre: 'Le bilan', texte: '[À COMPLÉTER : format du bilan et suite proposée aux lieux pilotes]', quand: '' },
+];
+---
+<section aria-labelledby="frise-titre" class="py-20 lg:py-28">
+  <div class="conteneur">
+    <div class="max-w-2xl">
+      <p class="surtitre flex items-center gap-3 text-bordeaux" data-reveal><span>Le déroulé</span><span class="h-px w-8 bg-dore" aria-hidden="true"></span></p>
+      <h2 id="frise-titre" class="mt-4 text-[2rem] leading-[1.1] font-medium tracking-[-0.015em] sm:text-5xl" data-reveal data-reveal-delai="1">Du premier mot au <em class="text-bordeaux">bilan</em>.</h2>
+    </div>
+
+    <ol role="list" class="frise relative mt-14 grid gap-10 lg:mt-20 lg:grid-cols-5 lg:gap-6">
+      <span class="frise-rail absolute top-3 bottom-3 left-[0.8rem] w-px bg-dore lg:top-[1.075rem] lg:right-[10%] lg:bottom-auto lg:left-[10%] lg:h-px lg:w-auto" aria-hidden="true"></span>
+      {
+        etapes.map((e, i) => (
+          <li class="frise-etape relative pl-12 lg:pt-12 lg:pl-0 lg:text-center" data-reveal data-reveal-delai={String(i + 1)}>
+            <span class="frise-point absolute top-1 left-0 grid h-[1.65rem] w-[1.65rem] place-items-center rounded-full border border-dore bg-creme lg:left-1/2 lg:-translate-x-1/2" aria-hidden="true">
+              <span class="h-2 w-2 rounded-full bg-bordeaux"></span>
+            </span>
+            <p class="surtitre text-bordeaux">{e.rep}</p>
+            <h3 class="mt-2 font-serif text-xl font-medium">{e.titre}</h3>
+            <p class="mt-2 text-[0.975rem] leading-snug text-encre-douce" set:html={avecPlaceholders(e.texte)} />
+            {e.quand && <p class="mt-3 text-[0.9rem]" set:html={avecPlaceholders(e.quand)} />}
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style is:global>
+  .frise-point { transition: transform 0.3s ease, background-color 0.3s ease; }
+  .frise-etape:hover .frise-point { background: var(--color-dore-clair); transform: scale(1.12); }
+  @media (min-width: 64rem) { .frise-etape:hover .frise-point { transform: translateX(-50%) scale(1.12); } }
+  @media (prefers-reduced-motion: no-preference) {
+    html.anim .frise-rail { transform-origin: top; transform: scaleY(0); transition: transform 1.6s cubic-bezier(0.3, 0.6, 0.2, 1) 0.2s; }
+    html.anim .frise.rail-trace .frise-rail { transform: scale(1); }
+    @media (min-width: 64rem) {
+      html.anim .frise-rail { transform-origin: left; transform: scaleX(0); }
+    }
+  }
+</style>
+<script>
+  const frise = document.querySelector('.frise');
+  if (frise && 'IntersectionObserver' in window) {
+    const o = new IntersectionObserver((es) => { if (es[0].isIntersecting) { frise.classList.add('rail-trace'); o.disconnect(); } }, { threshold: 0.1 });
+    o.observe(frise);
+  } else frise?.classList.add('rail-trace');
+</script>

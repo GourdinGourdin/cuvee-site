@@ -1,5 +1,5 @@
 ---
-import TitreSection from './TitreSection.astro';
+import FonctionnementTitre from './FonctionnementTitre.astro';
 
 // Données inventées pour l’illustration : aucun vrai domaine, aucun vrai client.
 const facture = [
@@ -41,8 +41,8 @@ const jours = [
 ---
 <section id="exemples" aria-labelledby="exemples-titre" class="border-y border-filet bg-creme-fonce py-20 lg:py-28">
   <div class="conteneur">
-    <TitreSection
-      numero="4"
+    <FonctionnementTitre
+      numero="02"
       libelle="Concrètement"
       id="exemples-titre"
       titre="Ce que vous verriez passer dans la semaine."
@@ -51,7 +51,7 @@ const jours = [
         Trois exemples de propositions, en plus de la commande présentée sur l’accueil. Les vins, les domaines et les chiffres
         sont inventés ; les boutons ne déclenchent rien.
       </p>
-    </TitreSection>
+    </FonctionnementTitre>
 
     <!-- Sélecteur de jour : affiché par le script sur mobile seulement (sans JavaScript, les trois fiches restent visibles). -->
     <div class="onglets-jours mt-10 lg:hidden" role="tablist" aria-label="Exemples par jour" data-onglets hidden>
@@ -73,7 +73,11 @@ const jours = [
       }
     </div>
 
-    <div class="grille-exemples mt-12 grid gap-6 lg:grid-cols-3 lg:items-start" data-grille-exemples>
+    <p class="mt-6 hidden text-[0.9rem] text-encre-douce lg:block" data-reveal data-reveal-delai="3">
+      <span class="cachet mr-2">Astuce</span>Cliquez sur une fiche pour la prendre en main ; cliquez ailleurs pour la reposer.
+    </p>
+    <div class="table-ex mt-8 lg:mt-6">
+    <div class="grille-exemples grid gap-6 lg:grid-cols-3 lg:items-start" data-grille-exemples>
       <!-- 1. Facture lue (mardi) : ticket au bord cranté -->
       <article class="papier bord-crante flex flex-col carte-ex carte-ex-1" data-demo data-reveal data-reveal-delai="1" aria-labelledby="ex-facture">
         <header class="flex items-center justify-between gap-3 border-b border-dashed border-filet px-5 py-3">
@@ -239,6 +243,7 @@ const jours = [
         <span class="tampon top-1/2 right-6" aria-hidden="true">Validé</span>
       </article>
     </div>
+    </div>
   </div>
 </section>
 
@@ -249,8 +254,37 @@ const jours = [
     .carte-ex-2 { rotate: 0.5deg; margin-top: 0.75rem; }
     .carte-ex-3 { rotate: -0.4deg; }
   }
+  .table-ex {
+    padding: 1.25rem 0;
+  }
+  @media (min-width: 64rem) {
+    .table-ex {
+      padding: 3rem 2.5rem 3.25rem;
+      background: var(--color-creme-sourde);
+      border: 1px solid var(--color-filet);
+      box-shadow: inset 0 0 0 8px var(--color-creme-fonce), inset 0 0 0 9px var(--color-dore), inset 0 12px 30px -18px rgb(31 26 23 / 0.35);
+    }
+  }
+  /* fiche « prise en main » : elle se soulève et se redresse (clic, ou focus clavier sur l’un de ses boutons) */
+  .carte-ex { position: relative; }
+  .carte-ex.est-pris,
+  .carte-ex:focus-within {
+    rotate: 0deg;
+    translate: 0 -10px;
+    scale: 1.025;
+    z-index: 3;
+    box-shadow: 0 1px 0 var(--color-filet), 0 28px 40px -18px rgb(31 26 23 / 0.5);
+  }
+  @media (min-width: 64rem) {
+    .carte-ex { cursor: pointer; }
+    .table-ex:has(.est-pris) .carte-ex:not(.est-pris) { opacity: 0.88; }
+  }
+  html.anim .carte-ex.est-visible {
+    transition: opacity 0.35s ease, transform 0.35s ease, rotate 0.35s ease, scale 0.35s ease, translate 0.35s ease, box-shadow 0.35s ease;
+    transition-delay: 0s;
+  }
   .carte-ex {
-    transition: rotate 0.35s ease, box-shadow 0.35s ease, translate 0.35s ease;
+    transition: scale 0.35s ease, opacity 0.35s ease, rotate 0.35s ease, box-shadow 0.35s ease, translate 0.35s ease;
     box-shadow: 0 1px 0 var(--color-filet), 0 10px 22px -14px rgb(31 26 23 / 0.35);
   }
   @media (hover: hover) {

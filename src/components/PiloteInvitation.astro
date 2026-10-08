@@ -1,0 +1,76 @@
+---
+import ACompleter from './ACompleter.astro';
+import PiloteSceau from './PiloteSceau.astro';
+import { avecPlaceholders } from '../lib/texte';
+
+// TODO : conditions du pilote à valider par l’équipe (durée, prix, nombre de places, rythme des échanges).
+const propose = [
+  'Cuvée [À COMPLÉTER : offert / à prix réduit] pendant toute la durée du pilote ([À COMPLÉTER : durée]).',
+  'La mise en place faite avec vous : on reprend votre inventaire actuel, même s’il est sur Excel ou dans un carnet.',
+  'Un contact direct avec l’équipe : vos remarques sont lues par ceux qui construisent l’outil.',
+  '[À COMPLÉTER : conditions après le pilote, par exemple un tarif préférentiel pour les lieux pilotes ?]',
+];
+const demande = [
+  'Être un lieu indépendant qui travaille le vin : cave à manger, bar à vin ou restaurant avec une vraie carte des vins, entre 100 et 600 références.',
+  'Nous laisser connecter votre caisse et nous transmettre vos factures fournisseurs pendant le pilote.',
+  'Un court échange régulier ([À COMPLÉTER : fréquence et durée]) pour nous dire ce qui marche et ce qui coince.',
+  'Votre franc-parler : si quelque chose ne sert à rien, dites-le. C’est le plus utile pour nous.',
+];
+const colonnes = [
+  { titre: 'Ce que nous vous proposons', items: propose },
+  { titre: 'Ce que nous vous demandons', items: demande },
+];
+---
+<section id="pilote" aria-labelledby="invitation-titre" class="bg-creme-fonce py-16 lg:py-24">
+  <div class="conteneur">
+    <div class="invitation papier relative mx-auto max-w-5xl px-5 pt-16 pb-10 sm:px-12 sm:pt-20 sm:pb-14 lg:px-20" data-reveal="echelle">
+      <span class="absolute inset-2 border border-dore/60 sm:inset-3" aria-hidden="true"></span>
+      <div data-reveal class="sceau-ouvre absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <PiloteSceau taille={84} />
+      </div>
+
+      <div class="relative text-center">
+        <p class="surtitre text-bordeaux" data-reveal>Une invitation</p>
+        <h2 id="invitation-titre" class="mx-auto mt-4 max-w-2xl text-[2rem] leading-[1.1] font-medium tracking-[-0.015em] sm:text-5xl" data-reveal data-reveal-delai="1">
+          Construisons-le ensemble, <em class="text-bordeaux">chez vous</em>.
+        </h2>
+        <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-encre-douce" data-reveal data-reveal-delai="2">
+          Nous cherchons <ACompleter texte="nombre" /> bars à vin et caves à manger indépendants pour essayer Cuvée pendant
+          le service, à partir de <ACompleter texte="mois de démarrage" />. Les conditions ci-dessous sont encore à valider
+          par l’équipe.
+        </p>
+        <!-- TODO : n’afficher ce tampon que si le nombre de places est réellement limité. -->
+        <p class="chiffres mt-6 inline-block -rotate-2 border-[3px] border-double border-bordeaux px-4 py-2 text-[0.8rem] tracking-[0.15em] text-bordeaux uppercase" data-reveal="echelle" data-reveal-delai="3">
+          <ACompleter texte="N" /> places
+        </p>
+      </div>
+
+      <div class="relative mt-12 grid gap-10 text-left md:grid-cols-2 md:gap-14">
+        <span class="absolute top-0 bottom-0 left-1/2 hidden w-px bg-filet md:block" aria-hidden="true"></span>
+        {
+          colonnes.map((col) => (
+            <div>
+              <h3 data-reveal class="border-b border-dore pb-3 font-serif text-2xl font-medium">{col.titre}</h3>
+              <ul role="list" class="mt-5 grid gap-4">
+                {col.items.map((item, i) => (
+                  <li data-reveal data-reveal-delai={String(Math.min(i + 1, 6))} class="pilote-item flex gap-3 text-encre-douce">
+                    <span class="pilote-tiret mt-[0.7rem] h-px w-4 shrink-0 bg-dore" aria-hidden="true" />
+                    <span set:html={avecPlaceholders(item)} />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+
+      <p class="relative mt-10 text-center font-serif text-xl text-bordeaux italic" data-reveal>L’équipe Cuvée</p>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .invitation { box-shadow: 0 1px 0 #fff inset, 0 18px 40px -26px rgb(31 26 23 / 0.5), 6px 6px 0 var(--color-creme), 6px 6px 0 1px var(--color-filet); }
+  .pilote-tiret { transition: width 0.3s ease; }
+  .pilote-item:hover .pilote-tiret { width: 1.5rem; }
+</style>

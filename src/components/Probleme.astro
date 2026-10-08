@@ -44,7 +44,7 @@ const scenes = [
             data-reveal
             data-reveal-delai={String(i + 1)}
             class:list={[
-              'relative border-t border-encre pt-5 lg:px-8',
+              'scene relative pt-5 lg:px-8',
               i === 0 && 'lg:pl-0',
               i > 0 && 'lg:border-l lg:border-l-filet',
               i === 2 && 'lg:pr-0',
@@ -63,7 +63,7 @@ const scenes = [
 
     <figure class="relative mt-16 max-w-3xl border-t border-dore pt-8 pl-0 sm:pl-14" data-reveal="gauche">
       <span class="absolute -top-2 left-0 hidden font-serif text-8xl leading-none text-bordeaux/25 sm:block" aria-hidden="true">“</span>
-      <p class="font-serif text-2xl leading-snug font-light sm:text-3xl">
+      <p class="font-serif text-2xl leading-snug font-light sm:text-3xl" data-reveal-lignes>
         Votre métier, c’est de choisir les vins et de les faire découvrir, pas de compter des cartons.{' '}
         <em class="font-normal text-bordeaux">Le suivi, Cuvée veut s’en charger.</em>
       </p>
@@ -75,5 +75,26 @@ const scenes = [
   .chiffre-contour {
     color: transparent;
     -webkit-text-stroke: 1px var(--color-bordeaux);
+    transition: color 1.2s ease 0.5s;
+  }
+  /* filet du haut qui se trace à l’apparition, comme une ligne tirée à la règle */
+  .scene::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: var(--color-encre);
+    transform-origin: left;
+    transition: transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s;
+  }
+  :global(html.anim) .scene::before {
+    transform: scaleX(0);
+  }
+  :global(html.anim) .scene:global(.est-visible)::before {
+    transform: none;
+  }
+  /* le chiffre se « remplit » une fois la scène lue */
+  :global(html.anim) .scene:global(.est-visible) .chiffre-contour {
+    color: rgb(110 31 47 / 0.12);
   }
 </style>

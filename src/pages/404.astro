@@ -5,9 +5,11 @@ import Footer from '../components/Footer.astro';
 ---
 <Base titre="Page introuvable · Cuvée" description="Cette page n’existe pas.">
   <Header simple />
-  <main id="contenu" class="conteneur py-20 lg:py-28">
-    <p class="surtitre text-bordeaux">Erreur 404</p>
-    <h1 class="mt-4 max-w-2xl text-4xl leading-tight font-medium sm:text-5xl">
+  <main id="contenu" class="entete-page">
+   <span class="entete-chiffre" aria-hidden="true">404</span>
+   <div class="conteneur relative py-20 lg:py-28">
+    <p class="surtitre flex items-center gap-3 text-bordeaux" data-reveal><span>Erreur 404</span><span class="entete-filet-page h-px w-14 bg-dore" aria-hidden="true"></span></p>
+    <h1 class="mt-5 max-w-2xl text-[2.5rem] leading-[1.05] font-medium tracking-[-0.02em] sm:text-6xl" data-reveal-lignes data-reveal>
       Cette référence n’est pas <em class="text-bordeaux">en cave</em>.
     </h1>
     <p class="mt-6 max-w-xl text-lg text-encre-douce">La page que vous cherchez n’existe pas ou a été déplacée.</p>
@@ -17,6 +19,7 @@ import Footer from '../components/Footer.astro';
       <a href="/pilote" class="lien lien-seul">Le pilote</a>
       <a href="/questions" class="lien lien-seul">Questions</a>
     </div>
+   </div>
   </main>
   <Footer />
 </Base>

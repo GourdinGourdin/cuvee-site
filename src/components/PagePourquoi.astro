@@ -1,22 +1,43 @@
 ---
-import TitreSection from './TitreSection.astro';
 import ACompleter from './ACompleter.astro';
+import { lienInscription } from '../data/site';
+
+const citations = [
+  { libelle: 'Notre conviction', contenu: 'texte' },
+  { libelle: 'Le déclic', contenu: 'l’histoire personnelle : le déclic, le lieu ou la personne qui a montré le problème de la cave' },
+  { libelle: 'Ce que nous avons observé', contenu: 'ce que vous avez observé chez les cavistes et sommeliers, sans chiffre inventé' },
+  { libelle: 'Ce que Cuvée doit changer', contenu: 'ce que vous voulez que Cuvée change concrètement pour un lieu indépendant' },
+];
 ---
-<section aria-labelledby="pourquoi-titre" class="border-t border-filet bg-creme-fonce py-20 lg:py-28">
-  <div class="conteneur grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:gap-16">
-    <div data-reveal>
-      <TitreSection numero="2" libelle="Pourquoi" id="pourquoi-titre" titre="Pourquoi nous faisons <em>ça</em>." />
+<section aria-labelledby="pourquoi-titre" class="sur-fond-sombre bg-bordeaux py-20 text-creme lg:py-32">
+  <div class="conteneur">
+    <p class="surtitre flex items-center gap-3 text-dore-clair" data-reveal><span>N° 2</span><span class="h-px w-8 bg-dore-clair" aria-hidden="true"></span><span>Pourquoi</span></p>
+    <h2 id="pourquoi-titre" class="mt-4 text-[2rem] leading-[1.1] font-medium sm:text-5xl" data-reveal data-reveal-delai="1">Pourquoi nous faisons <em>ça</em>.</h2>
+
+    <div class="mt-14 grid gap-16 lg:mt-20 lg:gap-24">
+      {
+        citations.map((c, i) => (
+          <figure class:list={['relative max-w-4xl pt-10 sm:pt-6', i % 2 === 1 && 'lg:ml-auto']}>
+            <span class="citation-guillemet pointer-events-none absolute -top-2 -left-1 font-serif text-[7rem] leading-none text-dore-clair/30 select-none sm:-top-8 sm:-left-10 sm:text-[10rem]" aria-hidden="true" data-reveal="echelle">“</span>
+            <figcaption class="surtitre relative text-dore-clair" data-reveal>{c.libelle}</figcaption>
+            <blockquote class="citation relative mt-4 font-serif text-[1.6rem] leading-[1.25] font-light sm:text-4xl lg:text-[2.6rem]" {...(c.contenu === 'texte' ? { 'data-reveal-lignes': '' } : { 'data-reveal': '' })}>
+              {c.contenu === 'texte' ? (
+                <p>Un outil qui se met au point dans de vrais lieux, avec les gens qui les font tourner.</p>
+              ) : (
+                <p><ACompleter texte={c.contenu} /></p>
+              )}
+            </blockquote>
+          </figure>
+        ))
+      }
     </div>
-    <div class="grid gap-5 text-lg leading-relaxed text-encre-douce" data-reveal data-reveal-delai="1">
-      <p>
-        <ACompleter texte="l’histoire personnelle : le déclic, le lieu ou la personne qui a montré le problème de la cave" />
-      </p>
-      <p>
-        <ACompleter texte="ce que vous avez observé chez les cavistes et sommeliers, sans chiffre inventé" />
-      </p>
-      <p>
-        <ACompleter texte="ce que vous voulez que Cuvée change concrètement pour un lieu indépendant" />
-      </p>
+    <div class="mt-20 flex flex-col gap-6 border-t border-creme/25 pt-10 sm:flex-row sm:items-center sm:justify-between">
+      <p class="max-w-xl font-serif text-2xl leading-snug" data-reveal>Envie de construire Cuvée avec nous ?</p>
+      <a href={lienInscription} class="btn btn-creme w-full sm:w-auto" data-reveal data-reveal-delai="1">Rejoindre le programme pilote</a>
     </div>
   </div>
 </section>
+
+<style is:global>
+  .citation .a-completer { font-size: 0.5em; }
+</style>

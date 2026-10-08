@@ -2,43 +2,42 @@
 import TitreSection from './TitreSection.astro';
 import ACompleter from './ACompleter.astro';
 
-// TODO : remplacer par les vrais membres de l’équipe (prénom, rôle, parcours en une ligne).
+// TODO : remplacer par les vrais membres de l’équipe (prénom, rôle, parcours en une ligne), puis les portraits.
 const membres = [1, 2, 3];
 ---
-<section id="equipe" aria-labelledby="equipe-titre" class="border-t border-filet py-20 lg:py-24">
-  <div class="conteneur grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
-    <div>
-      <TitreSection
-        numero="6"
-        libelle="Qui on est"
-        id="equipe-titre"
-        titre="Une petite équipe, qui veut construire avec le métier."
-      />
-      <p class="mt-6 text-lg text-encre-douce" data-reveal data-reveal-delai="2">
-        Nous ne voulons pas inventer un outil dans un bureau puis venir vous le vendre. Nous voulons le mettre au point
-        dans de vrais lieux, avec les gens qui les font tourner.
-      </p>
-      <p class="mt-4 text-lg text-encre-douce">
-        <ACompleter texte="qui vous êtes en deux phrases : parcours, lien avec le vin, pourquoi ce projet" />
-      </p>
+<section id="equipe" aria-labelledby="equipe-titre" class="py-20 lg:py-28">
+  <div class="conteneur">
+    <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
+      <TitreSection numero="6" libelle="Qui on est" id="equipe-titre" titre="Une petite équipe, qui veut construire avec le métier." />
+      <div>
+        <p class="text-lg text-encre-douce" data-reveal data-reveal-delai="2">
+          Nous ne voulons pas inventer un outil dans un bureau puis venir vous le vendre. Nous voulons le mettre au point
+          dans de vrais lieux, avec les gens qui les font tourner.
+        </p>
+        <p class="mt-4 text-lg text-encre-douce" data-reveal data-reveal-delai="3">
+          <ACompleter texte="qui vous êtes en deux phrases : parcours, lien avec le vin, pourquoi ce projet" />
+        </p>
+      </div>
     </div>
 
-    <ul role="list" class="grid content-start gap-4 sm:grid-cols-3 lg:grid-cols-1">
+    <ul role="list" class="mt-14 grid gap-8 sm:grid-cols-3 lg:mt-20">
       {
         membres.map((_, i) => (
-          <li data-reveal data-reveal-delai={String(i + 1)} class="equipe-membre flex items-center gap-4 border-b border-filet pb-4">
-            <span
-              class="equipe-pastille grid h-14 w-14 shrink-0 place-items-center border-[3px] border-double border-dore font-serif text-xl text-bordeaux italic"
-              aria-hidden="true"
-            >
-              ?
-            </span>
-            <span class="text-[0.95rem] leading-snug">
-              <ACompleter texte="prénom nom" />
-              <span class="mt-1.5 block">
-                <ACompleter texte="rôle, parcours en une ligne" />
-              </span>
-            </span>
+          <li data-reveal data-reveal-delai={String(i + 1)} class="carte-membre papier papier-ombre group p-4 pb-6">
+            <div class="portrait relative aspect-[4/5] overflow-hidden bg-creme-fonce" aria-hidden="true">
+              <svg viewBox="0 0 200 250" class="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMax slice">
+                <path d="M20 250V118a80 80 0 0 1 160 0v132z" fill="none" stroke="var(--color-dore)" stroke-width="1.2" />
+                <path d="M30 250V120a70 70 0 0 1 140 0v130z" fill="var(--color-dore-clair)" fill-opacity="0.55" />
+                <circle class="portrait-tete" cx="100" cy="112" r="30" fill="var(--color-creme)" stroke="var(--color-bordure)" stroke-width="1.2" stroke-dasharray="3 4" />
+                <path class="portrait-epaules" d="M44 250c0-44 24-68 56-68s56 24 56 68z" fill="var(--color-creme)" stroke="var(--color-bordure)" stroke-width="1.2" stroke-dasharray="3 4" />
+              </svg>
+              <span class="surtitre absolute bottom-3 left-3 bg-creme-fonce px-1 text-encre-douce">Portrait à venir</span>
+            </div>
+            <div class="mt-5 px-1">
+              <p class="surtitre text-bordeaux">Membre {i + 1}</p>
+              <p class="mt-2 font-serif text-xl leading-snug font-medium"><ACompleter texte="prénom nom" /></p>
+              <p class="mt-3 text-[0.95rem] leading-snug text-encre-douce"><ACompleter texte="rôle, parcours en une ligne" /></p>
+            </div>
           </li>
         ))
       }
@@ -47,11 +46,10 @@ const membres = [1, 2, 3];
 </section>
 
 <style is:global>
-  .equipe-pastille {
-    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.3), background-color 0.3s ease;
-  }
-  .equipe-membre:hover .equipe-pastille {
-    transform: rotate(-6deg) scale(1.05);
-    background: var(--color-dore-clair);
+  .carte-membre .portrait-tete,
+  .carte-membre .portrait-epaules { transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); transform-box: fill-box; transform-origin: center bottom; }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .carte-membre:hover .portrait-tete { transform: translateY(-4px); }
+    .carte-membre:hover .portrait-epaules { transform: translateY(-2px) scale(1.03); }
   }
 </style>

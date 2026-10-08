@@ -1,5 +1,5 @@
 ---
-import TitreSection from './TitreSection.astro';
+import FonctionnementTitre from './FonctionnementTitre.astro';
 import { avecPlaceholders } from '../lib/texte';
 
 const principes = [
@@ -54,8 +54,8 @@ const couleursStatut: Record<Statut, string> = {
 <section id="controle" aria-labelledby="controle-titre" class="py-20 lg:py-28">
   <div class="conteneur grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
     <div>
-      <TitreSection
-        numero="5"
+      <FonctionnementTitre
+        numero="03"
         libelle="Vous gardez la main"
         id="controle-titre"
         titre="C’est votre cave. Cuvée propose, <em class='text-bordeaux'>vous décidez</em>."
@@ -93,7 +93,7 @@ const couleursStatut: Record<Statut, string> = {
                 <br />
                 {e.heure}
               </span>
-              <span class="text-[0.95rem] leading-snug">{e.action}</span>
+              <span class="text-[0.95rem] leading-snug" data-frappe>{e.action}</span>
               <span class:list={['cachet col-start-2 sm:col-start-3', couleursStatut[e.statut]]}>
                 {e.statut === 'valide' && (
                   <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
@@ -116,60 +116,76 @@ const couleursStatut: Record<Statut, string> = {
 </section>
 
 <style is:global>
-  /* Le journal se remplit ligne à ligne quand il entre à l’écran (la classe est posée par le script ; sans lui, tout est visible). */
-  .journal.journal-pret .journal-ligne {
-    opacity: 0;
-    translate: 0 8px;
-    transition:
-      opacity 0.5s ease calc(var(--i) * 0.38s + 0.2s),
-      translate 0.5s ease calc(var(--i) * 0.38s + 0.2s);
+  /* Journal : chaque ligne apparaît, l’action est tapée à la machine, puis le cachet tombe. Sans JavaScript, tout est visible. */
+  .journal.journal-pret .journal-ligne { opacity: 0; }
+  .journal.journal-pret .journal-ligne.en-cours,
+  .journal.journal-pret .journal-ligne.est-ecrite { opacity: 1; transition: opacity 0.2s ease; }
+  .journal.journal-pret .journal-ligne .cachet { opacity: 0; transform: scale(1.6) rotate(-6deg); }
+  .journal.journal-pret .journal-ligne.est-ecrite .cachet {
+    opacity: 1; transform: none;
+    transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.3);
   }
-  .journal.journal-pret .journal-ligne .cachet {
-    opacity: 0;
-    transform: scale(1.6) rotate(-6deg);
-    transition:
-      opacity 0.25s ease calc(var(--i) * 0.38s + 0.65s),
-      transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.3) calc(var(--i) * 0.38s + 0.65s);
+  .caret-machine {
+    display: inline-block; width: 0.5ch; height: 1em; margin-left: 1px; vertical-align: -0.12em;
+    background: var(--color-bordeaux); animation: caret 0.8s steps(1) infinite;
   }
-  .journal.journal-rempli .journal-ligne {
-    opacity: 1;
-    translate: 0 0;
-  }
-  .journal.journal-rempli .journal-ligne .cachet {
-    opacity: 1;
-    transform: none;
-  }
+  @keyframes caret { 50% { opacity: 0; } }
   .journal-ligne { position: relative; }
   .journal-ligne:hover { background: rgb(233 221 191 / 0.28); }
   .principe { transition: border-color 0.3s ease; }
   .principe:hover { border-color: var(--color-bordeaux); }
-  @media (prefers-reduced-motion: reduce) {
-    .journal.journal-pret .journal-ligne,
-    .journal.journal-pret .journal-ligne .cachet {
-      opacity: 1 !important;
-      translate: none !important;
-      transform: none !important;
-    }
-  }
 </style>
 
 <script>
   const journal = document.querySelector<HTMLElement>('[data-journal]');
-  if (journal) {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
-      // rien à animer : le journal reste affiché tel quel
-    } else {
-      journal.classList.add('journal-pret');
-      const obs = new IntersectionObserver(
-        (entrees) => {
-          if (entrees.some((e) => e.isIntersecting)) {
-            journal.classList.add('journal-rempli');
-            obs.disconnect();
-          }
-        },
-        { threshold: 0.25 },
-      );
-      obs.observe(journal);
-    }
+  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (journal && !reduit && 'IntersectionObserver' in window) {
+    const lignes = Array.from(journal.querySelectorAll<HTMLElement>('.journal-ligne'));
+    const cibles = lignes.map((l) => l.querySelector<HTMLElement>('[data-frappe]')!);
+    const textes = cibles.map((c) => c.textContent ?? '');
+    // Version lisible pour les lecteurs d’écran, texte tapé masqué pour eux.
+    cibles.forEach((c, i) => {
+      c.style.display = 'block';
+      c.style.minHeight = c.offsetHeight + 'px';
+      c.innerHTML = '';
+      const vrai = document.createElement('span');
+      vrai.className = 'sr-only';
+      vrai.textContent = textes[i];
+      const tape = document.createElement('span');
+      tape.setAttribute('aria-hidden', 'true');
+      c.append(vrai, tape);
+    });
+    journal.classList.add('journal-pret');
+    const taper = async () => {
+      for (let i = 0; i < lignes.length; i++) {
+        lignes[i].classList.add('en-cours');
+        const tape = cibles[i].lastElementChild as HTMLElement;
+        const caret = document.createElement('span');
+        caret.className = 'caret-machine';
+        caret.setAttribute('aria-hidden', 'true');
+        tape.after(caret);
+        await new Promise<void>((fin) => {
+          let k = 0;
+          const pas = () => {
+            k++;
+            tape.textContent = textes[i].slice(0, k);
+            if (k >= textes[i].length) { caret.remove(); lignes[i].classList.add('est-ecrite'); fin(); }
+            else setTimeout(pas, 16 + Math.random() * 18);
+          };
+          pas();
+        });
+        await new Promise((r) => setTimeout(r, 140));
+      }
+    };
+    const obs = new IntersectionObserver(
+      (entrees) => {
+        if (entrees.some((e) => e.isIntersecting)) {
+          obs.disconnect();
+          taper();
+        }
+      },
+      { threshold: 0.3 },
+    );
+    obs.observe(journal);
   }
 </script>

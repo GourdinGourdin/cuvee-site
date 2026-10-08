@@ -1,0 +1,16 @@
+---
+/** Titre de section de /comment-ca-marche : numérotation propre à la page (01 / 03), filet doré qui se trace. */
+interface Props { numero: string; libelle: string; id: string; titre: string; sombre?: boolean }
+const { numero, libelle, id, titre } = Astro.props;
+---
+<div class="max-w-3xl">
+  <p class="surtitre flex items-center gap-3 text-bordeaux" data-reveal>
+    <span class="chiffres">{numero} / 03</span>
+    <span class="titre-filet h-px w-8 bg-dore" aria-hidden="true"></span>
+    <span>{libelle}</span>
+  </p>
+  <h2 id={id} data-reveal data-reveal-delai="1" class="mt-4 text-[2rem] leading-[1.1] font-medium tracking-[-0.015em] sm:text-[2.6rem] lg:text-5xl">
+    <Fragment set:html={titre} />
+  </h2>
+  <slot />
+</div>

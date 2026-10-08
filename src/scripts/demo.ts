@@ -20,6 +20,20 @@ document.querySelectorAll<HTMLElement>('[data-demo]').forEach((carte) => {
   });
 });
 
+// Papiers sur la table : un clic sur une fiche la prend en main, un clic ailleurs la repose.
+const fiches = Array.from(document.querySelectorAll<HTMLElement>('.carte-ex'));
+if (fiches.length) {
+  document.addEventListener('click', (e) => {
+    const cible = e.target as HTMLElement;
+    const fiche = cible.closest<HTMLElement>('.carte-ex');
+    if (fiche && cible.closest('button, a')) return;
+    fiches.forEach((f) => f.classList.toggle('est-pris', f === fiche && !f.classList.contains('est-pris')));
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') fiches.forEach((f) => f.classList.remove('est-pris'));
+  });
+}
+
 const liste = document.querySelector<HTMLElement>('[data-onglets]');
 const grille = document.querySelector<HTMLElement>('[data-grille-exemples]');
 if (liste && grille && !liste.dataset.pret) {

@@ -10,14 +10,17 @@ const {
   texte = 'Quelques lieux, quelques mois, et une équipe qui construit l’outil avec vous. L’inscription prend deux minutes.',
 } = Astro.props;
 ---
-<section aria-labelledby="page-cta-titre" class="sur-fond-sombre bg-bordeaux py-16 text-creme lg:py-20" data-page-cta>
-  <div class="conteneur flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-    <div class="max-w-2xl" data-reveal>
-      <h2 id="page-cta-titre" class="text-[1.9rem] leading-[1.1] font-medium sm:text-4xl">{titre}</h2>
-      <p class="mt-4 text-lg text-creme-sourde">{texte}</p>
+<section aria-labelledby="page-cta-titre" class="page-cta sur-fond-sombre bg-bordeaux py-20 text-creme lg:py-28" data-page-cta>
+  <div class="conteneur relative">
+    <div class="page-cta-filet mb-10 max-w-xs" aria-hidden="true" data-reveal></div>
+    <div class="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+      <div class="max-w-2xl" data-reveal>
+        <h2 id="page-cta-titre" class="text-[2.2rem] leading-[1.05] font-medium tracking-[-0.015em] sm:text-5xl lg:text-6xl">{titre}</h2>
+        <p class="mt-5 text-lg text-creme-sourde sm:text-xl">{texte}</p>
+      </div>
+      <a href={lienInscription} class="btn btn-creme w-full sm:w-auto" data-reveal data-reveal-delai="2">
+        Rejoindre le programme pilote
+      </a>
     </div>
-    <a href={lienInscription} class="btn btn-creme w-full sm:w-auto" data-reveal data-reveal-delai="1">
-      Rejoindre le programme pilote
-    </a>
   </div>
 </section>

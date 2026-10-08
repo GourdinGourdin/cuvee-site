@@ -30,14 +30,14 @@ const cartes = [
       <p class="surtitre flex items-center gap-3 text-bordeaux">
         <span>N° 3</span><span class="h-px w-8 bg-dore" aria-hidden="true"></span><span>La suite</span>
       </p>
-      <h2 id="apercu-titre" class="mt-4 text-[2rem] leading-[1.1] font-medium tracking-[-0.015em] sm:text-[2.6rem] lg:text-5xl">
+      <h2 id="apercu-titre" data-reveal-lignes class="mt-4 text-[2rem] leading-[1.1] font-medium tracking-[-0.015em] sm:text-[2.6rem] lg:text-5xl">
         Pour aller plus loin.
       </h2>
     </div>
     <ul role="list" class="mt-12 grid gap-6 lg:grid-cols-3">
       {
         cartes.map((c, i) => (
-          <li class="flex" data-reveal data-reveal-delai={String(i)}>
+          <li class="flex" data-reveal="echelle" data-reveal-delai={String(i + 1)}>
             <a
               href={c.href}
               class="group papier flex w-full flex-col p-6 text-encre transition-transform duration-300 hover:-translate-y-1 sm:p-8"

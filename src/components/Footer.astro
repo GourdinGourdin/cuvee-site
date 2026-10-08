@@ -5,8 +5,9 @@ import { site, navigation, lienInscription } from '../data/site';
 
 const annee = new Date().getFullYear();
 ---
-<footer class="sur-fond-sombre bg-encre pt-16 pb-12 text-creme">
-  <div class="conteneur">
+<footer class="sur-fond-sombre relative overflow-hidden bg-encre pt-16 pb-12 text-creme">
+  <div class="pied-mot" aria-hidden="true">Cuvée</div>
+  <div class="conteneur relative">
     <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
       <div>
         <a href="/" class="inline-block rounded-sm" aria-label="Cuvée, retour à l’accueil"><Logo clair /></a>
@@ -21,29 +22,29 @@ const annee = new Date().getFullYear();
           <li>
             {
               site.emailContact ? (
-                <a href={`mailto:${site.emailContact}`} class="lien">{site.emailContact}</a>
+                <a href={`mailto:${site.emailContact}`} class="pied-lien">{site.emailContact}</a>
               ) : (
                 <ACompleter texte="email de contact" />
               )
             }
           </li>
-          <li><a href={lienInscription} class="lien">Rejoindre le programme pilote</a></li>
+          <li><a href={lienInscription} class="pied-lien">Rejoindre le programme pilote</a></li>
         </ul>
       </div>
 
       <div>
         <p class="surtitre text-dore">Informations</p>
         <ul class="mt-4 grid gap-2.5">
-          {navigation.filter((n) => n.href !== '/').map((n) => <li><a href={n.href} class="lien">{n.libelle}</a></li>)}
-          <li><a href="/mentions-legales/" class="lien">Mentions légales</a></li>
-          <li><a href="/confidentialite/" class="lien">Confidentialité</a></li>
+          {navigation.filter((n) => n.href !== '/').map((n) => <li><a href={n.href} class="pied-lien">{n.libelle}</a></li>)}
+          <li><a href="/mentions-legales/" class="pied-lien">Mentions légales</a></li>
+          <li><a href="/confidentialite/" class="pied-lien">Confidentialité</a></li>
         </ul>
       </div>
     </div>
 
     <div class="filet-double mt-14 opacity-60" aria-hidden="true"></div>
 
-    <div class="mt-6 flex flex-col gap-3 text-[0.875rem] text-creme-sourde sm:flex-row sm:items-center sm:justify-between">
+    <div class="mt-6 pb-28 flex flex-col sm:pb-40 lg:pb-52 gap-3 text-[0.875rem] text-creme-sourde sm:flex-row sm:items-center sm:justify-between">
       <p>© {annee} Cuvée</p>
       <p>L’abus d’alcool est dangereux pour la santé, à consommer avec modération.</p>
     </div>

@@ -118,14 +118,24 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
 </div>
 
 <style>
-  /* les lignes s’écrivent de gauche à droite, l’une après l’autre */
-  .ligne-ecrite {
-    animation: ecrire 0.8s cubic-bezier(0.3, 0.6, 0.2, 1) both;
-    animation-delay: calc(0.7s + var(--i) * 0.55s);
+  /* Par défaut (sans JS, mouvement réduit, animation terminée) : état final, tout est écrit et tamponné. */
+  .tampon-auto {
+    opacity: 0.92;
+    transform: rotate(-11deg) scale(1);
   }
-  .total-ligne {
+  /* Pendant l’ouverture de la bouteille (voir Hero.astro et accueil-bouteille.ts), le bon s’écrit
+     ligne après ligne, à partir de --t0 (moment où le papier a fini de se dérouler). */
+  :global([data-etat='joue']) .ligne-ecrite {
+    animation: ecrire 0.8s cubic-bezier(0.3, 0.6, 0.2, 1) both;
+    animation-delay: calc(var(--t0, 0s) + 0.5s + var(--i) * 0.55s);
+  }
+  :global([data-etat='joue']) .total-ligne {
     animation: ecrire 0.6s ease-out both;
-    animation-delay: 2.5s;
+    animation-delay: calc(var(--t0, 0s) + 2.3s);
+  }
+  :global([data-etat='joue']) .tampon-auto {
+    animation: tamponner-auto 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+    animation-delay: calc(var(--t0, 0s) + 3.3s);
   }
   @keyframes ecrire {
     from {
@@ -137,30 +147,14 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
       opacity: 1;
     }
   }
-  /* tampon posé automatiquement, comme si la commande venait d’être relue */
-  .tampon-auto {
-    animation: tamponner-auto 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.25) 3.6s forwards;
-  }
   @keyframes tamponner-auto {
+    from {
+      opacity: 0;
+      transform: rotate(-11deg) scale(1.5);
+    }
     to {
       opacity: 0.92;
       transform: rotate(-11deg) scale(1);
     }
   }
 </style>
-
-<script>
-  // Le total se calcule à l’écran ; sans animation (ou sans JS), la valeur finale reste affichée.
-  const nb = document.querySelector<HTMLElement>('[data-total-nb]');
-  if (nb && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const fin = Number(nb.textContent);
-    const debut = performance.now() + 2500;
-    nb.textContent = '0';
-    const pas = (t: number) => {
-      const k = Math.min(Math.max((t - debut) / 700, 0), 1);
-      nb.textContent = String(Math.round(fin * k));
-      if (k < 1) requestAnimationFrame(pas);
-    };
-    requestAnimationFrame(pas);
-  }
-</script>

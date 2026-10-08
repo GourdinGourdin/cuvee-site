@@ -1,88 +1,16 @@
 ---
-import TitreSection from './TitreSection.astro';
-import ACompleter from './ACompleter.astro';
+import PiloteInvitation from './PiloteInvitation.astro';
+import PiloteFrise from './PiloteFrise.astro';
 import Formulaire from './Formulaire.astro';
-import { avecPlaceholders } from '../lib/texte';
-
-// TODO : conditions du pilote à valider par l’équipe (durée, prix, nombre de places, rythme des échanges).
-const propose = [
-  'Cuvée [À COMPLÉTER : offert / à prix réduit] pendant toute la durée du pilote ([À COMPLÉTER : durée]).',
-  "La mise en place faite avec vous : on reprend votre inventaire actuel, même s’il est sur Excel ou dans un carnet.",
-  "Un contact direct avec l’équipe : vos remarques sont lues par ceux qui construisent l’outil.",
-  '[À COMPLÉTER : conditions après le pilote, par exemple un tarif préférentiel pour les lieux pilotes ?]',
-];
-
-const demande = [
-  'Être un lieu indépendant qui travaille le vin : cave à manger, bar à vin ou restaurant avec une vraie carte des vins, entre 100 et 600 références.',
-  'Nous laisser connecter votre caisse et nous transmettre vos factures fournisseurs pendant le pilote.',
-  'Un court échange régulier ([À COMPLÉTER : fréquence et durée]) pour nous dire ce qui marche et ce qui coince.',
-  "Votre franc-parler : si quelque chose ne sert à rien, dites-le. C’est le plus utile pour nous.",
-];
 ---
-<section id="pilote" aria-labelledby="pilote-titre" class="sur-fond-sombre bg-bordeaux py-20 text-creme lg:py-28">
+<PiloteInvitation />
+<PiloteFrise />
+<section aria-labelledby="bon-titre" class="border-t border-filet bg-creme-fonce py-16 lg:py-24">
   <div class="conteneur">
-    <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-      <TitreSection
-        numero="7"
-        libelle="Le programme pilote"
-        id="pilote-titre"
-        titre="Construisons-le ensemble, chez vous."
-        sombre
-      >
-        <p class="mt-6 max-w-2xl text-lg text-creme-sourde">
-          Nous cherchons <ACompleter texte="nombre" /> bars à vin et caves à manger indépendants pour essayer Cuvée
-          pendant le service, à partir de <ACompleter texte="mois de démarrage" />. Les conditions ci-dessous sont
-          encore à valider par l’équipe.
-        </p>
-      </TitreSection>
-
-      <!-- TODO : n’afficher ce tampon que si le nombre de places est réellement limité. -->
-      <p
-        data-reveal="echelle"
-        class="pilote-tampon chiffres w-fit shrink-0 -rotate-2 border-[3px] border-double border-dore-clair px-4 py-2 text-center text-[0.8rem] tracking-[0.15em] text-dore-clair uppercase"
-      >
-        <ACompleter texte="N" /> places
-      </p>
-    </div>
-
-    <div class="mt-14 grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-14">
-      <div class="grid content-start gap-10">
-        <div>
-          <h3 data-reveal class="border-b border-creme/30 pb-3 text-2xl font-medium">Ce que nous vous proposons</h3>
-          <ul role="list" class="mt-5 grid gap-4">
-            {
-              propose.map((item, i) => (
-                <li data-reveal data-reveal-delai={String(Math.min(i + 1, 6))} class="pilote-item flex gap-3 text-creme-sourde">
-                  <span class="pilote-tiret mt-[0.6rem] h-px w-4 shrink-0 bg-dore-clair" aria-hidden="true" />
-                  <span set:html={avecPlaceholders(item)} />
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-        <div>
-          <h3 data-reveal class="border-b border-creme/30 pb-3 text-2xl font-medium">Ce que nous vous demandons</h3>
-          <ul role="list" class="mt-5 grid gap-4">
-            {
-              demande.map((item, i) => (
-                <li data-reveal data-reveal-delai={String(Math.min(i + 1, 6))} class="pilote-item flex gap-3 text-creme-sourde">
-                  <span class="pilote-tiret mt-[0.6rem] h-px w-4 shrink-0 bg-dore-clair" aria-hidden="true" />
-                  <span set:html={avecPlaceholders(item)} />
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-      </div>
-
-      <Formulaire />
+    <div class="mx-auto max-w-3xl">
+      <p class="surtitre flex items-center gap-3 text-bordeaux" data-reveal><span>Bon d’inscription</span><span class="h-px w-8 bg-dore" aria-hidden="true"></span></p>
+      <h2 id="bon-titre" class="mt-4 text-[2rem] leading-[1.1] font-medium tracking-[-0.015em] sm:text-5xl" data-reveal data-reveal-delai="1">Réservez votre <em class="text-bordeaux">place</em> au pilote.</h2>
+      <div class="mt-10" data-reveal data-reveal-delai="2"><Formulaire /></div>
     </div>
   </div>
 </section>
-
-<style is:global>
-  .pilote-tiret { transition: width 0.3s ease; }
-  .pilote-item:hover .pilote-tiret { width: 1.5rem; }
-  .pilote-tampon { transition: rotate 0.4s ease; rotate: 0deg; }
-  .pilote-tampon:hover { rotate: 2deg; }
-</style>

@@ -20,6 +20,15 @@
  * masque les éléments uniquement si <html> porte la classe `anim` (posée par un script inline
  * de Base.astro, jamais en mouvement réduit).
  *
+ * Charpente (toujours active, hors animation) — initEntete() :
+ *   [data-entete]               en-tête : attribut data-compact="true" après 24 px de défilement
+ *   [data-nav-desktop]          onglets : le trait doré [data-indicateur] glisse vers l’onglet actif,
+ *                               suit le survol/focus clavier et revient à l’onglet actif ; sans JS,
+ *                               un souligné CSS marque l’onglet actif
+ *   [data-menu]                 menu mobile plein écran (<details>) : focus piégé dans [data-menu-focus],
+ *                               Échap pour fermer (focus rendu au bouton), défilement de la page bloqué
+ *   [data-progression]          barre de lecture dorée (--p de 0 à 1) ; absente en mouvement réduit
+ *
  * Navigation : les transitions entre pages utilisent le CSS natif `@view-transition`
  * (pas de <ClientRouter />) ; chaque page se recharge, ce script s'exécute donc à chaque page.
  * Si un jour <ClientRouter /> est ajouté, appeler init() sur `astro:page-load`
@@ -122,7 +131,7 @@ export function init() {
           obs.unobserve(el);
         }
       },
-      { threshold: 0.15, rootMargin: '0px 0px -8% 0px' },
+      { threshold: 0, rootMargin: '0px 0px -10% 0px' },
     );
     cibles.forEach((el) => obs.observe(el));
     parallaxe(Array.from(document.querySelectorAll<HTMLElement>('[data-parallaxe]')));
@@ -136,3 +145,112 @@ init();
 document.addEventListener('astro:page-load', () => {
   if (!document.documentElement.classList.contains('anim-pret')) init();
 });
+
+/* ------------------------------------------------------------------ */
+/* Charpente : en-tête compact, indicateur d’onglet, menu mobile, progression de lecture */
+
+function initEntete() {
+  const entete = document.querySelector<HTMLElement>('[data-entete]');
+  const barre = document.querySelector<HTMLElement>('[data-progression]');
+  const menu = document.querySelector<HTMLDetailsElement>('[data-menu]');
+
+  // compaction + progression, au scroll
+  let attente = false;
+  const maj = () => {
+    attente = false;
+    const y = window.scrollY;
+    entete?.setAttribute('data-compact', String(y > 24));
+    if (barre) {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      barre.style.setProperty('--p', total > 0 ? Math.min(y / total, 1).toFixed(4) : '0');
+    }
+  };
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!attente) {
+        attente = true;
+        requestAnimationFrame(maj);
+      }
+    },
+    { passive: true },
+  );
+  window.addEventListener('resize', maj);
+  maj();
+
+  // indicateur d’onglet
+  const nav = document.querySelector<HTMLElement>('[data-nav-desktop]');
+  const indic = nav?.querySelector<HTMLElement>('[data-indicateur]');
+  if (nav && indic) {
+    const liens = Array.from(nav.querySelectorAll<HTMLAnchorElement>('a.onglet'));
+    const courant = () => nav.querySelector<HTMLAnchorElement>('a[aria-current="page"]');
+    const placer = (a: HTMLElement | null, animer: boolean) => {
+      if (!a) {
+        indic.style.opacity = '0';
+        return;
+      }
+      if (!animer) indic.style.transition = 'none';
+      indic.style.opacity = '1';
+      indic.style.width = `${a.offsetWidth}px`;
+      indic.style.transform = `translateX(${a.parentElement!.offsetLeft}px)`;
+      if (!animer) {
+        void indic.offsetWidth;
+        indic.style.transition = '';
+      }
+    };
+    nav.dataset.indic = 'oui';
+    const retour = () => placer(courant(), true);
+    liens.forEach((a) => {
+      a.addEventListener('mouseenter', () => placer(a, true));
+      a.addEventListener('focus', () => placer(a, true));
+      a.addEventListener('blur', retour);
+    });
+    nav.addEventListener('mouseleave', retour);
+    window.addEventListener('resize', () => placer(courant(), false));
+    document.fonts?.ready.then(() => placer(courant(), false));
+    placer(courant(), false);
+  }
+
+  // menu mobile plein écran
+  if (menu) {
+    const resume = menu.querySelector('summary') as HTMLElement;
+    const fermer = (rendreFocus: boolean) => {
+      menu.open = false;
+      if (rendreFocus) resume.focus();
+    };
+    menu.addEventListener('toggle', () => {
+      document.documentElement.classList.toggle('menu-ouvert', menu.open);
+      if (menu.open) menu.querySelector<HTMLElement>('[data-menu-lien]')?.focus({ preventScroll: true });
+    });
+    menu.querySelectorAll('[data-menu-lien]').forEach((l) => l.addEventListener('click', () => fermer(false)));
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => e.matches && fermer(false));
+    document.addEventListener('keydown', (e) => {
+      if (!menu.open) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        fermer(true);
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      // focus piégé : logo, bouton Menu, liens du panneau, bouton du pilote
+      const focusables = Array.from(document.querySelectorAll<HTMLElement>('[data-entete] [data-menu-focus]')).filter(
+        (el) => el.offsetParent !== null || el === resume,
+      );
+      const premier = focusables[0];
+      const dernier = focusables[focusables.length - 1];
+      const actif = document.activeElement;
+      if (e.shiftKey && actif === premier) {
+        e.preventDefault();
+        dernier.focus();
+      } else if (!e.shiftKey && actif === dernier) {
+        e.preventDefault();
+        premier.focus();
+      } else if (!focusables.includes(actif as HTMLElement)) {
+        e.preventDefault();
+        premier.focus();
+      }
+    });
+  }
+}
+
+initEntete();

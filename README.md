@@ -91,4 +91,6 @@ Tout est dans `src/scripts/animations.ts` (JS léger, sans dépendance) et la fi
 | `data-compteur="1250"` | compte jusqu'à la valeur (`data-compteur-decimales="1"` en option) ; l'élément ne contient que le nombre |
 | `data-parallaxe="0.1"` | parallaxe douce (coefficient, négatif = sens inverse) |
 
+Charpente (toujours active, sans dépendance, détail en tête de `animations.ts`) : en-tête qui se compacte au scroll (`data-entete`, fond flouté, filet doré), indicateur d’onglet doré qui glisse et suit le survol (`data-indicateur`, repli sans JS : souligné CSS), menu mobile plein écran façon sommaire (focus piégé, Échap, défilement bloqué), barre de lecture dorée (`data-progression`, masquée en mouvement réduit). `PageEntete` pose un chiffre romain en filigrane et révèle le titre mot à mot. Transitions : le contenu glisse, l’en-tête reste en place (desktop) et l’indicateur morphe (`view-transition-name: nav-indicateur`).
+
 Classes de micro-interaction : `.btn` (remplissage animé), `.lien` (souligné qui se dessine), `.papier` (se soulève au survol). Les transitions entre pages utilisent `@view-transition` en CSS natif ; si `<ClientRouter />` est ajouté un jour, le script se réinitialise sur `astro:page-load`.
