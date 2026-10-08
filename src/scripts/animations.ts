@@ -155,6 +155,16 @@ export function init() {
     } else {
       observer();
     }
+    // Navigation au clavier : un élément qui reçoit le focus ne doit pas rester invisible (ni son rideau
+    // d'image, ni sa carte) en attendant que l'observateur le voie.
+    document.addEventListener('focusin', (e) => {
+      for (let n = e.target instanceof HTMLElement ? e.target : null; n; n = n.parentElement) {
+        if (n.hasAttribute('data-reveal') && !n.classList.contains('est-visible')) {
+          n.classList.add('est-visible');
+          obs.unobserve(n);
+        }
+      }
+    });
     parallaxe(Array.from(document.querySelectorAll<HTMLElement>('[data-parallaxe]')));
     html.classList.add('anim-pret');
   } catch {

@@ -2,7 +2,7 @@
 /**
  * Vidéo d'ambiance muette, en boucle. Chargée et lancée seulement quand elle entre à l'écran,
  * mise en pause quand elle en sort. Avec « réduire les animations », seule l'affiche est montrée.
- * `prioritaire` : vidéo du haut de page, chargée tout de suite.
+ * `prioritaire` : vidéo du haut de page, chargée tout de suite (avec son affiche).
  */
 interface Props {
   src: string;
@@ -12,13 +12,18 @@ interface Props {
 }
 const { src, affiche, prioritaire = false, class: classe = '' } = Astro.props;
 ---
+{
+  /* Vidéo non prioritaire : l'affiche est une <img> chargée paresseusement (l'attribut poster, lui, se télécharge
+     toujours tout de suite). Elle reste visible sans JavaScript ou en mouvement réduit, la vidéo la recouvre ensuite. */
+  !prioritaire && <img src={affiche} alt="" loading="lazy" decoding="async" class={classe} />
+}
 <video
   class={classe}
   muted
   loop
   playsinline
   preload={prioritaire ? 'auto' : 'none'}
-  poster={affiche}
+  poster={prioritaire ? affiche : undefined}
   aria-hidden="true"
   data-video
   data-src={src}

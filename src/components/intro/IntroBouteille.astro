@@ -422,12 +422,13 @@ const poussieres = [
   .i-bouteille:focus-visible {
     outline: none;
   }
-  /* l'anneau de focus souligne l'invitation (et la bouteille se soulève) */
-  .i-bouteille:focus-visible .i-consigne {
+  /* l'anneau de focus souligne l'invitation (et la bouteille se soulève), seulement une fois une touche
+     pressée : le focus initial est posé par le script, il ne doit pas s'afficher à la souris */
+  .intro[data-clavier] .i-bouteille:focus-visible .i-consigne {
     outline: 1px solid var(--color-dore-clair);
     outline-offset: 6px;
   }
-  .i-bouteille:focus-visible .i-signature {
+  .intro[data-clavier] .i-bouteille:focus-visible .i-signature {
     text-shadow: 0 0 22px rgb(233 221 191 / 0.45);
   }
 
@@ -454,7 +455,7 @@ const poussieres = [
   }
   @media (hover: hover) {
     .i-bouteille:hover .i-lift,
-    .i-bouteille:focus-visible .i-lift {
+    .intro[data-clavier] .i-bouteille:focus-visible .i-lift {
       transform: translate3d(0, -10px, 0);
     }
     .i-bouteille:hover .i-signature {
@@ -665,7 +666,7 @@ const poussieres = [
     color: rgb(245 233 228 / 0.92);
     cursor: pointer;
   }
-  .i-passer:focus-visible {
+  .intro[data-clavier] .i-passer:focus-visible {
     outline: 1px solid var(--color-dore-clair);
     outline-offset: 4px;
   }

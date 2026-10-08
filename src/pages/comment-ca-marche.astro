@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import EnTete from '../components/maison/EnTete.astro';
 import PiedDePage from '../components/maison/PiedDePage.astro';
 import CtaMobile from '../components/CtaMobile.astro';
-import FonctionnementEntete from '../components/FonctionnementEntete.astro';
+import PageEntete from '../components/PageEntete.astro';
 import PageCta from '../components/PageCta.astro';
 import CommentCaMarche from '../components/CommentCaMarche.astro';
 import FonctionnementScene from '../components/FonctionnementScene.astro';
@@ -13,7 +13,15 @@ import GarderLaMain from '../components/GarderLaMain.astro';
 <Base titre="Comment ça marche · Cuvée" description="De la facture au bon de commande : comment Cuvée suit votre cave, repère les bouteilles qui dorment et prépare les commandes, avec vous aux commandes.">
   <EnTete />
   <main id="contenu">
-    <FonctionnementEntete />
+    <PageEntete
+      surtitre="Comment ça marche"
+      titre="De la facture au bon de commande, sans perdre la main."
+      signature="vous relisez, vous validez"
+      chapo="Cuvée lit vos factures, suit votre stock et prépare vos commandes. Vous relisez, vous corrigez, vous validez."
+      image="/media/vitrine-cave.jpg"
+      numero="II"
+      vt="media-comment-ca-marche"
+    />
     <CommentCaMarche />
     <FonctionnementScene />
     <Exemples />

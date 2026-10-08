@@ -7,7 +7,7 @@
  * Props :
  *  - surtitre, titre (HTML autorisé, pas d'<em> décoratif : il est neutralisé), chapo, signature
  *  - image : chemin /media/xxx.jpg · video : { src, affiche } (prioritaire sur l'image)
- *  - numero : chiffre romain du chapitre (I à V) · vt : view-transition-name posé sur le média
+ *  - numero : chiffre romain du chapitre (I à V) · vt : view-transition-name posé sur l'<img> (comme dans Pistes : pas de bande sombre pendant le morphing)
  *  - compact : version courte (~45svh) sans lien « Découvrir » (pages légales, 404)
  *  - id : id du h1 (défaut « page-titre »)
  */
@@ -43,8 +43,14 @@ const idSuite = `${id}-suite`;
   class:list={['page-entete sur-image relative isolate flex flex-col text-creme', compact ? 'page-entete--compact' : '']}
   aria-labelledby={id}
 >
-  <div class="page-entete-media media-cadre voile zoom-lent absolute inset-0 -z-10" style={vt ? `view-transition-name:${vt}` : undefined} data-page-media>
-    {video ? <Video src={video.src} affiche={video.affiche} prioritaire /> : <img src={image} alt="" fetchpriority="high" decoding="async" />}
+  <div class="page-entete-media media-cadre voile zoom-lent absolute inset-0 -z-10" data-page-media>
+    {
+      video ? (
+        <Video src={video.src} affiche={video.affiche} prioritaire />
+      ) : (
+        <img src={image} alt="" fetchpriority="high" decoding="async" style={vt ? `view-transition-name:${vt}` : undefined} />
+      )
+    }
   </div>
 
   <div class="relative z-10 flex flex-1 flex-col items-center justify-center px-5 pt-32 pb-16 text-center sm:px-8 lg:pt-36">

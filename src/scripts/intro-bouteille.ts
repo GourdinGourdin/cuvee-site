@@ -98,6 +98,8 @@ function demarrer(intro: HTMLElement) {
   }
 
   function auClavier(e: KeyboardEvent) {
+    // l'anneau de focus n'apparaît qu'à partir de la première touche (voir `data-clavier` dans le CSS)
+    if (!e.metaKey && !e.ctrlKey && !e.altKey) intro.dataset.clavier = '';
     if (e.key === 'Escape') {
       e.preventDefault();
       sauter();
@@ -261,8 +263,9 @@ function demarrer(intro: HTMLElement) {
 
   bouteille.addEventListener('click', ouvrir);
 
-  // Le focus est sur la bouteille (Entrée ou Espace la débouchent).
-  bouteille.focus({ preventScroll: true });
+  // Le focus est sur la bouteille (Entrée ou Espace la débouchent). Il est posé par le script : l'anneau
+  // ne s'affiche donc qu'en navigation clavier (`data-clavier`, posé à la première touche), jamais à la souris.
+  bouteille.focus({ preventScroll: true, focusVisible: false } as FocusOptions);
 }
 
 declare global {

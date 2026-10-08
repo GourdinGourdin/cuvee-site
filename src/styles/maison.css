@@ -34,12 +34,12 @@
 
 /* léger zoom lent sur les photos, une fois visibles */
 @media (prefers-reduced-motion: no-preference) {
-  .anim .zoom-lent img {
+  .anim .zoom-lent :is(img, video) {
     scale: 1.08;
     transition: scale 2.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .anim .zoom-lent.est-visible img {
+  .anim .zoom-lent.est-visible :is(img, video) {
     scale: 1;
   }
 }

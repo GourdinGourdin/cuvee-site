@@ -789,24 +789,6 @@
   .faq-item summary::-webkit-details-marker {
     display: none;
   }
-
-  .faq-item .faq-signe::before,
-  .faq-item .faq-signe::after {
-    content: "";
-    position: absolute;
-    inset: 50% 0 auto 0;
-    height: 1.5px;
-    background: currentColor;
-    transition: transform 0.2s ease;
-  }
-
-  .faq-item .faq-signe::after {
-    transform: rotate(90deg);
-  }
-
-  .faq-item[open] .faq-signe::after {
-    transform: rotate(0deg);
-  }
 }
 
 /* ------------------------------------------------------------------

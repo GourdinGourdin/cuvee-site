@@ -278,16 +278,7 @@ const jours = [
     font-size: 0.74rem;
     letter-spacing: 0.12em;
   }
-  /* la fiche est claire même posée sur la section sombre : le bouton contour reste à l’encre */
-  .fiche .btn-contour {
-    --remplissage: var(--color-encre);
-    border-color: var(--color-encre);
-    color: var(--color-encre);
-  }
-  .fiche .btn-contour:hover,
-  .fiche .btn-contour:focus-visible {
-    color: var(--color-creme);
-  }
+  /* (le bouton contour d’une fiche claire sur fond sombre est réinitialisé dans global.css) */
 
   /* Cartes posées sur la table : légère rotation (propriété rotate, sans conflit avec les animations d’entrée) */
   @media (min-width: 64rem) {

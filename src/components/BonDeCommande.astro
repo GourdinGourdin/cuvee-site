@@ -170,19 +170,19 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
     opacity: 0.92;
     transform: rotate(-11deg) scale(1);
   }
-  /* Pendant l’ouverture de la bouteille (voir Hero.astro et accueil-bouteille.ts), le bon s’écrit
-     ligne après ligne, à partir de --t0 (moment où le papier a fini de se dérouler). */
-  :global([data-etat='joue']) .ligne-ecrite {
+  /* Quand le bon apparaît à l’accueil (révélation au défilement, voir animations.ts), il s’écrit ligne après
+     ligne puis le tampon tombe. Sans JavaScript ou en mouvement réduit : état final d’emblée. */
+  :global(html.anim [data-reveal].est-visible) .ligne-ecrite {
     animation: ecrire 0.8s cubic-bezier(0.3, 0.6, 0.2, 1) both;
-    animation-delay: calc(var(--t0, 0s) + 0.5s + var(--i) * 0.55s);
+    animation-delay: calc(0.9s + var(--i) * 0.5s);
   }
-  :global([data-etat='joue']) .total-ligne {
+  :global(html.anim [data-reveal].est-visible) .total-ligne {
     animation: ecrire 0.6s ease-out both;
-    animation-delay: calc(var(--t0, 0s) + 2.3s);
+    animation-delay: 2.5s;
   }
-  :global([data-etat='joue']) .tampon-auto {
+  :global(html.anim [data-reveal].est-visible) .tampon-auto {
     animation: tamponner-auto 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
-    animation-delay: calc(var(--t0, 0s) + 3.3s);
+    animation-delay: 3.2s;
   }
   @keyframes ecrire {
     from {
