@@ -1,26 +1,25 @@
 ---
-/** Appel en bas de page vers le pilote. */
+/** Appel en bas de page vers le pilote : même esprit que maison/Appel.astro (bordeaux + photo en deux colonnes). */
 import { lienInscription } from '../data/site';
 interface Props {
   titre?: string;
   texte?: string;
+  image?: string;
 }
 const {
   titre = 'Prêt à essayer avec nous ?',
   texte = 'Quelques lieux, quelques mois, et une équipe qui construit l’outil avec vous. L’inscription prend deux minutes.',
+  image = '/media/casiers.jpg',
 } = Astro.props;
 ---
-<section aria-labelledby="page-cta-titre" class="page-cta sur-fond-sombre bg-bordeaux py-20 text-creme lg:py-28" data-page-cta>
-  <div class="conteneur relative">
-    <div class="page-cta-filet mb-10 max-w-xs" aria-hidden="true" data-reveal></div>
-    <div class="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
-      <div class="max-w-2xl" data-reveal>
-        <h2 id="page-cta-titre" class="text-[2.2rem] leading-[1.05] font-medium tracking-[-0.015em] sm:text-5xl lg:text-6xl">{titre}</h2>
-        <p class="mt-5 text-lg text-creme-sourde sm:text-xl">{texte}</p>
-      </div>
-      <a href={lienInscription} class="btn btn-creme w-full sm:w-auto" data-reveal data-reveal-delai="2">
-        Rejoindre le programme pilote
-      </a>
-    </div>
+<section class="cta-page grid bg-bordeaux text-creme lg:grid-cols-2" aria-labelledby="page-cta-titre" data-page-cta>
+  <div class="flex flex-col items-center justify-center px-6 py-24 text-center sm:px-12 lg:py-32">
+    <h2 id="page-cta-titre" class="max-w-xl text-[clamp(1.8rem,3.4vw,2.8rem)]" data-reveal>{titre}</h2>
+    <span class="signature mt-2 !text-dore-clair" data-reveal data-reveal-delai="1">deux minutes, pas plus</span>
+    <p class="mt-8 max-w-md text-creme/85" data-reveal data-reveal-delai="2">{texte}</p>
+    <a href={lienInscription} class="btn btn-creme mt-10" data-reveal data-reveal-delai="3">Rejoindre le programme pilote</a>
+  </div>
+  <div class="media-cadre zoom-lent min-h-[56vh] lg:min-h-[70vh]" data-reveal="rideau">
+    <img src={image} alt="" loading="lazy" decoding="async" />
   </div>
 </section>

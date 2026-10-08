@@ -39,22 +39,24 @@ const jours = [
   { cle: 'jeudi', nom: 'Jeudi', sujet: 'Livraison en retard' },
 ];
 ---
-<section id="exemples" aria-labelledby="exemples-titre" class="border-y border-filet bg-creme-fonce py-20 lg:py-28">
-  <div class="conteneur">
+<section id="exemples" aria-labelledby="exemples-titre" class="exemples sur-fond-sombre relative overflow-hidden bg-chai py-24 text-creme lg:py-32">
+  <div class="exemples-lueur" aria-hidden="true"></div>
+  <div class="relative mx-auto max-w-[76rem] px-4 sm:px-8">
     <FonctionnementTitre
-      numero="02"
       libelle="Concrètement"
       id="exemples-titre"
       titre="Ce que vous verriez passer dans la semaine."
+      signature="rien que des exemples"
+      sombre
     >
-      <p class="mt-5 max-w-2xl text-lg text-encre-douce" data-reveal data-reveal-delai="2">
+      <p class="mx-auto mt-8 max-w-xl text-creme/85" data-reveal data-reveal-delai="4">
         Trois exemples de propositions, en plus de la commande présentée sur l’accueil. Les vins, les domaines et les chiffres
         sont inventés ; les boutons ne déclenchent rien.
       </p>
     </FonctionnementTitre>
 
     <!-- Sélecteur de jour : affiché par le script sur mobile seulement (sans JavaScript, les trois fiches restent visibles). -->
-    <div class="onglets-jours mt-10 lg:hidden" role="tablist" aria-label="Exemples par jour" data-onglets hidden>
+    <div class="onglets-jours mt-12 lg:hidden" role="tablist" aria-label="Exemples par jour" data-onglets hidden>
       {
         jours.map((j, i) => (
           <button
@@ -73,20 +75,20 @@ const jours = [
       }
     </div>
 
-    <p class="mt-6 hidden text-[0.9rem] text-encre-douce lg:block" data-reveal data-reveal-delai="3">
-      <span class="cachet mr-2">Astuce</span>Cliquez sur une fiche pour la prendre en main ; cliquez ailleurs pour la reposer.
+    <p class="mt-10 hidden text-center text-[0.9rem] tracking-wide text-creme/75 lg:block" data-reveal data-reveal-delai="5">
+      Cliquez sur une fiche pour la prendre en main ; cliquez ailleurs pour la reposer.
     </p>
-    <div class="table-ex mt-8 lg:mt-6">
+    <div class="table-ex mt-8 lg:mt-8">
     <div class="grille-exemples grid gap-6 lg:grid-cols-3 lg:items-start" data-grille-exemples>
       <!-- 1. Facture lue (mardi) : ticket au bord cranté -->
-      <article class="papier bord-crante flex flex-col carte-ex carte-ex-1" data-demo data-reveal data-reveal-delai="1" aria-labelledby="ex-facture">
+      <article class="papier fiche bord-crante flex flex-col carte-ex carte-ex-1" data-demo data-reveal data-reveal-delai="1" aria-labelledby="ex-facture">
         <header class="flex items-center justify-between gap-3 border-b border-dashed border-filet px-5 py-3">
           <p class="surtitre text-bordeaux">Facture lue</p>
           <p class="cachet text-encre-douce">Exemple</p>
         </header>
         <div class="flex-1 px-5 pt-5 pb-7">
-          <h3 id="ex-facture" class="text-xl leading-snug font-medium">Facture de Négociant B</h3>
-          <p class="chiffres mt-1 text-[0.8rem] text-encre-douce">Reçue en photo mardi à 10 h 14 · 4 lignes lues</p>
+          <h3 id="ex-facture" class="text-[1.05rem] leading-snug text-bordeaux">Facture de Négociant B</h3>
+          <p class="mt-2 text-[0.82rem] text-encre-douce">Reçue en photo mardi à 10 h 14 · 4 lignes lues</p>
           <ul role="list" class="mt-4">
             {
               facture.map((f) => (
@@ -97,7 +99,7 @@ const jours = [
                     </svg>
                   ) : (
                     <span
-                      class="mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border-[1.5px] border-bordeaux font-serif text-[0.75rem] font-semibold text-bordeaux"
+                      class="mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border-[1.5px] border-bordeaux text-[0.75rem] font-semibold text-bordeaux"
                       role="img"
                       aria-label="À confirmer"
                     >
@@ -106,8 +108,8 @@ const jours = [
                   )}
                   <div class="min-w-0 flex-1">
                     <div class="flex items-baseline justify-between gap-3">
-                      <span class:list={['font-semibold', !f.ok && 'chiffres text-[0.875rem]']}>{f.lu}</span>
-                      <span class="chiffres shrink-0 text-[0.875rem] text-encre-douce" aria-label={`${f.qte} bouteilles`}>
+                      <span class:list={['font-semibold', !f.ok && 'nombre text-[0.875rem]']}>{f.lu}</span>
+                      <span class="nombre shrink-0 text-[0.875rem] text-encre-douce" aria-label={`${f.qte} bouteilles`}>
                         × {f.qte}
                       </span>
                     </div>
@@ -146,17 +148,17 @@ const jours = [
       </article>
 
       <!-- 2. Bouteilles qui dorment (mercredi) : fiche de cave perforée -->
-      <article class="papier flex flex-col carte-ex carte-ex-2" data-demo data-reveal data-reveal-delai="2" aria-labelledby="ex-dormantes">
+      <article class="papier fiche flex flex-col carte-ex carte-ex-2" data-demo data-reveal data-reveal-delai="2" aria-labelledby="ex-dormantes">
         <div class="perforation" aria-hidden="true"></div>
         <header class="flex items-center justify-between gap-3 border-b border-filet px-5 py-3">
           <p class="surtitre text-bordeaux">Bouteilles qui dorment</p>
           <p class="cachet text-encre-douce">Exemple</p>
         </header>
         <div class="flex-1 px-5 pt-5 pb-6">
-          <h3 id="ex-dormantes" class="text-xl leading-snug font-medium">
+          <h3 id="ex-dormantes" class="text-[1.05rem] leading-snug text-bordeaux">
             3 références sans vente depuis plus de 90 jours
           </h3>
-          <p class="chiffres mt-1 text-[0.8rem] text-encre-douce">
+          <p class="mt-2 text-[0.82rem] text-encre-douce">
             Mercredi à 8 h 30 · 51 bouteilles, 462 € au prix d’achat
           </p>
           <ul role="list" class="mt-4">
@@ -165,11 +167,11 @@ const jours = [
                 <li class="ligne-pointillee py-3 first:pt-1">
                   <div class="flex items-baseline justify-between gap-3">
                     <span class="font-semibold">{d.vin}</span>
-                    <span class="chiffres shrink-0 text-[0.875rem] text-encre-douce" aria-label={`${d.bouteilles} bouteilles`}>
+                    <span class="nombre shrink-0 text-[0.875rem] text-encre-douce" aria-label={`${d.bouteilles} bouteilles`}>
                       × {d.bouteilles}
                     </span>
                   </div>
-                  <p class="chiffres text-[0.8rem] text-encre-douce">Dernière vente il y a {d.jours} jours</p>
+                  <p class="nombre text-[0.8rem] text-encre-douce">Dernière vente il y a {d.jours} jours</p>
                   <p class="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-[0.95rem] leading-snug">
                     <span class="cachet text-bordeaux">{d.piste}</span>
                     <span>{d.suggestion}</span>
@@ -202,14 +204,14 @@ const jours = [
       </article>
 
       <!-- 3. Livraison en retard (jeudi) : lettre sur papier ligné -->
-      <article class="papier flex flex-col carte-ex carte-ex-3" data-demo data-reveal data-reveal-delai="3" aria-labelledby="ex-relance">
+      <article class="papier fiche flex flex-col carte-ex carte-ex-3" data-demo data-reveal data-reveal-delai="3" aria-labelledby="ex-relance">
         <header class="flex items-center justify-between gap-3 border-b border-filet px-5 py-3">
           <p class="surtitre text-bordeaux">Livraison en retard</p>
           <p class="cachet text-encre-douce">Exemple</p>
         </header>
         <div class="flex-1 px-5 pt-5 pb-6">
-          <h3 id="ex-relance" class="text-xl leading-snug font-medium">Domaine C · Languedoc</h3>
-          <p class="chiffres mt-1 text-[0.8rem] text-encre-douce">
+          <h3 id="ex-relance" class="text-[1.05rem] leading-snug text-bordeaux">Domaine C · Languedoc</h3>
+          <p class="mt-2 text-[0.82rem] text-encre-douce">
             Jeudi à 9 h 00 · commande du 22 sept., promise le 29. Toujours rien reçu.
           </p>
           <p class="mt-4 text-[0.95rem] text-encre-douce">Message préparé, à relire avant envoi :</p>
@@ -248,6 +250,45 @@ const jours = [
 </section>
 
 <style is:global>
+  /* lueur chaude en haut de la section sombre */
+  .exemples-lueur {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgb(168 138 74 / 0.18), transparent 70%),
+      radial-gradient(ellipse 50% 40% at 100% 100%, rgb(110 31 47 / 0.35), transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Fiches : typographie maison */
+  .fiche {
+    color: var(--color-encre);
+    border-color: transparent;
+  }
+  .fiche h3 {
+    font-size: 1.02rem;
+    letter-spacing: 0.05em;
+  }
+  .fiche .nombre {
+    font-variant-numeric: tabular-nums;
+  }
+  .fiche .btn {
+    padding: 0.85rem 1.1rem 0.75rem;
+    min-height: 2.9rem;
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+  }
+  /* la fiche est claire même posée sur la section sombre : le bouton contour reste à l’encre */
+  .fiche .btn-contour {
+    --remplissage: var(--color-encre);
+    border-color: var(--color-encre);
+    color: var(--color-encre);
+  }
+  .fiche .btn-contour:hover,
+  .fiche .btn-contour:focus-visible {
+    color: var(--color-creme);
+  }
+
   /* Cartes posées sur la table : légère rotation (propriété rotate, sans conflit avec les animations d’entrée) */
   @media (min-width: 64rem) {
     .carte-ex-1 { rotate: -0.7deg; }
@@ -259,10 +300,7 @@ const jours = [
   }
   @media (min-width: 64rem) {
     .table-ex {
-      padding: 3rem 2.5rem 3.25rem;
-      background: var(--color-creme-sourde);
-      border: 1px solid var(--color-filet);
-      box-shadow: inset 0 0 0 8px var(--color-creme-fonce), inset 0 0 0 9px var(--color-dore), inset 0 12px 30px -18px rgb(31 26 23 / 0.35);
+      padding: 2rem 0 1rem;
     }
   }
   /* fiche « prise en main » : elle se soulève et se redresse (clic, ou focus clavier sur l’un de ses boutons) */
@@ -273,11 +311,11 @@ const jours = [
     translate: 0 -10px;
     scale: 1.025;
     z-index: 3;
-    box-shadow: 0 1px 0 var(--color-filet), 0 28px 40px -18px rgb(31 26 23 / 0.5);
+    box-shadow: 0 1px 0 var(--color-filet), 0 30px 50px -18px rgb(0 0 0 / 0.7);
   }
   @media (min-width: 64rem) {
     .carte-ex { cursor: pointer; }
-    .table-ex:has(.est-pris) .carte-ex:not(.est-pris) { opacity: 0.88; }
+    .table-ex:has(.est-pris) .carte-ex:not(.est-pris) { opacity: 0.8; }
   }
   html.anim .carte-ex.est-visible {
     transition: opacity 0.35s ease, transform 0.35s ease, rotate 0.35s ease, scale 0.35s ease, translate 0.35s ease, box-shadow 0.35s ease;
@@ -285,20 +323,26 @@ const jours = [
   }
   .carte-ex {
     transition: scale 0.35s ease, opacity 0.35s ease, rotate 0.35s ease, box-shadow 0.35s ease, translate 0.35s ease;
-    box-shadow: 0 1px 0 var(--color-filet), 0 10px 22px -14px rgb(31 26 23 / 0.35);
+    box-shadow: 0 1px 0 var(--color-filet), 0 24px 40px -22px rgb(0 0 0 / 0.65);
   }
   @media (hover: hover) {
     .carte-ex:hover {
       rotate: 0deg;
       translate: 0 -4px;
-      box-shadow: 0 1px 0 var(--color-filet), 0 18px 28px -14px rgb(31 26 23 / 0.4);
+      box-shadow: 0 1px 0 var(--color-filet), 0 30px 46px -20px rgb(0 0 0 / 0.7);
     }
   }
   .carte-ex.est-valide {
-    border-color: var(--color-vert);
+    outline: 2px solid var(--color-vert);
+    outline-offset: -2px;
   }
 
   /* Tampon : il tombe sur la fiche, avec un léger rebond et un anneau d’encre */
+  .fiche .tampon {
+    font-family: var(--font-titre);
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
   .est-valide .tampon {
     animation: tampon-tombe 0.55s cubic-bezier(0.22, 0.9, 0.3, 1) forwards;
     box-shadow: 0 0 0 0 rgb(46 74 59 / 0.5);
@@ -323,12 +367,12 @@ const jours = [
     100% { opacity: 0; transform: scale(1.35); }
   }
 
-  /* Sélecteur d’onglets (mobile) */
+  /* Sélecteur d’onglets (mobile), sur fond sombre */
   .onglets-jours {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0;
-    border-bottom: 2px solid var(--color-encre);
+    border-bottom: 1px solid rgb(245 233 228 / 0.3);
   }
   .onglets-jours[hidden] { display: none; }
   .onglet-jour {
@@ -337,26 +381,27 @@ const jours = [
     flex-direction: column;
     gap: 0.15rem;
     min-height: 3.5rem;
-    padding: 0.55rem 0.5rem 0.65rem;
+    padding: 0.55rem 0.5rem 0.75rem;
     text-align: left;
-    color: var(--color-encre-douce);
+    color: rgb(245 233 228 / 0.75);
     cursor: pointer;
     transition: color 0.2s ease, background-color 0.2s ease;
   }
+  .onglet-jour .surtitre { letter-spacing: 0.16em; }
   .onglet-jour::after {
     content: "";
     position: absolute;
-    left: 0; right: 0; bottom: -2px;
-    height: 4px;
-    background: var(--color-bordeaux);
+    left: 0; right: 0; bottom: -1px;
+    height: 3px;
+    background: var(--color-dore-clair);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 0.3s ease;
   }
-  .onglet-jour[aria-selected="true"] { color: var(--color-bordeaux); }
+  .onglet-jour[aria-selected="true"] { color: var(--color-creme); }
   .onglet-jour[aria-selected="true"]::after { transform: scaleX(1); }
-  .onglet-sous { font-size: 0.8rem; line-height: 1.2; }
-  .onglet-jour:hover { background: rgb(255 255 255 / 0.4); }
+  .onglet-sous { font-size: 0.78rem; line-height: 1.25; }
+  .onglet-jour:hover { background: rgb(245 233 228 / 0.06); }
 
   @media (max-width: 63.99rem) {
     .grille-exemples[data-onglets-actifs] > article[data-actif="false"] { display: none; }

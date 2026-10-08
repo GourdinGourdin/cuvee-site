@@ -37,25 +37,29 @@ const chapitres = [
   {
     chapitres.map((c, i) => (
       <article class="grid lg:min-h-[88vh] lg:grid-cols-2">
-        <div class:list={['media-cadre min-h-[62vh] lg:min-h-0', i % 2 === 1 && 'lg:order-2']}>
+        <div class:list={['media-cadre min-h-[62vh] lg:min-h-0', i % 2 === 1 && 'lg:order-2']} data-reveal="rideau">
           <Video src={`/media/${c.video}.mp4`} affiche={`/media/${c.video}-poster.jpg`} />
         </div>
         <div class="flex flex-col justify-center px-6 py-20 sm:px-12 lg:px-20 xl:px-28">
-          <p class="chapitre-num text-bordeaux" data-reveal>
-            CHAPITRE {c.num}
+          <p class="chapitre-num flex items-center gap-4 text-bordeaux" data-reveal>
+            <span>CHAPITRE {c.num}</span>
+            <span class="block h-px w-12 bg-dore" data-reveal="filet" data-reveal-delai="2" aria-hidden="true" />
           </p>
-          <p class="surtitre mt-3 text-encre-douce" data-reveal>
+          <p class="surtitre mt-4 text-encre-douce" data-reveal data-reveal-delai="1">
             {c.quand}
           </p>
-          <h3 class="mt-5 text-[clamp(1.6rem,2.8vw,2.4rem)] text-encre" data-reveal data-reveal-delai="1">
+          <h3 class="mt-5 text-[clamp(1.6rem,2.8vw,2.4rem)] text-encre" data-reveal-lignes>
             {c.titre}
           </h3>
-          <p class="mt-6 max-w-lg text-encre-douce" data-reveal data-reveal-delai="2">
+          <p class="mt-6 max-w-lg text-encre-douce" data-reveal data-reveal-delai="3">
             {c.texte}
           </p>
-          <p class="mt-8 max-w-lg border-t border-dore pt-5 font-semibold text-encre" data-reveal data-reveal-delai="3">
-            {c.cuvee}
-          </p>
+          <div class="mt-8 max-w-lg">
+            <span class="mb-5 block h-px w-full bg-dore" data-reveal="filet" data-reveal-delai="4" aria-hidden="true" />
+            <p class="font-semibold text-encre" data-reveal data-reveal-delai="5">
+              {c.cuvee}
+            </p>
+          </div>
         </div>
       </article>
     ))

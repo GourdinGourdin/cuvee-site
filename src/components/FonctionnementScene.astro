@@ -1,90 +1,130 @@
 ---
-/** Petites scènes SVG décoratives des trois étapes (aucun chiffre, aucun client). */
-interface Props { n: 1 | 2 | 3 }
-const { n } = Astro.props;
+/** Scène « en un coup d’œil » : une facture entre, la cave se met à jour, un bon de commande est préparé. Se dessine à l’entrée dans l’écran. */
+import FonctionnementTitre from './FonctionnementTitre.astro';
 ---
-<svg class="scene" data-n={n} viewBox="0 0 400 300" aria-hidden="true" focusable="false">
-  {n === 1 && (
-    <>
-      <g class="el" style="--e:0"><g transform="translate(24 28) rotate(-3 90 110)">
-        <rect width="180" height="230" rx="3" class="s-papier" />
-        <path d="M20 34h80" class="s-trait fort" />
-        {[0, 1, 2, 3].map((i) => (<path d={`M20 ${70 + i * 34}h110M150 ${70 + i * 34}h10`} class="s-trait" />))}
-        {[0, 1, 2].map((i) => (<path d={`M166 ${72 + i * 34}l4 4 8-9`} class="s-ok" />))}
-        <circle cx="170" cy="208" r="9" class="s-quest" /><text x="170" y="212.5" text-anchor="middle" class="s-q">?</text>
-      </g></g>
-      <g class="el" style="--e:1"><path d="M228 140h54" class="s-fil" /><path d="M274 132l10 8-10 8" class="s-fil" /></g>
-      <g class="el" style="--e:2"><g transform="translate(298 96)">
-        <rect width="86" height="108" rx="3" class="s-papier" />
-        <path d="M12 22h62M12 40h62M12 58h62M12 76h40" class="s-trait" />
-        <path d="M60 86l6 6 12-14" class="s-ok" />
-      </g></g>
-      <g class="el" style="--e:3"><g transform="translate(300 224)"><rect width="80" height="46" rx="3" class="s-papier" /><path d="M12 16h56M12 30h36" class="s-trait" /></g>
-        <text x="340" y="292" text-anchor="middle" class="s-lib">caisse</text></g>
-    </>
-  )}
-  {n === 2 && (
-    <>
-      <g class="el" style="--e:0"><rect x="30" y="30" width="340" height="240" rx="3" class="s-papier" /></g>
-      {[0, 1, 2].map((r) => (
-        <>
-          <path d={`M44 ${100 + r * 76}h312`} class="s-trait fort" />
-          {[0, 1, 2, 3, 4, 5, 6, 7].map((c) => {
-            const dort = (r === 0 && c === 5) || (r === 1 && c === 2) || (r === 2 && c === 6) || (r === 2 && c === 7);
-            return (
-              <g class:list={['el', 's-btl', dort && 's-dort']} style={`--e:${1 + r * 2 + (c % 3)}`} transform={`translate(${58 + c * 38} ${r * 76 + 52})`}>
-                <rect x="4" y="20" width="16" height="30" rx="4" />
-                <rect x="9" y="4" width="6" height="18" />
-              </g>
-            );
-          })}
-        </>
-      ))}
-      <g class="el" style="--e:8"><circle cx="352" cy="50" r="13" class="s-quest" /><path d="M352 42v9l6 4" class="s-ok" style="stroke:var(--color-bordeaux)" /></g>
-    </>
-  )}
-  {n === 3 && (
-    <>
-      <g class="el" style="--e:0"><g transform="translate(70 24) rotate(-2 130 130)">
-        <rect width="260" height="252" rx="3" class="s-papier" />
-        <path d="M24 38h110" class="s-trait fort" />
-        {[0, 1, 2, 3].map((i) => (<path d={`M24 ${80 + i * 30}h150M214 ${80 + i * 30}h22`} class="s-trait" />))}
-        <path d="M24 214h90" class="s-trait" />
-      </g></g>
-      <g class="el s-tampon" style="--e:3"><g transform="translate(236 196) rotate(-12)">
-        <rect width="104" height="46" rx="3" class="s-tamp" />
-        <path d="M18 24l9 9 18-20" class="s-tamp-ok" />
-        <path d="M58 24h30" class="s-tamp-ok" style="stroke-width:3" />
-      </g></g>
-    </>
-  )}
-</svg>
+<section aria-labelledby="coup-doeil-titre" class="fct-coup bg-papier py-24 lg:py-32">
+  <div class="mx-auto max-w-[76rem] px-4 sm:px-8">
+    <FonctionnementTitre
+      libelle="En un coup d’œil"
+      id="coup-doeil-titre"
+      titre="Une facture entre, un bon de commande sort."
+      signature="et vous au milieu"
+    />
+
+    <div class="fct-scene mx-auto mt-14 max-w-4xl lg:mt-20" data-scene data-reveal data-reveal-delai="2">
+      <svg
+        class="fct-frise"
+        viewBox="0 0 600 190"
+        role="img"
+        aria-label="Schéma : une facture entre, la cave se met à jour, un bon de commande est préparé ; un fil doré relie les trois."
+      >
+        <path class="fct-fil-or" d="M96 96 C 170 30, 230 30, 300 92 S 430 150, 504 88" pathLength="1" />
+        <g class="fct-obj" style="--k:0">
+          <g transform="translate(40 24) rotate(-4 50 55)">
+            <rect width="100" height="120" rx="1.5" class="fct-papier" />
+            <path d="M14 22h46M14 40h72M14 54h72M14 68h72M14 82h40" class="fct-trait" />
+            <path d="M72 100l6 6 12-14" class="fct-ok" />
+          </g>
+        </g>
+        <g class="fct-obj" style="--k:1">
+          <g transform="translate(250 22)">
+            <rect width="100" height="124" rx="1.5" class="fct-papier" />
+            <path d="M8 44h84M8 84h84M8 122h84" class="fct-trait" />
+            {
+              [0, 1, 2].flatMap((r) =>
+                [0, 1, 2, 3].map((c) => (
+                  <g transform={`translate(${16 + c * 20} ${r * 40 + 8})`} class:list={['fct-btl', r === 1 && c === 2 && 'fct-dort']}>
+                    <rect x="3" y="12" width="9" height="20" rx="2.5" />
+                    <rect x="6" y="3" width="3" height="10" />
+                  </g>
+                ))
+              )
+            }
+          </g>
+        </g>
+        <g class="fct-obj" style="--k:2">
+          <g transform="translate(460 20) rotate(3 50 55)">
+            <rect width="100" height="124" rx="1.5" class="fct-papier" />
+            <path d="M14 22h50M14 42h72M14 56h72M14 70h72" class="fct-trait" />
+            <g transform="translate(58 82) rotate(-10)">
+              <rect x="0" y="0" width="34" height="20" rx="1.5" class="fct-tampon" />
+              <path d="M9 10.5l5 5 11-11" class="fct-tampon-ok" />
+            </g>
+          </g>
+        </g>
+        <g class="fct-lib">
+          <text x="90" y="178" text-anchor="middle">Facture</text>
+          <text x="300" y="178" text-anchor="middle">Cave</text>
+          <text x="510" y="178" text-anchor="middle">Bon de commande</text>
+        </g>
+      </svg>
+
+      <ul role="list" class="fct-legendes mt-10 grid gap-8 text-center sm:grid-cols-3">
+        <li>
+          <p class="surtitre text-bordeaux">Lue en photo ou en PDF</p>
+          <p class="mt-2 text-[0.98rem] text-encre-douce">Les lignes douteuses vous sont soumises.</p>
+        </li>
+        <li>
+          <p class="surtitre text-bordeaux">Suivie au jour le jour</p>
+          <p class="mt-2 text-[0.98rem] text-encre-douce">Les bouteilles qui dorment sont repérées.</p>
+        </li>
+        <li>
+          <p class="surtitre text-bordeaux">Préparée pour vous</p>
+          <p class="mt-2 text-[0.98rem] text-encre-douce">Vous relisez, vous validez, elle part.</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
 
 <style is:global>
-  .scene { width: 100%; height: auto; display: block; overflow: visible; }
-  .s-papier { fill: var(--color-papier); stroke: var(--color-filet); stroke-width: 2; }
-  .s-trait { fill: none; stroke: var(--color-bordure); stroke-width: 3; stroke-linecap: round; opacity: 0.5; }
-  .s-trait.fort { stroke: var(--color-encre); opacity: 0.75; stroke-width: 3.5; }
-  .s-ok { fill: none; stroke: var(--color-vert); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
-  .s-fil { fill: none; stroke: var(--color-dore); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 5 7; }
-  .s-quest { fill: var(--color-bordeaux-clair); stroke: var(--color-bordeaux); stroke-width: 2; }
-  .s-q { font-family: var(--font-serif); font-size: 15px; font-weight: 600; fill: var(--color-bordeaux); }
-  .s-lib { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; fill: var(--color-encre-douce); }
-  .s-btl rect { fill: var(--color-vert); opacity: 0.8; }
-  .s-btl.s-dort rect { fill: var(--color-dore); opacity: 1; }
-  .s-tamp { fill: var(--color-vert-clair); stroke: var(--color-vert); stroke-width: 3; }
-  .s-tamp-ok { fill: none; stroke: var(--color-vert); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
-
-  /* Entrée des éléments : uniquement si l’animation est active (html.anim) ; sans JS tout est visible. */
-  html.anim .scene .el {
-    opacity: 0;
-    translate: 0 10px;
-    transition: opacity 0.6s ease calc(var(--e) * 0.12s), translate 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) calc(var(--e) * 0.12s);
+  .fct-frise {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
   }
-  html.anim .scene.est-active .el { opacity: 1; translate: 0 0; }
-  html.anim .scene .s-tampon { translate: 0 -16px; }
-  html.anim .scene.est-active .s-tampon { transition-delay: 0.9s; }
-  .scene.est-active .s-dort { animation: s-dort 3s ease-in-out 1.2s infinite; }
-  @keyframes s-dort { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-  @media (prefers-reduced-motion: reduce) { .scene .s-dort { animation: none !important; } }
+  .fct-papier { fill: var(--color-creme); stroke: var(--color-dore); stroke-width: 1; }
+  .fct-trait { fill: none; stroke: var(--color-bordure); stroke-width: 2; stroke-linecap: round; opacity: 0.55; }
+  .fct-ok { fill: none; stroke: var(--color-vert); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .fct-btl rect { fill: var(--color-bordeaux); opacity: 0.8; }
+  .fct-btl.fct-dort rect { fill: var(--color-dore); opacity: 1; }
+  .fct-tampon { fill: var(--color-vert-clair); stroke: var(--color-vert); stroke-width: 1.5; }
+  .fct-tampon-ok { fill: none; stroke: var(--color-vert); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .fct-lib text {
+    font-family: var(--font-texte);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    fill: var(--color-encre-douce);
+  }
+  .fct-fil-or {
+    fill: none;
+    stroke: var(--color-dore);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+  }
+
+  /* animation : seulement si html.anim ; le conteneur reçoit .est-visible à l'entrée dans l'écran */
+  @media (prefers-reduced-motion: no-preference) {
+    html.anim .fct-scene .fct-obj { opacity: 0; transform: translateY(14px); }
+    html.anim .fct-scene .fct-fil-or { stroke-dashoffset: 1; }
+    html.anim .fct-scene.est-visible .fct-obj {
+      opacity: 1;
+      transform: none;
+      transition: opacity 0.9s ease calc(0.3s + var(--k) * 0.45s), transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) calc(0.3s + var(--k) * 0.45s);
+    }
+    html.anim .fct-scene.est-visible .fct-fil-or {
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 2.2s cubic-bezier(0.5, 0, 0.2, 1) 0.7s;
+    }
+    html.anim .fct-scene.est-visible .fct-btl.fct-dort {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: fct-dort 3.2s ease-in-out 2.6s infinite;
+    }
+  }
+  @keyframes fct-dort { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
 </style>

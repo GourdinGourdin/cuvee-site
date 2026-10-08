@@ -26,221 +26,314 @@ const caisses = [
   { valeur: 'aucune', libelle: 'Pas de logiciel de caisse / je ne sais pas' },
 ];
 ---
-<div id="inscription" class="papier carte-form bon self-start p-5 text-encre sm:p-10" data-contact={contact}>
-  <span class="pointer-events-none absolute inset-2 border border-dore/60" aria-hidden="true"></span>
-  <div data-form-zone class="relative">
-    <div class="flex items-start justify-between gap-4">
-      <h3 class="font-serif text-[1.75rem] leading-tight font-medium">Rejoindre le programme pilote</h3>
-      <span class="surtitre hidden shrink-0 pt-2 text-bordeaux sm:block">Bon d’inscription</span>
-    </div>
-    <div class="mt-5" data-progression>
-      <div class="flex items-center justify-between text-[0.85rem] text-encre-douce">
-        <span data-progression-texte aria-live="polite">0 champ obligatoire sur 0 renseigné</span>
-      </div>
-      <div class="mt-2 h-[3px] w-full bg-filet" aria-hidden="true"><div class="progression-barre h-full origin-left bg-bordeaux" data-progression-barre></div></div>
-    </div>
-    <p class="mt-2 text-encre-douce">
-      Deux minutes. Nous vous recontactons pour un premier échange, sans engagement.
-    </p>
-    <p class="mt-1 text-[0.875rem] text-encre-douce">Tous les champs sont obligatoires, sauf mention « facultatif ».</p>
-
-    <form
-      class="relative mt-7 grid gap-5 sm:grid-cols-2"
-      method="POST"
-      action={endpoint || undefined}
-      novalidate
-      data-inscription
-    >
-      <div>
-        <label for="f-nom" class="etiquette-champ">Prénom et nom</label>
-        <input id="f-nom" name="nom" type="text" autocomplete="name" required class="champ"
-          aria-describedby="f-nom-erreur" data-erreur="Indiquez votre prénom et votre nom." />
-        <p id="f-nom-erreur" class="message-erreur"></p>
-      </div>
-
-      <div>
-        <label for="f-lieu" class="etiquette-champ">Nom de votre lieu</label>
-        <input id="f-lieu" name="lieu" type="text" autocomplete="organization" required class="champ"
-          aria-describedby="f-lieu-erreur" data-erreur="Indiquez le nom de votre établissement." />
-        <p id="f-lieu-erreur" class="message-erreur"></p>
-      </div>
-
-      <div>
-        <label for="f-type" class="etiquette-champ">Type d’établissement</label>
-        <select id="f-type" name="type_etablissement" required class="champ"
-          aria-describedby="f-type-erreur" data-erreur="Choisissez le type d’établissement.">
-          <option value="">Choisir…</option>
-          {types.map((t) => <option value={t.valeur}>{t.libelle}</option>)}
-        </select>
-        <p id="f-type-erreur" class="message-erreur"></p>
-      </div>
-
-      <div>
-        <label for="f-ville" class="etiquette-champ">Ville</label>
-        <input id="f-ville" name="ville" type="text" autocomplete="address-level2" required class="champ"
-          aria-describedby="f-ville-erreur" data-erreur="Indiquez votre ville." />
-        <p id="f-ville-erreur" class="message-erreur"></p>
-      </div>
-
-      <div>
-        <label for="f-references" class="etiquette-champ">Nombre de références, environ</label>
-        <select id="f-references" name="references" required class="champ"
-          aria-describedby="f-references-erreur" data-erreur="Choisissez une fourchette, même approximative.">
-          <option value="">Choisir…</option>
-          {references.map((r) => <option value={r}>{r}</option>)}
-        </select>
-        <p id="f-references-erreur" class="message-erreur"></p>
-      </div>
-
-      <div>
-        <label for="f-caisse" class="etiquette-champ">Logiciel de caisse</label>
-        <select id="f-caisse" name="caisse" required class="champ"
-          aria-describedby="f-caisse-erreur" data-erreur="Choisissez votre logiciel de caisse." data-caisse>
-          <option value="">Choisir…</option>
-          {caisses.map((c) => <option value={c.valeur}>{c.libelle}</option>)}
-        </select>
-        <p id="f-caisse-erreur" class="message-erreur"></p>
-      </div>
-
-      <div class="sm:col-span-2" hidden data-caisse-autre>
-        <label for="f-caisse-autre" class="etiquette-champ">Lequel ?</label>
-        <input id="f-caisse-autre" name="caisse_autre" type="text" class="champ"
-          aria-describedby="f-caisse-autre-erreur" data-erreur="Indiquez le nom de votre logiciel de caisse." />
-        <p id="f-caisse-autre-erreur" class="message-erreur"></p>
-      </div>
-
-      <div>
-        <label for="f-email" class="etiquette-champ">Email</label>
-        <input id="f-email" name="email" type="email" autocomplete="email" required class="champ"
-          aria-describedby="f-email-erreur" data-erreur="Indiquez votre adresse email." />
-        <p id="f-email-erreur" class="message-erreur"></p>
-      </div>
-
-      <div>
-        <label for="f-tel" class="etiquette-champ">
-          Téléphone <span class="font-normal text-encre-douce">(facultatif)</span>
-        </label>
-        <input id="f-tel" name="telephone" type="tel" autocomplete="tel" class="champ" aria-describedby="f-tel-aide" />
-        <p id="f-tel-aide" class="mt-1 text-[0.85rem] text-encre-douce">Si vous préférez un coup de fil.</p>
-      </div>
-
-      <div class="sm:col-span-2">
-        <label for="f-temps" class="etiquette-champ">
-          Qu’est-ce qui vous prend le plus de temps avec votre cave aujourd’hui ?{' '}
-          <span class="font-normal text-encre-douce">(facultatif)</span>
-        </label>
-        <textarea id="f-temps" name="ce_qui_prend_du_temps" rows="3" class="champ"></textarea>
-      </div>
-
-      <!-- Champs cachés : test de message et provenance -->
-      <input type="hidden" name="variante_titre" value="a" data-variante />
-      <input type="hidden" name="utm_source" value="" data-utm="utm_source" />
-      <input type="hidden" name="utm_medium" value="" data-utm="utm_medium" />
-      <input type="hidden" name="utm_campaign" value="" data-utm="utm_campaign" />
-      <input type="hidden" name="_subject" value="Nouvelle inscription au pilote Cuvée" />
-
-      <!-- Piège à robots : invisible pour les visiteurs -->
-      <div class="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
-        <label for="f-gotcha">Ne pas remplir ce champ</label>
-        <input id="f-gotcha" type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
-      </div>
-
-      <p class="text-[0.85rem] leading-snug text-encre-douce sm:col-span-2">
-        Vos informations servent uniquement à vous recontacter au sujet du programme pilote. Elles ne sont ni vendues ni
-        utilisées à d’autres fins. Nous notons aussi la version de la page que vous avez vue, pour savoir quels messages
-        parlent le mieux. <a href="/confidentialite/" class="underline underline-offset-2">En savoir plus</a>.
+<section id="inscription" aria-labelledby="inscription-titre" class="inscription bg-creme px-6 py-24 sm:px-10 lg:py-32" data-contact={contact}>
+  <div data-form-zone class="mx-auto max-w-[52rem]">
+    <div class="text-center">
+      <p class="surtitre text-bordeaux" data-reveal>Bon d’inscription</p>
+      <h2 id="inscription-titre" class="mt-5 text-[clamp(1.8rem,3.6vw,3rem)]" data-reveal data-reveal-delai="1">Rejoindre le programme pilote</h2>
+      <span class="signature mt-3" data-reveal data-reveal-delai="2">avec nous</span>
+      <p class="mx-auto mt-8 max-w-xl text-encre-douce" data-reveal data-reveal-delai="3">
+        Deux minutes. Nous vous recontactons pour un premier échange, sans engagement.
       </p>
+    </div>
 
-      <div class="sm:col-span-2">
-        <p class="message-erreur mb-4 text-[0.95rem]" role="alert" data-erreur-envoi></p>
-        <button type="submit" class="btn btn-primaire w-full sm:w-auto" data-envoyer>
-          Rejoindre le programme pilote
-        </button>
+    <div class="carte-form papier relative mt-12 px-6 pt-8 pb-10 sm:px-12 sm:pt-10 sm:pb-12" data-reveal data-reveal-delai="4">
+      <span class="pointer-events-none absolute inset-2.5 border border-dore/50" aria-hidden="true"></span>
+      <div class="relative" data-progression>
+        <span class="progression-texte" data-progression-texte aria-live="polite">0 champ obligatoire sur 0 renseigné</span>
+        <div class="progression-piste" aria-hidden="true"><div class="progression-barre" data-progression-barre></div></div>
       </div>
-    </form>
+      <p class="relative mt-5 text-[0.9rem] text-encre-douce">Tous les champs sont obligatoires, sauf mention « facultatif ».</p>
+
+      <form
+        class="relative mt-8 grid gap-x-8 gap-y-7 sm:grid-cols-2"
+        method="POST"
+        action={endpoint || undefined}
+        novalidate
+        data-inscription
+      >
+        <div>
+          <label for="f-nom" class="etiquette-champ">Prénom et nom</label>
+          <input id="f-nom" name="nom" type="text" autocomplete="name" required class="champ"
+            aria-describedby="f-nom-erreur" data-erreur="Indiquez votre prénom et votre nom." />
+          <p id="f-nom-erreur" class="message-erreur"></p>
+        </div>
+
+        <div>
+          <label for="f-lieu" class="etiquette-champ">Nom de votre lieu</label>
+          <input id="f-lieu" name="lieu" type="text" autocomplete="organization" required class="champ"
+            aria-describedby="f-lieu-erreur" data-erreur="Indiquez le nom de votre établissement." />
+          <p id="f-lieu-erreur" class="message-erreur"></p>
+        </div>
+
+        <div>
+          <label for="f-type" class="etiquette-champ">Type d’établissement</label>
+          <select id="f-type" name="type_etablissement" required class="champ"
+            aria-describedby="f-type-erreur" data-erreur="Choisissez le type d’établissement.">
+            <option value="">Choisir…</option>
+            {types.map((t) => <option value={t.valeur}>{t.libelle}</option>)}
+          </select>
+          <p id="f-type-erreur" class="message-erreur"></p>
+        </div>
+
+        <div>
+          <label for="f-ville" class="etiquette-champ">Ville</label>
+          <input id="f-ville" name="ville" type="text" autocomplete="address-level2" required class="champ"
+            aria-describedby="f-ville-erreur" data-erreur="Indiquez votre ville." />
+          <p id="f-ville-erreur" class="message-erreur"></p>
+        </div>
+
+        <div>
+          <label for="f-references" class="etiquette-champ">Nombre de références, environ</label>
+          <select id="f-references" name="references" required class="champ"
+            aria-describedby="f-references-erreur" data-erreur="Choisissez une fourchette, même approximative.">
+            <option value="">Choisir…</option>
+            {references.map((r) => <option value={r}>{r}</option>)}
+          </select>
+          <p id="f-references-erreur" class="message-erreur"></p>
+        </div>
+
+        <div>
+          <label for="f-caisse" class="etiquette-champ">Logiciel de caisse</label>
+          <select id="f-caisse" name="caisse" required class="champ"
+            aria-describedby="f-caisse-erreur" data-erreur="Choisissez votre logiciel de caisse." data-caisse>
+            <option value="">Choisir…</option>
+            {caisses.map((c) => <option value={c.valeur}>{c.libelle}</option>)}
+          </select>
+          <p id="f-caisse-erreur" class="message-erreur"></p>
+        </div>
+
+        <div class="sm:col-span-2" hidden data-caisse-autre>
+          <label for="f-caisse-autre" class="etiquette-champ">Lequel ?</label>
+          <input id="f-caisse-autre" name="caisse_autre" type="text" class="champ"
+            aria-describedby="f-caisse-autre-erreur" data-erreur="Indiquez le nom de votre logiciel de caisse." />
+          <p id="f-caisse-autre-erreur" class="message-erreur"></p>
+        </div>
+
+        <div>
+          <label for="f-email" class="etiquette-champ">Email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required class="champ"
+            aria-describedby="f-email-erreur" data-erreur="Indiquez votre adresse email." />
+          <p id="f-email-erreur" class="message-erreur"></p>
+        </div>
+
+        <div>
+          <label for="f-tel" class="etiquette-champ">
+            Téléphone <span class="font-normal text-encre-douce">(facultatif)</span>
+          </label>
+          <input id="f-tel" name="telephone" type="tel" autocomplete="tel" class="champ" aria-describedby="f-tel-aide" />
+          <p id="f-tel-aide" class="mt-1 text-[0.85rem] text-encre-douce">Si vous préférez un coup de fil.</p>
+        </div>
+
+        <div class="sm:col-span-2">
+          <label for="f-temps" class="etiquette-champ">
+            Qu’est-ce qui vous prend le plus de temps avec votre cave aujourd’hui ?{' '}
+            <span class="font-normal text-encre-douce">(facultatif)</span>
+          </label>
+          <textarea id="f-temps" name="ce_qui_prend_du_temps" rows="3" class="champ"></textarea>
+        </div>
+
+        <!-- Champs cachés : test de message et provenance -->
+        <input type="hidden" name="variante_titre" value="a" data-variante />
+        <input type="hidden" name="utm_source" value="" data-utm="utm_source" />
+        <input type="hidden" name="utm_medium" value="" data-utm="utm_medium" />
+        <input type="hidden" name="utm_campaign" value="" data-utm="utm_campaign" />
+        <input type="hidden" name="_subject" value="Nouvelle inscription au pilote Cuvée" />
+
+        <!-- Piège à robots : invisible pour les visiteurs -->
+        <div class="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+          <label for="f-gotcha">Ne pas remplir ce champ</label>
+          <input id="f-gotcha" type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <p class="mentions sm:col-span-2">
+          Vos informations servent uniquement à vous recontacter au sujet du programme pilote. Elles ne sont ni vendues ni
+          utilisées à d’autres fins. Nous notons aussi la version de la page que vous avez vue, pour savoir quels messages
+          parlent le mieux. <a href="/confidentialite/" class="lien">En savoir plus</a>.
+        </p>
+
+        <div class="sm:col-span-2">
+          <p class="message-erreur mb-4" role="alert" data-erreur-envoi></p>
+          <button type="submit" class="btn btn-primaire w-full sm:w-auto sm:min-w-[19rem]" data-envoyer>
+            Rejoindre le programme pilote
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
-  <div hidden data-form-succes class="form-succes relative">
-    <span class="sceau-pose inline-block" aria-hidden="true"><PiloteSceau taille={72} /></span>
-    <p class="surtitre mt-4 text-bordeaux">Demande reçue</p>
-    <h3 class="mt-3 font-serif text-[1.9rem] leading-tight font-medium" tabindex="-1" data-succes-titre>Merci !</h3>
-    <p class="mt-4 text-lg text-encre-douce">
-      Votre demande est bien arrivée. Nous vous recontactons sous <mark class="a-completer"
-        >[À COMPLÉTER : délai de recontact]</mark
-      > pour un premier échange.
-    </p>
-    <p class="mt-4 text-encre-douce">
-      Une question d’ici là ?
-      {
-        contact ? (
-          <a href={`mailto:${contact}`} class="lien">{contact}</a>
-        ) : (
-          <mark class="a-completer">[À COMPLÉTER : email de contact]</mark>
-        )
-      }
-    </p>
-    <span class="tampon top-8 right-6 hidden sm:block" aria-hidden="true">Reçu</span>
+  <div hidden data-form-succes class="form-succes papier relative mx-auto max-w-2xl px-6 py-14 text-center sm:px-14 sm:py-16">
+    <span class="pointer-events-none absolute inset-2.5 border border-dore/50" aria-hidden="true"></span>
+    <div class="relative">
+      <span class="sceau-pose inline-block" aria-hidden="true"><PiloteSceau taille={76} /></span>
+      <p class="surtitre mt-6 text-bordeaux">Demande reçue</p>
+      <h2 class="mt-4 text-[clamp(1.8rem,4vw,2.6rem)]" tabindex="-1" data-succes-titre>Merci !</h2>
+      <span class="signature mt-3">à très bientôt</span>
+      <p class="mx-auto mt-8 max-w-md text-encre-douce">
+        Votre demande est bien arrivée. Nous vous recontactons sous <mark class="a-completer"
+          >[À COMPLÉTER : délai de recontact]</mark
+        > pour un premier échange.
+      </p>
+      <p class="mt-4 text-encre-douce">
+        Une question d’ici là ?
+        {
+          contact ? (
+            <a href={`mailto:${contact}`} class="lien">{contact}</a>
+          ) : (
+            <mark class="a-completer">[À COMPLÉTER : email de contact]</mark>
+          )
+        }
+      </p>
+    </div>
   </div>
-</div>
-
+</section>
 
 <style is:global>
-  /* Champs : fond de fiche, soulignement bordeaux qui se trace au focus, étiquette qui prend la couleur */
-  [data-inscription] .champ {
-    background-color: #fffdf8;
-    background-image: linear-gradient(var(--color-bordeaux), var(--color-bordeaux));
-    background-repeat: no-repeat;
-    background-position: left bottom;
-    background-size: 0% 3px;
-    border-color: var(--color-bordure);
-    border-radius: 2px;
-    transition:
-      background-size 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
-      background-color 0.2s ease,
-      border-color 0.2s ease,
-      box-shadow 0.25s ease;
+  /* Fiche d'inscription : champs fins à filet, libellés en petites capitales */
+  .inscription {
+    scroll-margin-top: 0;
   }
-  [data-inscription] select.champ {
-    background-image:
-      linear-gradient(var(--color-bordeaux), var(--color-bordeaux)),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%231f1a17' stroke-width='1.6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat, no-repeat;
-    background-position: left bottom, right 0.9rem center;
-    background-size: 0% 3px, 12px 8px;
+  .carte-form {
+    box-shadow: 0 30px 60px -40px rgb(42 34 32 / 0.55);
   }
-  [data-inscription] .champ:focus,
-  [data-inscription] .champ:focus-visible {
-    background-size: 100% 3px;
-    background-color: #fff;
-    border-color: var(--color-bordeaux);
-    box-shadow: 0 6px 14px -10px rgb(110 31 47 / 0.55);
-    outline: 2px solid var(--color-bordeaux);
-    outline-offset: 2px;
+
+  /* progression : une ligne fine qui se dore */
+  .progression-texte {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-encre-douce);
   }
-  [data-inscription] select.champ:focus,
-  [data-inscription] select.champ:focus-visible {
-    background-size: 100% 3px, 12px 8px;
+  .progression-piste {
+    margin-top: 0.7rem;
+    height: 2px;
+    background: var(--color-filet);
+  }
+  .progression-barre {
+    height: 100%;
+    background: var(--color-dore);
+    transform-origin: left;
+    transform: scaleX(var(--p, 0));
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  [data-inscription] .etiquette-champ {
+    margin-bottom: 0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    line-height: 1.5;
+    text-transform: uppercase;
+    color: var(--color-encre-douce);
+    transition: color 0.25s ease;
+  }
+  [data-inscription] .etiquette-champ span {
+    font-weight: 400;
+    letter-spacing: 0.08em;
   }
   [data-inscription] > div:focus-within > .etiquette-champ {
     color: var(--color-bordeaux);
   }
-  .etiquette-champ {
-    transition: color 0.2s ease;
+
+  [data-inscription] .champ {
+    min-height: 3.1rem;
+    padding: 0.55rem 0.15rem 0.5rem;
+    background-color: transparent;
+    background-image: linear-gradient(var(--color-bordeaux), var(--color-bordeaux));
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: 0% 2px;
+    border: 0;
+    border-bottom: 1px solid var(--color-bordure);
+    border-radius: 0;
+    box-shadow: none;
+    font-size: 1.05rem;
+    transition:
+      background-size 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.25s ease,
+      border-color 0.25s ease;
   }
-  /* erreur : trait plein rouge, message qui glisse, léger tremblement une seule fois */
+  [data-inscription] .champ:hover {
+    border-bottom-color: var(--color-encre-douce);
+  }
+  [data-inscription] .champ:focus,
+  [data-inscription] .champ:focus-visible {
+    background-color: rgb(110 31 47 / 0.045);
+    background-size: 100% 2px;
+    outline: 2px solid var(--color-bordeaux);
+    outline-offset: 3px;
+    border-radius: 1px;
+    box-shadow: none;
+  }
+  [data-inscription] textarea.champ {
+    min-height: 5.5rem;
+    line-height: 1.6;
+    margin-top: 0.15rem;
+  }
+  [data-inscription] select.champ {
+    padding-right: 1.8rem;
+    cursor: pointer;
+    background-image:
+      linear-gradient(var(--color-bordeaux), var(--color-bordeaux)),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%236e1f2f' stroke-width='1.6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, no-repeat;
+    background-position: left bottom, right 0.2rem center;
+    background-size: 0% 2px, 12px 8px;
+  }
+  [data-inscription] select.champ:focus,
+  [data-inscription] select.champ:focus-visible {
+    background-size: 100% 2px, 12px 8px;
+  }
+
+  /* erreur : filet rouge, message qui glisse, un léger tremblement */
   [data-inscription] .champ[aria-invalid="true"] {
-    background-size: 100% 3px;
+    border-width: 0 0 1px;
+    box-shadow: none;
+    border-bottom-color: var(--color-erreur);
     background-image: linear-gradient(var(--color-erreur), var(--color-erreur));
+    background-size: 100% 2px;
     animation: champ-tremble 0.35s ease;
   }
   [data-inscription] select.champ[aria-invalid="true"] {
     background-image:
       linear-gradient(var(--color-erreur), var(--color-erreur)),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%231f1a17' stroke-width='1.6'/%3E%3C/svg%3E");
-    background-size: 100% 3px, 12px 8px;
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%236e1f2f' stroke-width='1.6'/%3E%3C/svg%3E");
+    background-size: 100% 2px, 12px 8px;
+  }
+  [data-inscription] .message-erreur {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  [data-inscription] .message-erreur:empty {
+    display: none;
+  }
+  [data-inscription] .message-erreur:not(:empty)::before {
+    content: "!";
+    flex: none;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.1rem;
+    border-radius: 999px;
+    background: var(--color-erreur);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    line-height: 1.1rem;
+    text-align: center;
   }
   [data-inscription] .message-erreur:not(:empty) {
     animation: erreur-glisse 0.3s ease both;
+  }
+  [data-inscription] [data-erreur-envoi]:not(:empty) {
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--color-erreur);
+    background: rgb(155 28 44 / 0.06);
   }
   @keyframes champ-tremble {
     25% { translate: -3px 0; }
@@ -249,47 +342,56 @@ const caisses = [
   @keyframes erreur-glisse {
     from { opacity: 0; translate: 0 -4px; }
   }
-  /* champ « Lequel ? » : il apparaît en douceur */
   [data-caisse-autre]:not([hidden]) {
     animation: erreur-glisse 0.35s ease both;
   }
+
+  .inscription .mentions {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--color-encre-douce);
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--color-filet);
+  }
+
+  /* bouton : rectangulaire bordeaux ; pendant l'envoi, un trait doré court en bas */
   [data-envoyer] {
     position: relative;
     overflow: hidden;
   }
-  [data-envoyer]::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(100deg, transparent 30%, rgb(245 239 227 / 0.22) 50%, transparent 70%);
-    translate: -110% 0;
-    transition: translate 0.6s ease;
-  }
-  [data-envoyer]:hover::after {
-    translate: 110% 0;
-  }
   [data-envoyer]:disabled {
-    opacity: 0.75;
+    opacity: 0.85;
     cursor: progress;
   }
+  [data-envoyer]:disabled::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 40%;
+    background: var(--color-dore-clair);
+    animation: envoi-court 1.1s ease-in-out infinite;
+  }
+  @keyframes envoi-court {
+    from { translate: -100% 0; }
+    to { translate: 250% 0; }
+  }
 
-  /* Succès : le formulaire laisse place à un accusé, avec coche tracée et tampon */
+  /* succès : le formulaire laisse place au merci, le sceau se pose */
   .form-succes:not([hidden]) {
-    animation: succes-entre 0.5s ease both;
+    animation: succes-entre 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
   @keyframes succes-entre {
-    from { opacity: 0; translate: 0 12px; }
+    from { opacity: 0; translate: 0 16px; }
   }
-  .progression-barre { transform: scaleX(var(--p, 0)); transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
-  .bon { box-shadow: 0 18px 40px -26px rgb(31 26 23 / 0.5), 6px 6px 0 var(--color-creme), 6px 6px 0 1px var(--color-filet); }
-  .est-valide .sceau-pose { animation: sceau-pose 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.3) both; }
-  @keyframes sceau-pose { from { opacity: 0; transform: scale(1.6) rotate(-14deg); } }
-  .est-valide .form-succes .tampon {
-    animation-delay: 0.9s;
-  }
+  .form-succes [data-succes-titre]:focus { outline: none; }
+  .est-valide .sceau-pose { animation: sceau-pose 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.3) 0.2s both; }
+  @keyframes sceau-pose { from { opacity: 0; transform: scale(1.7) rotate(-14deg); } }
   @media (prefers-reduced-motion: reduce) {
     [data-inscription] .champ[aria-invalid="true"],
-    .est-valide .sceau-pose {
+    .est-valide .sceau-pose,
+    [data-envoyer]:disabled::after {
       animation: none !important;
     }
     .progression-barre { transition: none; }

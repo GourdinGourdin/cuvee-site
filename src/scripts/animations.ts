@@ -16,18 +16,27 @@
  *                               Utilise la propriété CSS `translate` : ne pas la poser sur un
  *                               élément qui a aussi un data-reveal-* avec translate (OK avec data-reveal).
  *
+ *   data-reveal="rideau"       le média (ou son conteneur) se dévoile par un volet qui s'ouvre, l'image
+ *                               à l'intérieur se dézoome doucement. À poser sur le CONTENEUR de l'image
+ *                               (.media-cadre), pas sur l'<img>. Sens du volet : data-reveal-sens="bas"
+ *                               (défaut) | "haut" | "gauche" | "droite".
+ *   data-reveal="flou"          apparition depuis un léger flou (fondu + netteté), pour un titre ou un bloc
+ *
  * Sans JS ou avec prefers-reduced-motion: reduce, tout reste visible et immobile : le CSS
  * masque les éléments uniquement si <html> porte la classe `anim` (posée par un script inline
  * de Base.astro, jamais en mouvement réduit).
  *
- * Charpente (toujours active, hors animation) — initEntete() :
- *   [data-entete]               en-tête : attribut data-compact="true" après 24 px de défilement
- *   [data-nav-desktop]          onglets : le trait doré [data-indicateur] glisse vers l’onglet actif,
- *                               suit le survol/focus clavier et revient à l’onglet actif ; sans JS,
- *                               un souligné CSS marque l’onglet actif
- *   [data-menu]                 menu mobile plein écran (<details>) : focus piégé dans [data-menu-focus],
- *                               Échap pour fermer (focus rendu au bouton), défilement de la page bloqué
+ * Intro de l'accueil : tant que <html> porte `intro-active` (et pas `intro-vue`), les révélations
+ * attendent l'événement `cuvee:intro-fin` (filet de sécurité : 12 s) avant de s'observer.
+ *
+ * Charpente :
  *   [data-progression]          barre de lecture dorée (--p de 0 à 1) ; absente en mouvement réduit
+ *   pageswap                    transitions de page : le morphing d'image `media-*` (carte de l'accueil
+ *                               vers l'en-tête de la page) n'est gardé que de l'accueil vers une page,
+ *                               et seulement si la carte est à l'écran ; dans les autres cas le média
+ *                               suit simplement la transition de la page.
+ * L'en-tête (fond au défilement, masquage, onglets, menu plein écran) a son propre script, dans
+ * src/components/maison/EnTete.astro.
  *
  * Navigation : les transitions entre pages utilisent le CSS natif `@view-transition`
  * (pas de <ClientRouter />) ; chaque page se recharge, ce script s'exécute donc à chaque page.
@@ -133,7 +142,19 @@ export function init() {
       },
       { threshold: 0, rootMargin: '0px 0px -10% 0px' },
     );
-    cibles.forEach((el) => obs.observe(el));
+    const observer = () => cibles.forEach((el) => obs.observe(el));
+    if (html.classList.contains('intro-active') && !html.classList.contains('intro-vue')) {
+      let lance = false;
+      const lancer = () => {
+        if (lance) return;
+        lance = true;
+        observer();
+      };
+      document.addEventListener('cuvee:intro-fin', lancer, { once: true });
+      window.setTimeout(lancer, 12000);
+    } else {
+      observer();
+    }
     parallaxe(Array.from(document.querySelectorAll<HTMLElement>('[data-parallaxe]')));
     html.classList.add('anim-pret');
   } catch {
@@ -147,110 +168,46 @@ document.addEventListener('astro:page-load', () => {
 });
 
 /* ------------------------------------------------------------------ */
-/* Charpente : en-tête compact, indicateur d’onglet, menu mobile, progression de lecture */
+/* Barre de lecture dorée */
 
-function initEntete() {
-  const entete = document.querySelector<HTMLElement>('[data-entete]');
+function initProgression() {
   const barre = document.querySelector<HTMLElement>('[data-progression]');
-  const menu = document.querySelector<HTMLDetailsElement>('[data-menu]');
-
-  // compaction + progression, au scroll
+  if (!barre) return;
   let attente = false;
   const maj = () => {
     attente = false;
-    const y = window.scrollY;
-    entete?.setAttribute('data-compact', String(y > 24));
-    if (barre) {
-      const total = document.documentElement.scrollHeight - window.innerHeight;
-      barre.style.setProperty('--p', total > 0 ? Math.min(y / total, 1).toFixed(4) : '0');
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    barre.style.setProperty('--p', total > 0 ? Math.min(Math.max(window.scrollY / total, 0), 1).toFixed(4) : '0');
+  };
+  const demander = () => {
+    if (!attente) {
+      attente = true;
+      requestAnimationFrame(maj);
     }
   };
-  window.addEventListener(
-    'scroll',
-    () => {
-      if (!attente) {
-        attente = true;
-        requestAnimationFrame(maj);
-      }
-    },
-    { passive: true },
-  );
-  window.addEventListener('resize', maj);
+  window.addEventListener('scroll', demander, { passive: true });
+  window.addEventListener('resize', demander);
   maj();
-
-  // indicateur d’onglet
-  const nav = document.querySelector<HTMLElement>('[data-nav-desktop]');
-  const indic = nav?.querySelector<HTMLElement>('[data-indicateur]');
-  if (nav && indic) {
-    const liens = Array.from(nav.querySelectorAll<HTMLAnchorElement>('a.onglet'));
-    const courant = () => nav.querySelector<HTMLAnchorElement>('a[aria-current="page"]');
-    const placer = (a: HTMLElement | null, animer: boolean) => {
-      if (!a) {
-        indic.style.opacity = '0';
-        return;
-      }
-      if (!animer) indic.style.transition = 'none';
-      indic.style.opacity = '1';
-      indic.style.width = `${a.offsetWidth}px`;
-      indic.style.transform = `translateX(${a.parentElement!.offsetLeft}px)`;
-      if (!animer) {
-        void indic.offsetWidth;
-        indic.style.transition = '';
-      }
-    };
-    nav.dataset.indic = 'oui';
-    const retour = () => placer(courant(), true);
-    liens.forEach((a) => {
-      a.addEventListener('mouseenter', () => placer(a, true));
-      a.addEventListener('focus', () => placer(a, true));
-      a.addEventListener('blur', retour);
-    });
-    nav.addEventListener('mouseleave', retour);
-    window.addEventListener('resize', () => placer(courant(), false));
-    document.fonts?.ready.then(() => placer(courant(), false));
-    placer(courant(), false);
-  }
-
-  // menu mobile plein écran
-  if (menu) {
-    const resume = menu.querySelector('summary') as HTMLElement;
-    const fermer = (rendreFocus: boolean) => {
-      menu.open = false;
-      if (rendreFocus) resume.focus();
-    };
-    menu.addEventListener('toggle', () => {
-      document.documentElement.classList.toggle('menu-ouvert', menu.open);
-      if (menu.open) menu.querySelector<HTMLElement>('[data-menu-lien]')?.focus({ preventScroll: true });
-    });
-    menu.querySelectorAll('[data-menu-lien]').forEach((l) => l.addEventListener('click', () => fermer(false)));
-    window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => e.matches && fermer(false));
-    document.addEventListener('keydown', (e) => {
-      if (!menu.open) return;
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        fermer(true);
-        return;
-      }
-      if (e.key !== 'Tab') return;
-      // focus piégé : logo, bouton Menu, liens du panneau, bouton du pilote
-      const focusables = Array.from(document.querySelectorAll<HTMLElement>('[data-entete] [data-menu-focus]')).filter(
-        (el) => el.offsetParent !== null || el === resume,
-      );
-      const premier = focusables[0];
-      const dernier = focusables[focusables.length - 1];
-      const actif = document.activeElement;
-      if (e.shiftKey && actif === premier) {
-        e.preventDefault();
-        dernier.focus();
-      } else if (!e.shiftKey && actif === dernier) {
-        e.preventDefault();
-        premier.focus();
-      } else if (!focusables.includes(actif as HTMLElement)) {
-        e.preventDefault();
-        premier.focus();
-      }
-    });
-  }
 }
 
-initEntete();
+initProgression();
+
+/* ------------------------------------------------------------------ */
+/* Morphing d'image entre l'accueil et une page : on ne garde que le sens accueil -> page */
+
+const chemin = (u: string | URL) => new URL(u, location.href).pathname.replace(/\/+$/, '') || '/';
+
+window.addEventListener('pageswap', (e) => {
+  const evt = e as Event & { activation?: { entry?: { url?: string } }; viewTransition?: unknown };
+  if (!evt.viewTransition || !evt.activation?.entry?.url) return;
+  const depart = chemin(location.href);
+  const arrivee = chemin(evt.activation.entry.url);
+  document.querySelectorAll<HTMLElement>('*').forEach((el) => {
+    const nom = getComputedStyle(el).viewTransitionName;
+    if (!nom || !nom.startsWith('media-')) return;
+    const bonneCarte = depart === '/' && nom === `media-${arrivee.slice(1)}`;
+    const r = el.getBoundingClientRect();
+    const dansEcran = r.bottom > 0 && r.top < window.innerHeight && r.right > 0 && r.left < window.innerWidth;
+    if (!bonneCarte || !dansEcran) el.style.viewTransitionName = 'none';
+  });
+});

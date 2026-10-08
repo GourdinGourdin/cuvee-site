@@ -3,30 +3,38 @@ import BonDeCommande from '../BonDeCommande.astro';
 ---
 <section id="proposition" class="relative overflow-hidden bg-creme" aria-labelledby="proposition-titre">
   <div class="grid lg:grid-cols-[1.05fr_1fr]">
-    <div class="media-cadre zoom-lent relative min-h-[70vh] px-4 py-16 sm:px-10 lg:min-h-[100vh] lg:py-24" data-reveal>
-      <img src="/media/mur-bouteilles.jpg" alt="" loading="lazy" decoding="async" />
+    <div class="proposition-media media-cadre zoom-lent relative min-h-[70vh] px-4 py-16 sm:px-10 lg:min-h-[100vh] lg:py-24" data-reveal="rideau">
+      <img src="/media/mur-bouteilles.jpg" alt="" loading="lazy" decoding="async" data-parallaxe="-0.08" />
       <div class="absolute inset-0 bg-chai/35" aria-hidden="true"></div>
-      <div class="relative z-10 mx-auto flex h-full max-w-md items-center lg:max-w-lg">
+      <div class="relative z-10 mx-auto flex h-full max-w-md items-center lg:max-w-lg" data-reveal="echelle" data-reveal-delai="4">
         <BonDeCommande />
       </div>
     </div>
     <div class="flex flex-col justify-center px-6 py-20 sm:px-12 lg:px-20 xl:px-24">
       <p class="surtitre text-encre-douce" data-reveal>Un exemple, lundi à 7 h 02</p>
-      <h2 id="proposition-titre" class="mt-5 text-[clamp(1.7rem,3vw,2.6rem)] text-bordeaux" data-reveal data-reveal-delai="1">
+      <h2 id="proposition-titre" class="mt-5 text-[clamp(1.7rem,3vw,2.6rem)] text-bordeaux" data-reveal-lignes>
         La commande est prête avant vous
       </h2>
-      <span class="signature mt-2" data-reveal data-reveal-delai="2">au carton près</span>
-      <p class="mt-8 max-w-lg text-encre-douce" data-reveal data-reveal-delai="3">
+      <span class="signature mt-2" data-reveal="ecriture" style="--d: 9">au carton près</span>
+      <p class="mt-8 max-w-lg text-encre-douce" data-reveal data-reveal-delai="2">
         Cuvée compare ce qui sort et ce qui reste, voit venir la rupture et prépare le bon pour le domaine,{' '}
         <strong class="font-semibold text-encre">franco compris</strong>. Vous ajustez une quantité, vous validez, il part par
         email ou WhatsApp.
       </p>
-      <ul class="mt-8 grid max-w-lg gap-3 text-encre-douce" role="list" data-reveal data-reveal-delai="4">
-        <li class="flex gap-3 border-b border-filet pb-3"><span class="font-semibold text-bordeaux">01</span> Vos ventes, lues depuis la caisse</li>
-        <li class="flex gap-3 border-b border-filet pb-3"><span class="font-semibold text-bordeaux">02</span> Vos entrées, lues sur les factures</li>
-        <li class="flex gap-3 border-b border-filet pb-3"><span class="font-semibold text-bordeaux">03</span> Votre feu vert, toujours</li>
+      <ul class="mt-8 grid max-w-lg gap-3 text-encre-douce" role="list">
+        <li class="flex items-baseline gap-4 border-b border-dore/50 pb-3" data-reveal data-reveal-delai="3"><span class="chapitre-num !font-extrabold text-bordeaux">01</span> Vos ventes, lues depuis la caisse</li>
+        <li class="flex items-baseline gap-4 border-b border-dore/50 pb-3" data-reveal data-reveal-delai="4"><span class="chapitre-num !font-extrabold text-bordeaux">02</span> Vos entrées, lues sur les factures</li>
+        <li class="flex items-baseline gap-4 border-b border-dore/50 pb-3" data-reveal data-reveal-delai="5"><span class="chapitre-num !font-extrabold text-bordeaux">03</span> Votre feu vert, toujours</li>
       </ul>
-      <a href="/comment-ca-marche" class="lien-cap mt-8 self-start text-encre" data-reveal data-reveal-delai="5">Voir le fonctionnement</a>
+      <a href="/comment-ca-marche" class="lien-cap mt-8 self-start text-encre" data-reveal data-reveal-delai="6">Voir le fonctionnement</a>
     </div>
   </div>
 </section>
+
+<style>
+  /* l'image dépasse du cadre pour que la parallaxe ne laisse jamais de bord vide */
+  .proposition-media > img {
+    inset: -10% 0 auto 0;
+    height: 120%;
+  }
+</style>

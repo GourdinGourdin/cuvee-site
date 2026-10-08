@@ -1,3 +1,685 @@
 ---
-/** Intro de l’accueil : bouteille à déboucher (à construire). */
+/**
+ * Intro de l'accueil : une bouteille de bordeaux à déboucher.
+ *
+ * Au clic : la capsule se découpe, le bouchon saute, la bouteille s'incline, un filet de vin
+ * monte en vague et couvre l'écran, puis ce rideau se retire vers le haut sur l'accueil.
+ * C'est une métaphore d'ouverture, pas une invitation à boire. Pas de son.
+ *
+ * Contrat : `html.intro-active` pendant l'intro, puis `html.intro-vue` + événement `cuvee:intro-fin`
+ * sur `document` + `window.cuveeIntroVue = true`. Jamais montrée sans JavaScript, en mouvement
+ * réduit, ni après la première visite de la session (sauf avec `/?intro=1`).
+ */
+import outfitWoff2 from '@fontsource-variable/outfit/files/outfit-latin-wght-normal.woff2?url';
+import josefinWoff2 from '@fontsource-variable/josefin-sans/files/josefin-sans-latin-wght-normal.woff2?url';
+import dafoeWoff2 from '@fontsource/mr-dafoe/files/mr-dafoe-latin-400-normal.woff2?url';
+
+// Une vague (deux périodes, pour boucler sans raccord) : trois couches de profondeur.
+const vague = 'M0 120V62C200 8 400 8 600 62S1000 116 1200 62C1400 8 1600 8 1800 62S2200 116 2400 62V120Z';
+const vagueArriere = 'M0 120V48C220 98 380 98 600 48S980 -2 1200 48C1420 98 1580 98 1800 48S2180 -2 2400 48V120Z';
+
+// Poussières de lumière (positions fixes, pas d'aléatoire : rendu stable).
+const poussieres = [
+  [8, 22, 0.8, 11, 0], [17, 64, 1.2, 14, 3], [26, 38, 0.7, 12, 6], [34, 82, 1.0, 16, 1],
+  [43, 14, 0.9, 13, 8], [52, 70, 0.7, 15, 4], [61, 30, 1.3, 12, 9], [69, 88, 0.8, 17, 2],
+  [77, 48, 1.0, 13, 5], [85, 20, 0.7, 15, 7], [91, 62, 1.1, 14, 10], [13, 90, 0.6, 16, 12],
+  [57, 8, 0.8, 18, 11], [95, 36, 0.7, 13, 13],
+];
 ---
+<link rel="preload" href={outfitWoff2} as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={josefinWoff2} as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={dafoeWoff2} as="font" type="font/woff2" crossorigin />
+
+<script is:inline>
+  // Décidé AVANT le rendu : pas de flash. Sans ceci (ou sans JavaScript), l'overlay reste caché.
+  (function () {
+    var racine = document.documentElement;
+    var affiche = false;
+    try {
+      var forcee = /(^|[?&])intro=1(&|$)/.test(location.search);
+      var reduit = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduit) {
+        if (forcee) {
+          affiche = true;
+        } else {
+          try {
+            affiche = !sessionStorage.getItem('cuvee-intro-vue');
+          } catch (e) {
+            affiche = false; // stockage indisponible : on ne rejouerait l'intro qu'à chaque page
+          }
+        }
+      }
+      if (affiche) {
+        try {
+          sessionStorage.setItem('cuvee-intro-vue', '1');
+        } catch (e) {}
+      }
+    } catch (e) {
+      affiche = false;
+    }
+    if (affiche) {
+      racine.classList.add('intro-active');
+      // filet de sécurité : si le script de l'intro ne démarre pas, on ne bloque jamais la page
+      setTimeout(function () {
+        var o = document.querySelector('[data-intro]');
+        if (o && !o.hasAttribute('data-pret')) {
+          racine.classList.remove('intro-active');
+          racine.classList.add('intro-vue');
+          window.cuveeIntroVue = true;
+          o.remove();
+        }
+      }, 6000);
+    } else {
+      racine.classList.add('intro-vue');
+      window.cuveeIntroVue = true;
+    }
+  })();
+</script>
+
+<div class="intro" data-intro role="dialog" aria-modal="true" aria-label="Bienvenue">
+  <div class="i-fond" aria-hidden="true" data-fond>
+    <div class="i-halo"></div>
+    <div class="i-sol"></div>
+    <div class="i-poussieres">
+      {
+        poussieres.map(([x, y, t, d, r]) => (
+          <span style={`--x:${x}%;--y:${y}%;--t:${t}px;--d:${d}s;--r:-${r}s`} />
+        ))
+      }
+    </div>
+    <div class="i-grain"></div>
+    <div class="i-vignette"></div>
+  </div>
+
+  <div class="i-scene" data-scene>
+    <button type="button" class="i-bouteille" data-bouteille aria-label="Déboucher la bouteille et entrer sur le site">
+      <span class="i-flotte">
+        <span class="i-lift" data-lift>
+          <span class="i-pivot" data-pivot>
+            <span class="i-derive" data-derive>
+              <svg viewBox="0 0 220 700" class="i-svg" aria-hidden="true" focusable="false">
+                <defs>
+                  <linearGradient id="ib-verre" x1="0" x2="1" y1="0" y2="0">
+                    <stop offset="0" stop-color="#070504" />
+                    <stop offset="0.1" stop-color="#16100f" />
+                    <stop offset="0.3" stop-color="#2c1c1d" />
+                    <stop offset="0.52" stop-color="#1c1213" />
+                    <stop offset="0.82" stop-color="#0f0a0a" />
+                    <stop offset="1" stop-color="#040303" />
+                  </linearGradient>
+                  <linearGradient id="ib-vin" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0.35" stop-color="#6e1f2f" stop-opacity="0" />
+                    <stop offset="1" stop-color="#6e1f2f" stop-opacity="0.34" />
+                  </linearGradient>
+                  <linearGradient id="ib-or" x1="0" x2="1" y1="0" y2="0">
+                    <stop offset="0" stop-color="#6f5821" />
+                    <stop offset="0.2" stop-color="#b79a55" />
+                    <stop offset="0.38" stop-color="#ecdcae" />
+                    <stop offset="0.55" stop-color="#a88a4a" />
+                    <stop offset="0.82" stop-color="#7d6428" />
+                    <stop offset="1" stop-color="#5a4519" />
+                  </linearGradient>
+                  <linearGradient id="ib-or-haut" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0" stop-color="#ffffff" stop-opacity="0.45" />
+                    <stop offset="0.5" stop-color="#ffffff" stop-opacity="0" />
+                  </linearGradient>
+                  <linearGradient id="ib-liege" x1="0" x2="1" y1="0" y2="0">
+                    <stop offset="0" stop-color="#a98d5c" />
+                    <stop offset="0.35" stop-color="#d9c593" />
+                    <stop offset="0.7" stop-color="#c3a870" />
+                    <stop offset="1" stop-color="#8f7646" />
+                  </linearGradient>
+                  <linearGradient id="ib-papier" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0" stop-color="#fbf8f2" />
+                    <stop offset="1" stop-color="#eadfcf" />
+                  </linearGradient>
+                  <linearGradient id="ib-cyl" x1="0" x2="1" y1="0" y2="0">
+                    <stop offset="0" stop-color="#2a2220" stop-opacity="0.42" />
+                    <stop offset="0.22" stop-color="#2a2220" stop-opacity="0.04" />
+                    <stop offset="0.55" stop-color="#ffffff" stop-opacity="0.1" />
+                    <stop offset="0.8" stop-color="#2a2220" stop-opacity="0.08" />
+                    <stop offset="1" stop-color="#2a2220" stop-opacity="0.5" />
+                  </linearGradient>
+                  <linearGradient id="ib-reflet" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0" stop-color="#fff" stop-opacity="0" />
+                    <stop offset="0.18" stop-color="#fff" stop-opacity="0.55" />
+                    <stop offset="0.8" stop-color="#fff" stop-opacity="0.32" />
+                    <stop offset="1" stop-color="#fff" stop-opacity="0" />
+                  </linearGradient>
+                  <linearGradient id="ib-chaud" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0" stop-color="#d9a25a" stop-opacity="0" />
+                    <stop offset="0.25" stop-color="#d9a25a" stop-opacity="0.34" />
+                    <stop offset="0.8" stop-color="#d9a25a" stop-opacity="0.2" />
+                    <stop offset="1" stop-color="#d9a25a" stop-opacity="0" />
+                  </linearGradient>
+                  <clipPath id="ib-clip">
+                    <path d="M80 44V190C80 238 30 250 30 322V648Q30 680 62 680H158Q190 680 190 648V322C190 250 140 238 140 190V44Z" />
+                  </clipPath>
+                </defs>
+
+                <!-- ombre portée sur le comptoir -->
+                <ellipse class="i-ombre" data-ombre cx="110" cy="684" rx="92" ry="9" fill="#000" opacity="0.5" />
+
+                <!-- bouchon (derrière la capsule : il en sort au moment de sauter) -->
+                <g class="i-bouchon" data-bouchon>
+                  <rect x="88" y="28" width="44" height="74" rx="5" fill="url(#ib-liege)" />
+                  <g fill="#7d6428" opacity="0.5">
+                    <circle cx="97" cy="42" r="1.1" /><circle cx="118" cy="50" r="0.9" /><circle cx="105" cy="64" r="1.2" />
+                    <circle cx="124" cy="78" r="1" /><circle cx="95" cy="86" r="0.9" /><circle cx="113" cy="92" r="1.1" />
+                    <circle cx="101" cy="30" r="0.8" /><circle cx="127" cy="60" r="0.8" />
+                  </g>
+                  <path d="M88 33h44M88 97h44" stroke="#8f7646" stroke-width="0.7" opacity="0.7" />
+                  <rect x="93" y="30" width="5" height="68" rx="2.5" fill="#fff" opacity="0.16" />
+                </g>
+
+                <!-- verre -->
+                <path
+                  d="M80 44V190C80 238 30 250 30 322V648Q30 680 62 680H158Q190 680 190 648V322C190 250 140 238 140 190V44Z"
+                  fill="url(#ib-verre)"
+                />
+                <path
+                  d="M80 44V190C80 238 30 250 30 322V648Q30 680 62 680H158Q190 680 190 648V322C190 250 140 238 140 190V44Z"
+                  fill="url(#ib-vin)"
+                />
+                <g clip-path="url(#ib-clip)">
+                  <!-- reflets : ils respirent doucement -->
+                  <g class="i-reflets">
+                    <rect x="37" y="330" width="7" height="308" rx="3.5" fill="url(#ib-reflet)" />
+                    <rect x="48" y="372" width="2.5" height="190" rx="1.25" fill="url(#ib-reflet)" opacity="0.5" />
+                    <path d="M91 108V186C91 218 56 232 46 280" fill="none" stroke="#fff" stroke-opacity="0.34" stroke-width="3.2" stroke-linecap="round" />
+                    <path d="M99 120V184" stroke="#fff" stroke-opacity="0.14" stroke-width="1.6" stroke-linecap="round" />
+                  </g>
+                  <!-- lueur chaude sur le flanc droit -->
+                  <rect x="178" y="336" width="5" height="290" rx="2.5" fill="url(#ib-chaud)" />
+                  <rect x="132" y="150" width="2.4" height="44" rx="1.2" fill="url(#ib-chaud)" />
+                  <!-- fond de bouteille -->
+                  <path d="M42 652Q110 668 178 652" fill="none" stroke="#fff" stroke-opacity="0.1" stroke-width="2" />
+                </g>
+
+                <!-- bague de verre -->
+                <rect x="79" y="52" width="62" height="12" rx="3" fill="url(#ib-verre)" />
+
+                <!-- étiquette -->
+                <g class="i-etiquette">
+                  <rect x="46" y="372" width="128" height="190" rx="2" fill="url(#ib-papier)" />
+                  <rect x="53" y="379" width="114" height="176" fill="none" stroke="#a88a4a" stroke-width="0.9" />
+                  <rect x="57" y="383" width="106" height="168" fill="none" stroke="#a88a4a" stroke-width="0.4" />
+                  <!-- petit emblème : voûte et bouteille -->
+                  <path d="M97 438V418A13 13 0 0 1 123 418V438" fill="none" stroke="#6e1f2f" stroke-width="1" />
+                  <path d="M109.2 410h1.6v6c0 2.3 2.6 2.6 2.6 6.2v12.3q0 1-1 1h-5.4q-1 0-1-1V422.2c0-3.6 2.6-3.9 2.6-6.2z" fill="#6e1f2f" />
+                  <rect x="108.9" y="406.8" width="2.2" height="3.4" fill="#a88a4a" />
+                  <path d="M94 438H126" stroke="#6e1f2f" stroke-width="1" />
+                  <text x="110" y="476" text-anchor="middle" class="i-nom" textLength="98" lengthAdjust="spacing">CUVÉE</text>
+                  <path d="M76 492H103M117 492H144" stroke="#a88a4a" stroke-width="0.8" />
+                  <path d="M110 488.6l3.4 3.4-3.4 3.4-3.4-3.4z" fill="#a88a4a" />
+                  <text x="110" y="512" text-anchor="middle" class="i-sous" textLength="92" lengthAdjust="spacing">ASSISTANT DE CAVE</text>
+                  <text x="110" y="535" text-anchor="middle" class="i-micro" textLength="74" lengthAdjust="spacing">CAVES À MANGER · BARS À VIN</text>
+                  <rect x="46" y="372" width="128" height="190" rx="2" fill="url(#ib-cyl)" />
+                </g>
+
+                <!-- collier de capsule (partie qui reste) -->
+                <g class="i-collier">
+                  <path d="M77 60Q110 63 143 60L144.5 122Q110 133 75.5 122Z" fill="url(#ib-or)" />
+                  <path d="M77 60Q110 63 143 60L144.5 122Q110 133 75.5 122Z" fill="url(#ib-or-haut)" />
+                  <path d="M76 114Q110 124 144 114" fill="none" stroke="#5a4519" stroke-opacity="0.55" stroke-width="0.8" />
+                  <path d="M76 118Q110 128 144 118" fill="none" stroke="#fff" stroke-opacity="0.22" stroke-width="0.6" />
+                  <rect x="84" y="66" width="3.4" height="52" rx="1.7" fill="#fff" opacity="0.4" />
+                </g>
+                <!-- trait de coupe : s'allume quand la capsule se découpe -->
+                <path class="i-coupe" data-coupe d="M77 60Q110 63 143 60" pathLength="1" fill="none" stroke="#fff6dc" stroke-width="1.6" stroke-linecap="round" />
+
+                <!-- calotte de capsule (la partie qui s'envole) -->
+                <g class="i-calotte" data-calotte>
+                  <path d="M77 60V40Q77 20 110 20Q143 20 143 40V60Q110 63 77 60Z" fill="url(#ib-or)" />
+                  <path d="M77 60V40Q77 20 110 20Q143 20 143 40V60Q110 63 77 60Z" fill="url(#ib-or-haut)" />
+                  <path d="M88 52V40Q88 29 100 27" fill="none" stroke="#fff" stroke-opacity="0.5" stroke-width="2.4" stroke-linecap="round" />
+                </g>
+
+                <!-- onde de choc du bouchon -->
+                <circle class="i-onde" data-onde cx="110" cy="40" r="22" fill="none" stroke="#e9ddbf" stroke-width="1.4" />
+                <!-- repère : bouche de la bouteille (aucun rendu) -->
+                <circle data-bouche cx="110" cy="58" r="1" fill="none" />
+              </svg>
+            </span>
+          </span>
+        </span>
+      </span>
+
+      <span class="i-invite" data-invite>
+        <span class="i-signature">Débouchez</span>
+        <span class="i-consigne">Cliquez sur la bouteille</span>
+      </span>
+    </button>
+  </div>
+
+  <!-- le filet de vin -->
+  <div class="i-filet" data-filet aria-hidden="true"></div>
+
+  <!-- le rideau de vin : monte en vague, puis se retire vers le haut -->
+  <div class="i-vin" aria-hidden="true">
+    <div class="i-nappe" data-nappe>
+      <div class="i-vague i-vague-haut">
+        <svg viewBox="0 0 2400 120" preserveAspectRatio="none" class="i-onde-fond" focusable="false">
+          <path d={vagueArriere} fill="#8a2a3e" />
+        </svg>
+        <svg viewBox="0 0 2400 120" preserveAspectRatio="none" class="i-onde-avant" focusable="false">
+          <path d={vague} fill="#6e1f2f" />
+        </svg>
+      </div>
+      <div class="i-corps"></div>
+      <div class="i-vague i-vague-bas">
+        <svg viewBox="0 0 2400 120" preserveAspectRatio="none" class="i-onde-fond" focusable="false">
+          <path d={vagueArriere} fill="#5a1927" />
+        </svg>
+        <svg viewBox="0 0 2400 120" preserveAspectRatio="none" class="i-onde-avant" focusable="false">
+          <path d={vague} fill="#4a1420" />
+        </svg>
+      </div>
+      <div class="i-mot">
+        <span class="i-mot-nom">Cuvée</span>
+        <span class="i-mot-sig">Bienvenue</span>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="lien-cap i-passer" data-passer>Passer l’intro</button>
+</div>
+
+<script>
+  import '../../scripts/intro-bouteille.ts';
+</script>
+
+<style>
+  /* ---------- affichage : seulement sous html.intro-active (décidé avant le rendu) ---------- */
+  .intro {
+    display: none;
+  }
+  :global(html.intro-active) .intro,
+  .intro[data-actif] {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    overflow: hidden;
+    color: var(--color-creme);
+    touch-action: manipulation;
+  }
+  :global(html.intro-active),
+  :global(html.intro-active body) {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+  :global(body[tabindex='-1']) {
+    outline: none;
+  }
+
+  /* ---------- fond : cave à la bougie ---------- */
+  .i-fond,
+  .i-halo,
+  .i-grain,
+  .i-vignette,
+  .i-sol {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .i-fond {
+    background:
+      radial-gradient(120% 90% at 50% 38%, #2d2321 0%, #1d1614 48%, #0f0b0a 100%);
+  }
+  .i-halo {
+    background:
+      radial-gradient(44% 52% at 50% 44%, rgb(214 168 92 / 0.22) 0%, rgb(168 138 74 / 0.08) 45%, transparent 72%),
+      radial-gradient(30% 24% at 50% 100%, rgb(110 31 47 / 0.28) 0%, transparent 70%);
+    animation: i-bougie 7s ease-in-out infinite;
+  }
+  .i-sol {
+    top: auto;
+    height: 22%;
+    background: linear-gradient(180deg, transparent, rgb(0 0 0 / 0.38));
+  }
+  .i-grain {
+    opacity: 0.55;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .95 0 0 0 0 .9 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .i-vignette {
+    background: radial-gradient(110% 100% at 50% 45%, transparent 55%, rgb(0 0 0 / 0.5) 100%);
+  }
+  @keyframes i-bougie {
+    0%,
+    100% {
+      opacity: 0.92;
+      transform: scale(1);
+    }
+    30% {
+      opacity: 1;
+      transform: scale(1.025);
+    }
+    55% {
+      opacity: 0.86;
+      transform: scale(0.99);
+    }
+    78% {
+      opacity: 0.98;
+      transform: scale(1.015);
+    }
+  }
+
+  /* poussières de lumière */
+  .i-poussieres {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .i-poussieres span {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--t);
+    height: var(--t);
+    border-radius: 50%;
+    background: #e9ddbf;
+    opacity: 0;
+    animation: i-poussiere var(--d) ease-in-out var(--r) infinite;
+  }
+  @keyframes i-poussiere {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 10px, 0);
+    }
+    25%,
+    70% {
+      opacity: 0.55;
+    }
+    100% {
+      opacity: 0;
+      transform: translate3d(14px, -46px, 0);
+    }
+  }
+
+  /* ---------- scène : la bouteille et son invitation ---------- */
+  .i-scene {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 1.25rem 1rem 3.5rem;
+  }
+  .i-bouteille {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(0.4rem, 1.6svh, 1.1rem);
+    padding: 0.5rem 1.5rem 0.75rem;
+    background: none;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .i-bouteille:focus-visible {
+    outline: none;
+  }
+  /* l'anneau de focus souligne l'invitation (et la bouteille se soulève) */
+  .i-bouteille:focus-visible .i-consigne {
+    outline: 1px solid var(--color-dore-clair);
+    outline-offset: 6px;
+  }
+  .i-bouteille:focus-visible .i-signature {
+    text-shadow: 0 0 22px rgb(233 221 191 / 0.45);
+  }
+
+  .i-flotte,
+  .i-lift,
+  .i-pivot,
+  .i-derive {
+    display: block;
+  }
+  .i-flotte {
+    animation: i-flotte 7s ease-in-out infinite;
+  }
+  @keyframes i-flotte {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -5px, 0);
+    }
+  }
+  .i-lift {
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (hover: hover) {
+    .i-bouteille:hover .i-lift,
+    .i-bouteille:focus-visible .i-lift {
+      transform: translate3d(0, -10px, 0);
+    }
+    .i-bouteille:hover .i-signature {
+      text-shadow: 0 0 22px rgb(233 221 191 / 0.45);
+    }
+  }
+  .i-svg {
+    display: block;
+    height: clamp(15rem, 60svh, 40rem);
+    width: auto;
+    aspect-ratio: 220 / 700;
+    overflow: visible;
+    filter: drop-shadow(0 18px 28px rgb(0 0 0 / 0.55));
+  }
+
+  .i-reflets {
+    animation: i-respire 5.5s ease-in-out infinite;
+  }
+  @keyframes i-respire {
+    0%,
+    100% {
+      opacity: 0.62;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  /* éléments de la bouteille qui s'animent à l'ouverture */
+  .i-bouchon,
+  .i-calotte,
+  .i-onde {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .i-onde {
+    opacity: 0;
+  }
+  .i-coupe {
+    opacity: 0;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  .i-nom {
+    font-family: var(--font-titre);
+    font-weight: 800;
+    font-size: 27px;
+    fill: #4a1420;
+  }
+  .i-sous {
+    font-family: var(--font-texte);
+    font-weight: 600;
+    font-size: 8.5px;
+    fill: #51473f;
+  }
+  .i-micro {
+    font-family: var(--font-texte);
+    font-weight: 500;
+    font-size: 5px;
+    fill: #51473f;
+  }
+
+  /* invitation */
+  .i-invite {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  .i-signature {
+    display: block;
+    font-family: var(--font-script);
+    font-size: clamp(2.6rem, 5.4svh + 1rem, 4rem);
+    line-height: 1.05;
+    color: color-mix(in srgb, var(--color-dore) 72%, var(--color-dore-clair));
+    rotate: -3deg;
+    transition: text-shadow 0.6s ease;
+    text-shadow: 0 0 18px rgb(233 221 191 / 0.18);
+  }
+  .i-consigne {
+    display: block;
+    font-family: var(--font-texte);
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    padding-left: 0.26em;
+    color: rgb(245 233 228 / 0.88);
+  }
+
+  /* ---------- le filet de vin ---------- */
+  .i-filet {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 7px;
+    margin-left: -3.5px;
+    border-radius: 0 0 3px 3px;
+    background: linear-gradient(90deg, #4a1420 0%, #9b2c42 38%, #a5364a 50%, #7a2335 66%, #4a1420 100%);
+    transform-origin: 50% 0;
+    transform: scaleY(0);
+    visibility: hidden;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  /* ---------- le rideau de vin ---------- */
+  .i-vin {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    --onde: clamp(3.5rem, 13svh, 7.5rem);
+  }
+  .i-nappe {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top: calc(var(--onde) * -1);
+    height: calc(100% + var(--onde) * 2);
+    transform: translate3d(0, 100%, 0);
+    will-change: transform;
+  }
+  .i-corps {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--onde) - 2px);
+    bottom: calc(var(--onde) - 2px);
+    background:
+      radial-gradient(70% 45% at 50% 50%, rgb(140 42 62 / 0.55), transparent 70%),
+      linear-gradient(180deg, #6e1f2f 0%, #5a1927 55%, #4a1420 100%);
+  }
+  .i-vague {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: var(--onde);
+    overflow: hidden;
+  }
+  .i-vague-haut {
+    top: 0;
+  }
+  .i-vague-bas {
+    bottom: 0;
+    transform: scaleY(-1);
+  }
+  .i-vague svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200%;
+    height: 100%;
+    display: block;
+    will-change: transform;
+  }
+  .ouvre .i-onde-avant {
+    animation: i-houle 3.2s linear infinite;
+  }
+  .ouvre .i-onde-fond {
+    animation: i-houle 4.6s linear infinite reverse;
+  }
+  @keyframes i-houle {
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  .i-mot {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    text-align: center;
+  }
+  .i-mot-nom {
+    font-family: var(--font-titre);
+    font-weight: 800;
+    font-size: clamp(2.2rem, 6vw, 4.2rem);
+    letter-spacing: 0.32em;
+    padding-left: 0.32em;
+    text-transform: uppercase;
+    color: var(--color-creme);
+  }
+  .i-mot-sig {
+    font-family: var(--font-script);
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1;
+    color: var(--color-dore-clair);
+    rotate: -3deg;
+  }
+
+  /* ---------- passer ---------- */
+  .i-passer {
+    position: absolute;
+    right: max(1rem, env(safe-area-inset-right), 3vw);
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+    z-index: 3;
+    padding: 0 0.25rem;
+    background-color: transparent;
+    border: 0;
+    font-family: var(--font-texte);
+    color: rgb(245 233 228 / 0.92);
+    cursor: pointer;
+  }
+  .i-passer:focus-visible {
+    outline: 1px solid var(--color-dore-clair);
+    outline-offset: 4px;
+  }
+
+  /* une fois cliquée, la bouteille n'est plus interactive */
+  .ouvre .i-bouteille {
+    pointer-events: none;
+    cursor: default;
+  }
+  .ouvre .i-flotte {
+    animation-play-state: paused;
+  }
+  .ouvre .i-lift {
+    transition: none;
+    transform: none;
+  }
+</style>

@@ -1,8 +1,9 @@
 ---
 /**
- * Bouton fixe en bas d’écran sur mobile. Il apparaît une fois le haut de page passé
- * (bouton du hero sur l’accueil, sinon un peu de défilement) et s’efface quand le pied de page
- * ou un bloc d’appel au pilote est à l’écran. Absent de la page /pilote, qui est déjà l’inscription.
+ * Bouton fixe en bas d’écran, sur mobile et tablette. Il apparaît une fois le premier écran passé
+ * (et le bouton du hero hors champ s’il existe), s’efface quand le pied de page ou un bloc
+ * d’appel `[data-page-cta]` est à l’écran, reste caché pendant l’intro de l’accueil
+ * (`html.intro-active`). Absent de /pilote, qui est déjà l’inscription.
  */
 import { lienInscription } from '../data/site';
 const chemin = Astro.url.pathname.replace(/\/+$/, '');
@@ -10,11 +11,7 @@ const masque = chemin === '/pilote';
 ---
 {
   !masque && (
-    <div
-      class="fixed inset-x-0 bottom-0 z-50 translate-y-full border-t border-filet bg-creme/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-sm transition-transform duration-300 data-[visible=true]:translate-y-0 lg:hidden"
-      data-cta-mobile
-      data-visible="false"
-    >
+    <div class="cta-mobile" data-cta-mobile data-visible="false" inert>
       <a href={lienInscription} class="btn btn-primaire w-full" tabindex="-1" data-cta-lien>
         Rejoindre le programme pilote
       </a>
@@ -22,42 +19,95 @@ const masque = chemin === '/pilote';
   )
 }
 
+<style>
+  .cta-mobile {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 45;
+    padding: 0.75rem 1rem max(0.75rem, env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--color-creme) 94%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 -1px 0 var(--color-filet);
+    transform: translateY(105%);
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .cta-mobile[data-visible='true'] {
+    transform: none;
+  }
+  /* filet doré fin au-dessus du bouton */
+  .cta-mobile::before {
+    content: '';
+    position: absolute;
+    inset: -1px 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-dore), transparent);
+  }
+  .cta-mobile :global(.btn) {
+    min-height: 3rem;
+    padding-block: 0.95rem 0.8rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    padding-inline: 0.75rem;
+    white-space: nowrap;
+  }
+  @media (min-width: 64rem) {
+    .cta-mobile {
+      display: none;
+    }
+  }
+  :global(html.intro-active) .cta-mobile {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cta-mobile {
+      transition: none;
+    }
+  }
+</style>
+
 <script>
   const barre = document.querySelector<HTMLElement>('[data-cta-mobile]');
   const lien = barre?.querySelector<HTMLAnchorElement>('[data-cta-lien]');
 
-  if (barre && lien && 'IntersectionObserver' in window) {
-    // Sentinelle : le bouton du hero s’il existe, sinon une sentinelle posée à 500 px du haut.
-    let hero: Element | null = document.querySelector('[data-hero-cta]');
-    if (!hero) {
-      const s = document.createElement('div');
-      s.setAttribute('aria-hidden', 'true');
-      s.style.cssText = 'position:absolute;top:500px;left:0;width:1px;height:1px;pointer-events:none';
-      document.body.style.position ||= 'relative';
-      document.body.prepend(s);
-      hero = s;
-    }
+  if (barre && lien) {
+    const html = document.documentElement;
+    const hero = document.querySelector('[data-hero-cta]');
     const cibles = [document.querySelector('[data-page-cta]'), document.querySelector('footer')].filter(Boolean) as Element[];
-    let heroVisible = true;
     const ciblesVisibles = new Set<Element>();
+    let heroVisible = !!hero;
+    let passeEcran = false;
 
     const mettreAJour = () => {
-      const visible = !heroVisible && ciblesVisibles.size === 0;
+      const visible = passeEcran && !heroVisible && ciblesVisibles.size === 0 && !html.classList.contains('intro-active');
       barre.dataset.visible = String(visible);
-      // Hors écran, le bouton ne doit pas recevoir le focus clavier.
+      // Hors écran, le bouton ne doit pas recevoir le focus clavier ni être lu.
       lien.tabIndex = visible ? 0 : -1;
       barre.toggleAttribute('inert', !visible);
     };
 
-    new IntersectionObserver(([entree]) => {
-      heroVisible = entree.isIntersecting || entree.boundingClientRect.top > 0;
+    // « Après le premier écran » : on a défilé de plus de 85 % de la hauteur de l’écran.
+    const surDefilement = () => {
+      passeEcran = window.scrollY > window.innerHeight * 0.85;
       mettreAJour();
-    }).observe(hero);
+    };
+    window.addEventListener('scroll', surDefilement, { passive: true });
+    window.addEventListener('resize', surDefilement);
 
-    const observateur = new IntersectionObserver((entrees) => {
-      entrees.forEach((e) => (e.isIntersecting ? ciblesVisibles.add(e.target) : ciblesVisibles.delete(e.target)));
-      mettreAJour();
-    });
-    cibles.forEach((c) => observateur.observe(c));
+    if ('IntersectionObserver' in window) {
+      if (hero) {
+        new IntersectionObserver(([entree]) => {
+          heroVisible = entree.isIntersecting;
+          mettreAJour();
+        }).observe(hero);
+      }
+      const observateur = new IntersectionObserver((entrees) => {
+        entrees.forEach((e) => (e.isIntersecting ? ciblesVisibles.add(e.target) : ciblesVisibles.delete(e.target)));
+        mettreAJour();
+      });
+      cibles.forEach((c) => observateur.observe(c));
+    }
+    document.addEventListener('cuvee:intro-fin', mettreAJour);
+    surDefilement();
   }
 </script>

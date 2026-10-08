@@ -14,7 +14,7 @@ const lignes = [
 const total = lignes.reduce((somme, l) => somme + l.commande, 0);
 const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
 ---
-<div class="relative mx-auto w-full max-w-md lg:max-w-none">
+<div class="bon relative mx-auto w-full max-w-md lg:max-w-none">
   <!-- feuille du dessous, pour l’effet de carnet -->
   <div
     class="papier absolute inset-0 translate-x-2 translate-y-3 rotate-[2.2deg] opacity-80 lg:translate-x-3"
@@ -34,13 +34,13 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
         <p class="surtitre text-encre-douce">Proposition de commande</p>
         <p class="cachet shrink-0 text-bordeaux">Exemple illustratif</p>
       </div>
-      <p class="mt-3 font-serif text-2xl leading-tight font-medium">Domaine A · Anjou</p>
-      <p class="chiffres mt-1 text-[0.85rem] text-encre-douce">Préparée lundi à 7 h 02</p>
+      <p class="bon-titre mt-3 text-[1.45rem] leading-tight text-encre">Domaine A · Anjou</p>
+      <p class="chiffres mt-1 text-[0.9rem] tracking-[0.04em] text-encre-douce">Préparée lundi à 7 h 02</p>
 
       <table class="mt-5 w-full text-left">
         <caption class="sr-only">Quantités proposées par référence</caption>
         <thead>
-          <tr class="surtitre border-b border-encre text-encre-douce">
+          <tr class="surtitre border-b-2 border-dore text-encre-douce">
             <th scope="col" class="pb-2 font-medium">Référence</th>
             <th scope="col" class="pb-2 text-right font-medium whitespace-nowrap">
               <span class="sm:hidden">Cave</span><span class="hidden sm:inline">En cave</span>
@@ -70,7 +70,7 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
           }
         </tbody>
         <tfoot>
-          <tr class="total-ligne">
+          <tr class="total-ligne border-t-2 border-dore">
             <th scope="row" class="pt-3 align-top font-semibold">Total</th>
             <td colspan="2" class="pt-3 pl-3 text-right">
               <span class="chiffres font-medium whitespace-nowrap"><span data-total-nb>{total}</span> bouteilles</span>
@@ -80,7 +80,7 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
         </tfoot>
       </table>
 
-      <p class="mt-3 flex items-center gap-2 text-[0.9rem] text-vert">
+      <p class="mt-3 flex items-center gap-2 text-[0.92rem] text-bordeaux">
         <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" class="shrink-0">
           <path d="M2.5 7.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.8" />
         </svg>
@@ -88,7 +88,7 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
       </p>
 
       <p class="mt-4 border-l-2 border-dore bg-creme/60 py-2 pr-2 pl-3 text-[0.95rem] leading-snug text-encre-douce">
-        <span class="font-semibold text-encre">Pourquoi maintenant :</span> à ce rythme, il ne restera plus d’Anjou blanc
+        <span class="font-semibold tracking-[0.02em] text-encre">Pourquoi maintenant :</span> à ce rythme, il ne restera plus d’Anjou blanc
         samedi. Le domaine livre en 5 jours : c’est à commander aujourd’hui.
       </p>
 
@@ -110,7 +110,7 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
           Modifier
         </button>
       </div>
-      <p class="mt-3 min-h-[1.25rem] text-[0.875rem] text-vert" role="status" data-demo-statut></p>
+      <p class="mt-3 min-h-[1.25rem] text-[0.875rem] text-bordeaux" role="status" data-demo-statut></p>
     </div>
 
     <span class="tampon tampon-auto bottom-8 right-8 max-sm:hidden" aria-hidden="true">Validé</span>
@@ -118,6 +118,53 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
 </div>
 
 <style>
+  /* Typographie maison pour l'objet « papier » : titre Outfit en capitales, texte Josefin, filets dorés */
+  .bon-titre {
+    font-family: var(--font-titre);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .bon :global(.chiffres) {
+    font-family: var(--font-texte);
+    font-variant-numeric: tabular-nums;
+  }
+  .bon :global(.chiffres.font-medium) {
+    font-family: var(--font-titre);
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+  .bon :global(.cachet) {
+    font-family: var(--font-texte);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    font-size: 0.68rem;
+    padding: 0.2rem 0.5rem 0.1rem;
+  }
+  .bon :global(thead th) {
+    letter-spacing: 0.14em;
+    font-weight: 600;
+  }
+  .bon :global(tbody th) {
+    letter-spacing: 0.01em;
+  }
+  .bon :global(.ligne-pointillee) {
+    border-bottom: 1px solid color-mix(in srgb, var(--color-dore) 45%, transparent);
+  }
+  .bon :global(.btn) {
+    padding: 0.9rem 1.25rem 0.75rem;
+    min-height: 2.9rem;
+    font-size: 0.76rem;
+    letter-spacing: 0.14em;
+  }
+  .bon :global(.tampon) {
+    border-color: var(--color-bordeaux);
+    color: var(--color-bordeaux);
+    font-family: var(--font-titre);
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    border-radius: 1px;
+  }
   /* Par défaut (sans JS, mouvement réduit, animation terminée) : état final, tout est écrit et tamponné. */
   .tampon-auto {
     opacity: 0.92;

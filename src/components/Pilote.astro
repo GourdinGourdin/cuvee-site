@@ -1,16 +1,23 @@
 ---
+/** Contenu de la page pilote : invitation et conditions, mise en place (vidéo), déroulé, formulaire (conclusion de la page). */
 import PiloteInvitation from './PiloteInvitation.astro';
 import PiloteFrise from './PiloteFrise.astro';
 import Formulaire from './Formulaire.astro';
+import Video from './maison/Video.astro';
 ---
 <PiloteInvitation />
-<PiloteFrise />
-<section aria-labelledby="bon-titre" class="border-t border-filet bg-creme-fonce py-16 lg:py-24">
-  <div class="conteneur">
-    <div class="mx-auto max-w-3xl">
-      <p class="surtitre flex items-center gap-3 text-bordeaux" data-reveal><span>Bon d’inscription</span><span class="h-px w-8 bg-dore" aria-hidden="true"></span></p>
-      <h2 id="bon-titre" class="mt-4 text-[2rem] leading-[1.1] font-medium tracking-[-0.015em] sm:text-5xl" data-reveal data-reveal-delai="1">Réservez votre <em class="text-bordeaux">place</em> au pilote.</h2>
-      <div class="mt-10" data-reveal data-reveal-delai="2"><Formulaire /></div>
-    </div>
+
+<section class="media-cadre voile sur-image sur-fond-sombre flex min-h-[78svh] items-center justify-center text-center text-creme" aria-labelledby="mise-en-place-titre">
+  <Video src="/media/mise-en-place.mp4" affiche="/media/mise-en-place-poster.jpg" />
+  <div class="absolute inset-0 bg-chai/45" aria-hidden="true"></div>
+  <div class="relative z-10 mx-auto max-w-3xl px-6 py-24 sm:px-10">
+    <p class="surtitre" data-reveal>La mise en place</p>
+    <h2 id="mise-en-place-titre" class="mt-5 text-[clamp(1.8rem,4vw,3.2rem)]" data-reveal data-reveal-delai="1">
+      Rien d’engageant ne part sans votre validation
+    </h2>
+    <span class="signature mt-3" data-reveal data-reveal-delai="2">votre feu vert, toujours</span>
   </div>
 </section>
+
+<PiloteFrise />
+<Formulaire />

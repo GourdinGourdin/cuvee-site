@@ -1,35 +1,116 @@
 ---
+/**
+ * Pied de page de toutes les pages : emblème et signature, navigation, contact, mentions.
+ * La mention santé est obligatoire et doit rester lisible.
+ */
 import Embleme from './Embleme.astro';
 import ACompleter from '../ACompleter.astro';
 import { site, navigation, lienInscription } from '../../data/site';
 
 const annee = new Date().getFullYear();
+const chemin = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const actif = (href: string) => (href === '/' ? chemin === '/' : chemin === href || chemin.startsWith(href + '/'));
 ---
-<footer class="sur-fond-sombre bg-chai px-4 pt-20 pb-10 text-creme">
-  <div class="mx-auto flex max-w-[76rem] flex-col items-center text-center">
-    <a href="/" class="flex flex-col items-center gap-2 text-creme no-underline" aria-label="Cuvée, retour à l’accueil">
-      <Embleme taille={22} />
-      <span class="font-[family-name:var(--font-titre)] text-2xl font-extrabold tracking-[0.32em] [margin-right:-0.32em]">CUVÉE</span>
-    </a>
-    <span class="signature mt-4 text-[2.2rem]!">assistant de cave</span>
+<footer class="pied sur-fond-sombre bg-chai px-4 pt-20 pb-10 text-creme lg:pt-24" aria-label="Pied de page">
+  <div class="mx-auto max-w-[76rem]">
+    <div class="grid gap-14 lg:grid-cols-[1.1fr_1fr_1fr] lg:gap-16">
+      <div class="flex flex-col items-center text-center lg:items-start lg:text-left" data-reveal>
+        <a href="/" class="flex flex-col items-center gap-2 text-creme no-underline" aria-label="Cuvée, retour à l’accueil">
+          <Embleme taille={44} />
+          <span class="font-[family-name:var(--font-titre)] text-2xl font-extrabold tracking-[0.32em] [margin-right:-0.32em]">CUVÉE</span>
+        </a>
+        <span class="signature mt-4 text-[2.2rem]!">assistant de cave</span>
+        <p class="mt-5 max-w-[22rem] text-[1rem] leading-relaxed text-creme/75">
+          Cuvée est en construction, avec des lieux indépendants.
+        </p>
+      </div>
 
-    <nav aria-label="Pied de page" class="mt-12">
-      <ul role="list" class="flex flex-wrap justify-center gap-x-8 gap-y-2">
-        {navigation.filter((n) => n.href !== '/').map((n) => <li><a href={n.href} class="lien-cap">{n.libelle}</a></li>)}
-      </ul>
-    </nav>
+      <nav aria-label="Pied de page" class="text-center lg:text-left" data-reveal data-reveal-delai="1">
+        <p class="surtitre text-dore-clair">Explorer</p>
+        <ul role="list" class="mt-5 flex flex-col items-center gap-1 lg:items-start">
+          {
+            navigation.map((n) => (
+              <li>
+                <a href={n.href} class="pied-nav" aria-current={actif(n.href) ? 'page' : undefined}>{n.libelle}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
 
-    <p class="mt-8 text-creme/75">
-      {site.emailContact ? <a href={`mailto:${site.emailContact}`} class="lien">{site.emailContact}</a> : <ACompleter texte="email de contact" />}
-      <span class="mx-3" aria-hidden="true">·</span>
-      <a href={lienInscription} class="lien">Rejoindre le programme pilote</a>
-    </p>
-
-    <div class="filet-double mt-14 w-full opacity-50" aria-hidden="true"></div>
-    <div class="mt-6 flex w-full flex-col gap-3 text-[0.875rem] text-creme/60 sm:flex-row sm:items-center sm:justify-between">
-      <p>© {annee} Cuvée · <a href="/mentions-legales/" class="lien">Mentions légales</a> · <a href="/confidentialite/" class="lien">Confidentialité</a></p>
-      <p>Photos et vidéos : Pexels (licence libre), à remplacer par nos propres prises de vue.</p>
+      <div class="text-center lg:text-left" data-reveal data-reveal-delai="2">
+        <p class="surtitre text-dore-clair">Nous écrire</p>
+        <p class="mt-5 text-creme/85">
+          {site.emailContact ? <a href={`mailto:${site.emailContact}`} class="lien">{site.emailContact}</a> : <ACompleter texte="email de contact" />}
+        </p>
+        <a href={lienInscription} class="btn btn-creme pied-btn mt-6">Rejoindre le programme pilote</a>
+      </div>
     </div>
-    <p class="mt-4 text-[0.875rem] text-creme/60">L’abus d’alcool est dangereux pour la santé, à consommer avec modération.</p>
+
+    <div class="filet-double mt-16 w-full opacity-50" aria-hidden="true"></div>
+
+    <div class="mt-6 flex flex-col gap-3 text-[0.9rem] text-creme/70 lg:flex-row lg:items-center lg:justify-between">
+      <p class="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 lg:justify-start">
+        <span>© {annee} Cuvée</span>
+        <a href="/mentions-legales/" class="lien">Mentions légales</a>
+        <a href="/confidentialite/" class="lien">Confidentialité</a>
+        <a href="/?intro=1" class="lien pied-intro">Revoir l’intro</a>
+      </p>
+      <p class="text-center lg:text-right">Photos et vidéos : Pexels (licence libre), à remplacer par nos propres prises de vue.</p>
+    </div>
+    <p class="mt-5 text-center text-[0.95rem] text-creme/80 lg:text-left">L’abus d’alcool est dangereux pour la santé, à consommer avec modération.</p>
   </div>
 </footer>
+
+<style>
+  .pied-nav {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-family: var(--font-titre);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: rgb(245 233 228 / 0.85);
+    transition:
+      color 0.3s ease,
+      translate 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .pied-nav::before {
+    content: '';
+    width: 0;
+    height: 1px;
+    margin-right: 0;
+    background: var(--color-dore);
+    transition:
+      width 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      margin-right 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .pied-nav:hover,
+  .pied-nav:focus-visible,
+  .pied-nav[aria-current='page'] {
+    color: var(--color-creme);
+  }
+  .pied-nav:hover::before,
+  .pied-nav:focus-visible::before,
+  .pied-nav[aria-current='page']::before {
+    width: 1.25rem;
+    margin-right: 0.7rem;
+  }
+  .pied-btn {
+    letter-spacing: 0.13em;
+    padding-inline: 1.2rem;
+    white-space: nowrap;
+  }
+  .pied-intro {
+    opacity: 0.85;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pied-nav,
+    .pied-nav::before {
+      transition: none;
+    }
+  }
+</style>

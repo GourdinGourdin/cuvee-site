@@ -4,134 +4,288 @@ import { avecPlaceholders } from '../lib/texte';
 import { site, lienInscription } from '../data/site';
 
 const contact = site.emailContact;
-const compte = (t: string) => faq.filter((q) => q.theme === t).length;
+// Chaque question garde son numéro d’origine (ancre #q-N), les groupes suivent l’ordre des thèmes.
+const indexees = faq.map((q, i) => ({ ...q, i }));
+const groupes = themes.map((t) => ({ theme: t, questions: indexees.filter((q) => q.theme === t) }));
+const slug = (t: string) => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 ---
-<section id="faq" aria-labelledby="faq-titre" class="py-14 lg:py-24">
-  <div class="conteneur grid gap-10 lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)] lg:gap-16">
-    <aside class="lg:sticky lg:top-24 lg:self-start" aria-label="Rechercher et filtrer les questions">
-      <h2 id="faq-titre" class="font-serif text-2xl font-medium">Trouver une réponse</h2>
-
-      <div class="mt-4">
-        <label for="faq-recherche" class="etiquette-champ">Rechercher une question</label>
-        <input id="faq-recherche" type="search" class="champ faq-recherche" placeholder="caisse, prix, données…" autocomplete="off" />
-      </div>
-
-      <div class="mt-5" role="group" aria-labelledby="faq-themes-libelle">
-        <p id="faq-themes-libelle" class="surtitre text-encre-douce">Par thème</p>
-        <div class="mt-2 flex flex-wrap gap-2">
-          <button type="button" class="faq-filtre" data-theme="" aria-pressed="true">Tout <span class="chiffres">{faq.length}</span></button>
-          {themes.map((t) => <button type="button" class="faq-filtre" data-theme={t} aria-pressed="false">{t} <span class="chiffres">{compte(t)}</span></button>)}
-        </div>
-      </div>
-
-      <p class="mt-4 min-h-[1.5rem] text-[0.9rem] text-encre-douce" role="status" aria-live="polite" data-faq-statut></p>
-
-      <nav class="mt-6 hidden border-t border-filet pt-4 lg:block" aria-label="Sommaire des questions">
-        <ol role="list" class="grid gap-1">
-          {faq.map((q, i) => (
-            <li data-toc={String(i)}><a href={`#q-${i + 1}`} class="faq-toc flex gap-3 py-1 text-[0.9rem] leading-snug text-encre-douce hover:text-bordeaux"><span class="chiffres text-bordeaux">{String(i + 1).padStart(2, '0')}</span><span>{q.question}</span></a></li>
-          ))}
-        </ol>
-      </nav>
-    </aside>
-
-    <div>
-      <div class="border-t-2 border-encre" data-reveal data-faq-liste>
-        {
-          faq.map((item, i) => (
-            <details id={`q-${i + 1}`} class="faq-item group border-b border-filet" data-theme={item.theme} data-index={String(i)}>
-              <summary class="faq-question flex items-start gap-4 py-5 font-serif text-xl leading-snug font-medium transition-colors hover:text-bordeaux sm:text-[1.35rem]">
-                <span class="chiffres mt-2 shrink-0 text-[0.8rem] text-bordeaux" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                <span class="grow">{item.question}</span>
-                <span class="faq-signe relative mt-3 h-3.5 w-3.5 shrink-0 text-bordeaux" aria-hidden="true" />
-              </summary>
-              <div class="faq-reponse grid gap-3 pr-8 pb-6 pl-9 text-encre-douce">
-                <p class="surtitre text-bordeaux">{item.theme}</p>
-                {item.reponse.map((paragraphe) => (
-                  <p set:html={avecPlaceholders(paragraphe)} />
-                ))}
-              </div>
-            </details>
-          ))
-        }
-      </div>
-
-      <p class="mt-8 hidden border border-dashed border-bordure p-5 text-encre-douce" data-faq-vide>
-        Aucune question ne correspond à cette recherche. Écrivez-nous plutôt ci-dessous.
+<section id="faq" aria-label="Questions fréquentes" class="faq bg-creme py-24 lg:py-32">
+  <div class="mx-auto grid max-w-[76rem] grid-cols-[minmax(0,1fr)] gap-12 px-4 sm:px-8 lg:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] lg:gap-24">
+    <aside class="faq-nav min-w-0 lg:sticky lg:top-28 lg:self-start" aria-label="Rechercher et filtrer les questions">
+      <p class="surtitre hidden items-center gap-4 text-bordeaux lg:flex" data-reveal>
+        <span>Les thèmes</span><span class="h-px w-8 bg-dore" aria-hidden="true"></span>
       </p>
 
-      <div class="faq-ecrire papier mt-10 p-6 sm:p-8" data-reveal>
-        <p class="surtitre text-bordeaux">Votre question n’est pas là ?</p>
-        <p class="mt-3 font-serif text-2xl leading-snug font-medium">Écrivez-nous directement, nous répondons nous-mêmes.</p>
-        <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-          {contact ? (
-            <a href={`mailto:${contact}`} class="btn btn-primaire w-full sm:w-auto">{contact}</a>
-          ) : (
-            <p><mark class="a-completer">[À COMPLÉTER : email de contact]</mark></p>
-          )}
-          <a href={lienInscription} class="lien lien-seul">ou posez-la dans le formulaire du pilote</a>
-        </div>
+      <div class="faq-recherche-bloc" data-reveal>
+        <label for="faq-recherche" class="sr-only">Rechercher une question</label>
+        <svg class="faq-loupe" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8.5" cy="8.5" r="5.5" /><path d="m13 13 4.5 4.5" /></svg>
+        <input id="faq-recherche" type="search" class="faq-recherche" placeholder="Caisse, prix, données…" autocomplete="off" />
       </div>
+
+      <div class="faq-themes" role="group" aria-label="Filtrer par thème" data-reveal data-reveal-delai="1">
+        <button type="button" class="faq-theme" data-theme="" aria-pressed="true"><span>Tout</span><span class="faq-compte">{faq.length}</span></button>
+        {groupes.map((g) => <button type="button" class="faq-theme" data-theme={g.theme} aria-pressed="false"><span>{g.theme}</span><span class="faq-compte">{g.questions.length}</span></button>)}
+      </div>
+
+      <p class="mt-5 min-h-[1.5rem] text-[0.9rem] text-encre-douce" role="status" aria-live="polite" data-faq-statut></p>
+    </aside>
+
+    <div data-faq-liste>
+      {
+        groupes.map((g) => (
+          <section class="faq-groupe" aria-labelledby={`faq-g-${slug(g.theme)}`} data-groupe={g.theme}>
+            <div class="faq-groupe-tete" data-reveal>
+              <h2 id={`faq-g-${slug(g.theme)}`} class="text-[clamp(1.3rem,2.2vw,1.7rem)] text-bordeaux">{g.theme}</h2>
+              <span class="h-px grow bg-dore/70" aria-hidden="true"></span>
+              <span class="chapitre-num text-encre-douce" aria-hidden="true">{String(g.questions.length).padStart(2, '0')}</span>
+            </div>
+            <div>
+              {g.questions.map((item, k) => (
+                <details id={`q-${item.i + 1}`} class="faq-item" data-theme={item.theme} data-reveal data-reveal-delai={String(Math.min(k + 1, 4))}>
+                  <summary class="faq-question">
+                    <span class="faq-intitule">{item.question}</span>
+                    <span class="faq-signe" aria-hidden="true" />
+                  </summary>
+                  <div class="faq-reponse">
+                    {item.reponse.map((paragraphe) => (
+                      <p set:html={avecPlaceholders(paragraphe)} />
+                    ))}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </section>
+        ))
+      }
+
+      <p class="faq-vide hidden" data-faq-vide>
+        Aucune question ne correspond à cette recherche. Écrivez-nous plutôt ci-dessous.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="autre-titre" class="faq-autre bg-papier px-4 py-24 text-center lg:py-32">
+  <div class="mx-auto flex max-w-2xl flex-col items-center">
+    <span class="h-12 w-px bg-dore" aria-hidden="true" data-reveal></span>
+    <p class="surtitre mt-8 text-bordeaux" data-reveal data-reveal-delai="1">Votre question n’est pas là&nbsp;?</p>
+    <h2 id="autre-titre" class="mt-5 text-[clamp(1.7rem,3.2vw,2.5rem)] text-encre" data-reveal data-reveal-delai="2">Une autre question&nbsp;?</h2>
+    <span class="signature mt-2" data-reveal data-reveal-delai="3">écrivez-nous</span>
+    <p class="mt-8 text-encre-douce" data-reveal data-reveal-delai="3">Écrivez-nous directement, nous répondons nous-mêmes.</p>
+    <div class="mt-10 flex flex-col items-center gap-6" data-reveal data-reveal-delai="4">
+      {
+        contact ? (
+          <a href={`mailto:${contact}`} class="btn btn-primaire">{contact}</a>
+        ) : (
+          <p><mark class="a-completer">[À COMPLÉTER : email de contact]</mark></p>
+        )
+      }
+      <a href={lienInscription} class="lien-cap text-bordeaux">Ou posez-la dans le formulaire du pilote</a>
     </div>
   </div>
 </section>
 
 <style is:global>
-  .faq-filtre {
-    min-height: 2.75rem;
-    padding: 0.4rem 0.9rem;
-    border: 1px solid var(--color-bordure);
-    border-radius: 999px;
+  /* ---- Navigation : recherche + thèmes ---- */
+  .faq-recherche-bloc { position: relative; margin-top: 1.5rem; }
+  .faq-loupe { position: absolute; left: 0; top: 50%; translate: 0 -50%; color: var(--color-bordeaux); pointer-events: none; }
+  .faq-recherche {
+    display: block;
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.5rem 0.25rem 0.5rem 2rem;
+    border: 0;
+    border-bottom: 1px solid var(--color-encre-douce);
+    border-radius: 0;
     background: transparent;
     color: var(--color-encre);
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    font: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
-  .faq-filtre .chiffres { font-size: 0.75rem; opacity: 0.8; margin-left: 0.15rem; }
-  .faq-filtre:hover { border-color: var(--color-bordeaux); color: var(--color-bordeaux); }
-  .faq-filtre[aria-pressed="true"] { background: var(--color-bordeaux); border-color: var(--color-bordeaux); color: var(--color-creme); }
-  .faq-toc { transition: translate 0.25s ease, color 0.2s ease; }
-  .faq-toc:hover { translate: 4px 0; }
-  .faq-item[hidden], [data-faq-liste] [hidden] { display: none; }
-  [data-toc][hidden] { display: none; }
-  .faq-item:target { background: var(--color-bordeaux-clair); }
+  .faq-recherche::placeholder { color: var(--color-encre-douce); opacity: 0.85; }
+  .faq-recherche:hover { border-bottom-color: var(--color-bordeaux); }
+  .faq-recherche:focus-visible { outline: none; border-bottom-color: var(--color-bordeaux); box-shadow: 0 1px 0 var(--color-bordeaux); }
+  .faq-recherche-bloc:focus-within { outline: 2px solid var(--color-bordeaux); outline-offset: 4px; }
+  .faq-recherche::-webkit-search-cancel-button { cursor: pointer; }
 
-  /* Ouverture animée : navigateurs récents (::details-content + interpolate-size) ; ailleurs, l’ouverture reste instantanée. */
-  @supports (interpolate-size: allow-keywords) {
-    .faq-item { interpolate-size: allow-keywords; }
-    .faq-item::details-content {
-      block-size: 0;
-      overflow: clip;
-      opacity: 0;
-      transition: block-size 0.35s ease, opacity 0.3s ease, content-visibility 0.35s allow-discrete;
+  .faq-themes {
+    display: flex;
+    margin: 1.25rem -1rem 0;
+    padding: 0 1rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: 1.75rem;
+    border-bottom: 1px solid var(--color-filet);
+  }
+  .faq-themes::-webkit-scrollbar { display: none; }
+  .faq-theme {
+    position: relative;
+    display: flex;
+    flex: none;
+    align-items: baseline;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.7rem 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-encre-douce);
+    font-family: var(--font-titre);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.25s ease, translate 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .faq-theme::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--color-bordeaux);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .faq-compte { font-weight: 300; font-size: 0.78rem; letter-spacing: 0.1em; }
+  .faq-theme:hover { color: var(--color-bordeaux); }
+  .faq-theme[aria-pressed="true"] { color: var(--color-bordeaux); }
+  .faq-theme[aria-pressed="true"]::after { transform: scaleX(1); }
+
+  @media (min-width: 64rem) {
+    .faq-themes {
+      flex-direction: column;
+      margin: 1.5rem 0 0;
+      padding: 0;
+      overflow: visible;
+      gap: 0;
+      border-bottom: 0;
+      border-left: 1px solid var(--color-filet);
     }
-    .faq-item[open]::details-content { block-size: auto; opacity: 1; }
+    .faq-theme { justify-content: space-between; padding: 0.7rem 0 0.7rem 1.25rem; }
+    .faq-theme::after { left: -1px; right: auto; top: 0; bottom: 0; width: 2px; height: auto; transform: scaleY(0); transform-origin: top; background: var(--color-dore); }
+    .faq-theme[aria-pressed="true"]::after { transform: scaleY(1); }
+    .faq-theme:hover { translate: 4px 0; }
   }
-  .faq-item .faq-signe { transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1.2); }
-  .faq-item[open] .faq-signe { transform: rotate(135deg); }
-  .faq-item[open] .faq-signe::after { transform: rotate(90deg); }
+
+  /* ---- Groupes ---- */
+  .faq-groupe + .faq-groupe { margin-top: 4.5rem; }
+  .faq-groupe[hidden], .faq-item[hidden] { display: none; }
+  .faq-groupe-tete { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 0.75rem; }
+
+  /* ---- Accordéons ---- */
+  .faq-item { border-bottom: 1px solid var(--color-filet); scroll-margin-top: 6rem; transition: background-color 0.6s ease; }
+  .faq-groupe-tete + div > .faq-item:first-child { border-top: 1px solid var(--color-filet); }
+  .faq-item:target { background: var(--color-bordeaux-clair); }
   .faq-question {
-    background-image: linear-gradient(var(--color-bordeaux), var(--color-bordeaux));
-    background-repeat: no-repeat;
-    background-position: left bottom;
-    background-size: 0% 2px;
-    transition: background-size 0.35s ease, color 0.2s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 3.5rem;
+    padding: 1.4rem 0;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-titre);
+    font-size: clamp(0.95rem, 1.5vw, 1.05rem);
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-encre);
+    transition: color 0.3s ease, padding 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .faq-item[open] .faq-question, .faq-question:hover { background-size: 100% 2px; }
-  .faq-item[open] .faq-question { color: var(--color-bordeaux); }
+  .faq-question::-webkit-details-marker { display: none; }
+  .faq-question::marker { content: ""; }
+  .faq-question::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    height: 1px;
+    width: 100%;
+    background: var(--color-dore);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .faq-question:hover, .faq-item[open] .faq-question { color: var(--color-bordeaux); }
+  .faq-question:hover::after, .faq-item[open] .faq-question::after { transform: scaleX(1); }
+  .faq-question:focus-visible { outline-offset: 6px; }
+
+  .faq-signe {
+    position: relative;
+    flex: none;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--color-dore);
+    border-radius: 50%;
+    color: var(--color-bordeaux);
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  .faq-signe::before, .faq-signe::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.8rem;
+    height: 1.5px;
+    background: currentColor;
+    translate: -50% -50%;
+    transition: rotate 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .faq-signe::after { rotate: 90deg; }
+  .faq-question:hover .faq-signe { border-color: var(--color-bordeaux); }
+  .faq-item[open] .faq-signe { transform: rotate(180deg); background: var(--color-bordeaux); border-color: var(--color-bordeaux); color: var(--color-creme); }
+  .faq-item[open] .faq-signe::after { rotate: 0deg; }
+
+  .faq-reponse {
+    display: grid;
+    gap: 1rem;
+    max-width: 40rem;
+    padding: 0 3.5rem 2.25rem 0;
+    color: var(--color-encre-douce);
+  }
+
+  /* Ouverture fluide en hauteur : navigateurs récents ; ailleurs, la réponse apparaît en fondu. */
+  @media (prefers-reduced-motion: no-preference) {
+    .faq-item[open] .faq-reponse { animation: faq-entree 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    @supports (interpolate-size: allow-keywords) {
+      .faq-item { interpolate-size: allow-keywords; }
+      .faq-item::details-content {
+        block-size: 0;
+        overflow: clip;
+        transition: block-size 0.5s cubic-bezier(0.22, 1, 0.36, 1), content-visibility 0.5s allow-discrete;
+      }
+      .faq-item[open]::details-content { block-size: auto; }
+    }
+  }
+  @keyframes faq-entree {
+    from { opacity: 0; translate: 0 -0.5rem; }
+    to { opacity: 1; translate: 0 0; }
+  }
+
+  .faq-vide { margin-top: 2rem; padding: 1.5rem; border: 1px dashed var(--color-dore); color: var(--color-encre-douce); }
+  .faq-vide.hidden { display: none; }
+
+  @media (max-width: 40rem) {
+    .faq-reponse { padding-right: 0; }
+  }
   @media (prefers-reduced-motion: reduce) {
-    .faq-item::details-content, .faq-item .faq-signe, .faq-toc, .faq-filtre { transition: none !important; }
+    .faq-item, .faq-question, .faq-question::after, .faq-signe, .faq-signe::before, .faq-signe::after, .faq-theme, .faq-theme::after { transition: none !important; }
   }
 </style>
 
 <script>
   const liste = document.querySelector<HTMLElement>('[data-faq-liste]');
   if (liste) {
+    const groupes = Array.from(liste.querySelectorAll<HTMLElement>('.faq-groupe'));
     const items = Array.from(liste.querySelectorAll<HTMLDetailsElement>('.faq-item'));
-    const tocs = Array.from(document.querySelectorAll<HTMLElement>('[data-toc]'));
-    const boutons = Array.from(document.querySelectorAll<HTMLButtonElement>('.faq-filtre'));
+    const boutons = Array.from(document.querySelectorAll<HTMLButtonElement>('.faq-theme'));
     const recherche = document.getElementById('faq-recherche') as HTMLInputElement;
     const statut = document.querySelector<HTMLElement>('[data-faq-statut]')!;
     const vide = document.querySelector<HTMLElement>('[data-faq-vide]')!;
@@ -145,8 +299,10 @@ const compte = (t: string) => faq.filter((q) => q.theme === t).length;
       items.forEach((d, i) => {
         const ok = (!theme || d.dataset.theme === theme) && mots.every((m) => textes[i].includes(m));
         d.hidden = !ok;
-        if (tocs[i]) tocs[i].hidden = !ok;
         if (ok) n++;
+      });
+      groupes.forEach((g) => {
+        g.hidden = !g.querySelector('.faq-item:not([hidden])');
       });
       vide.classList.toggle('hidden', n > 0);
       statut.textContent = recherche.value || theme ? `${n} question${n > 1 ? 's' : ''} affichée${n > 1 ? 's' : ''} sur ${items.length}` : '';
@@ -161,7 +317,7 @@ const compte = (t: string) => faq.filter((q) => q.theme === t).length;
     );
     recherche.addEventListener('input', filtrer);
 
-    // Un lien du sommaire ou une ancre ouvre la question visée.
+    // Une ancre (#q-3) ouvre la question visée.
     const ouvrirCible = () => {
       const cible = document.getElementById(location.hash.slice(1));
       if (cible instanceof HTMLDetailsElement) cible.open = true;

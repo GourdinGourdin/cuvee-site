@@ -2,6 +2,7 @@
 import Base from './Base.astro';
 import EnTete from '../components/maison/EnTete.astro';
 import PiedDePage from '../components/maison/PiedDePage.astro';
+import PageEntete from '../components/PageEntete.astro';
 
 interface Props {
   titre: string;
@@ -12,15 +13,75 @@ const { titre, description, surtitre } = Astro.props;
 ---
 <Base titre={`${titre} · Cuvée`} description={description}>
   <EnTete />
-  <main id="contenu" class="conteneur py-14 lg:py-20">
-    <div class="max-w-3xl">
-      <p class="surtitre text-bordeaux" data-reveal>{surtitre}</p>
-      <h1 data-reveal data-reveal-delai="1" class="mt-4 text-4xl leading-tight font-medium sm:text-5xl">{titre}</h1>
-      <div class="filet-double mt-8 w-24" aria-hidden="true"></div>
-      <div class="texte-courant mt-8 text-encre-douce">
+  <main id="contenu">
+    <PageEntete surtitre={surtitre} titre={titre} image="/media/cave-voutee.jpg" compact />
+    <div class="bg-papier px-5 py-20 sm:px-8 lg:py-28">
+      <div class="lecture mx-auto max-w-[44rem]">
         <slot />
       </div>
     </div>
   </main>
   <PiedDePage />
 </Base>
+
+<style>
+  .lecture {
+    font-size: 1.0625rem;
+    line-height: 1.85;
+    color: var(--color-encre-douce);
+  }
+  .lecture :global(h2) {
+    position: relative;
+    margin-top: 3.5rem;
+    padding-top: 1.75rem;
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    color: var(--color-encre);
+  }
+  .lecture :global(h2)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3.5rem;
+    height: 1px;
+    background: var(--color-dore);
+  }
+  .lecture :global(h2:first-child) {
+    margin-top: 0;
+  }
+  .lecture :global(p),
+  .lecture :global(ul) {
+    margin-top: 1rem;
+  }
+  .lecture :global(ul) {
+    padding-left: 1.25rem;
+    list-style: none;
+  }
+  .lecture :global(li) {
+    position: relative;
+  }
+  .lecture :global(li)::before {
+    content: '';
+    position: absolute;
+    left: -1.1rem;
+    top: 0.85em;
+    width: 0.4rem;
+    height: 1px;
+    background: var(--color-dore);
+  }
+  .lecture :global(li + li) {
+    margin-top: 0.5rem;
+  }
+  .lecture :global(a) {
+    color: var(--color-bordeaux);
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+  }
+  .lecture :global(a:hover) {
+    text-decoration-thickness: 2px;
+  }
+  .lecture :global(strong) {
+    color: var(--color-encre);
+    font-weight: 600;
+  }
+</style>

@@ -1,18 +1,21 @@
 ---
-import TitreSection from './TitreSection.astro';
+/** Calculateur « combien dort dans votre cave » : trois chiffres, de tête. Rien n'est enregistré. */
 ---
-<section id="calcul" aria-labelledby="calcul-titre" class="sur-fond-sombre overflow-x-clip bg-vert py-20 text-creme lg:py-28">
-  <div
-    class="conteneur grid gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:grid-rows-[auto_1fr] lg:gap-x-16 lg:gap-y-10"
-  >
-    <div data-reveal="gauche">
-      <TitreSection numero="2" libelle="Faites le calcul" id="calcul-titre" titre="Combien dort dans votre cave ?" sombre />
-      <p class="mt-6 max-w-lg text-lg text-creme-sourde" data-reveal data-reveal-delai="2">Trois chiffres, de tête. Rien n’est enregistré ni envoyé.</p>
+<section id="calcul" aria-labelledby="calcul-titre" class="calcul sur-fond-sombre relative overflow-x-clip bg-bordeaux-nuit py-24 text-creme lg:py-32">
+  <div class="absolute inset-x-0 top-0 mx-auto max-w-[76rem] px-4" aria-hidden="true">
+    <div class="filet-double"></div>
+  </div>
+  <div class="mx-auto grid max-w-[76rem] gap-12 px-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:grid-rows-[auto_1fr] lg:gap-x-20 lg:gap-y-10">
+    <div>
+      <p class="surtitre text-dore-clair" data-reveal>Faites le calcul</p>
+      <h2 id="calcul-titre" class="mt-4 text-[clamp(1.7rem,3vw,2.6rem)]" data-reveal-lignes>Combien dort dans votre cave&nbsp;?</h2>
+      <span class="signature mt-2 !text-dore-clair" data-reveal="ecriture" style="--d: 9">à la louche</span>
+      <p class="mt-8 max-w-lg text-lg text-creme/85" data-reveal data-reveal-delai="2">Trois chiffres, de tête. Rien n’est enregistré ni envoyé.</p>
     </div>
 
     <form
       data-reveal="droite"
-      class="papier papier-ombre p-5 text-encre sm:p-8 lg:col-start-2 lg:row-span-2 lg:row-start-1"
+      class="calc-fiche papier relative p-6 text-encre sm:p-10 lg:col-start-2 lg:row-span-2 lg:row-start-1"
       aria-label="Calculateur : argent qui dort en cave"
       data-calculateur
       novalidate
@@ -22,10 +25,10 @@ import TitreSection from './TitreSection.astro';
         <p class="cachet text-bordeaux" data-calc-exemple>Valeurs d’exemple</p>
       </div>
 
-      <div class="mt-5 grid gap-6">
+      <div class="mt-6 grid gap-7">
         <div>
           <label for="calc-stock" class="etiquette-champ">Valeur de votre stock de vin, en euros</label>
-          <span id="calc-stock-aide" class="aide-champ -mt-1 mb-2">Au prix d’achat, hors taxes</span>
+          <span id="calc-stock-aide" class="aide-champ -mt-1 mb-1">Au prix d’achat, hors taxes</span>
           <div class="relative">
             <input
               id="calc-stock"
@@ -35,18 +38,18 @@ import TitreSection from './TitreSection.astro';
               enterkeyhint="done"
               autocomplete="off"
               spellcheck="false"
-              class="champ chiffres pr-10 text-lg"
+              class="champ chiffres pr-8"
               value="30 000"
               aria-describedby="calc-stock-aide"
               data-calc-stock
             />
-            <span class="chiffres pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-encre-douce" aria-hidden="true">€</span>
+            <span class="calc-unite pointer-events-none absolute top-1/2 right-0 -translate-y-1/2" aria-hidden="true">€</span>
           </div>
         </div>
 
         <div>
           <label for="calc-dormant" class="etiquette-champ">Part du stock qui n’a pas bougé depuis 3 mois</label>
-          <span id="calc-dormant-aide" class="aide-champ -mt-1 mb-2">Une estimation à la louche suffit</span>
+          <span id="calc-dormant-aide" class="aide-champ -mt-1 mb-1">Une estimation à la louche suffit</span>
           <div class="flex items-center gap-4">
             <input
               id="calc-dormant"
@@ -56,17 +59,17 @@ import TitreSection from './TitreSection.astro';
               max="80"
               step="1"
               value="15"
-              class="h-11 w-full cursor-pointer accent-bordeaux"
+              class="calc-curseur h-11 w-full cursor-pointer"
               aria-describedby="calc-dormant-aide"
               data-calc-dormant
             />
-            <output for="calc-dormant" class="chiffres w-14 shrink-0 text-right text-lg font-medium" aria-hidden="true" data-calc-dormant-valeur>15 %</output>
+            <output for="calc-dormant" class="calc-unite w-16 shrink-0 text-right" aria-hidden="true" data-calc-dormant-valeur>15 %</output>
           </div>
         </div>
 
         <div>
           <label for="calc-heures" class="etiquette-champ">Heures par semaine sur les commandes et l’inventaire</label>
-          <span id="calc-heures-aide" class="aide-champ -mt-1 mb-2">Commandes, relances, comptage, saisie des factures</span>
+          <span id="calc-heures-aide" class="aide-champ -mt-1 mb-1">Commandes, relances, comptage, saisie des factures</span>
           <div class="relative max-w-[12rem]">
             <input
               id="calc-heures"
@@ -76,38 +79,39 @@ import TitreSection from './TitreSection.astro';
               enterkeyhint="done"
               autocomplete="off"
               spellcheck="false"
-              class="champ chiffres pr-10 text-lg"
+              class="champ chiffres pr-8"
               value="4"
               aria-describedby="calc-heures-aide"
               data-calc-heures
             />
-            <span class="chiffres pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-encre-douce" aria-hidden="true">h</span>
+            <span class="calc-unite pointer-events-none absolute top-1/2 right-0 -translate-y-1/2" aria-hidden="true">h</span>
           </div>
         </div>
       </div>
 
-      <div class="mt-8 border-t-2 border-encre pt-6">
+      <div class="mt-9" data-calc-resultats>
+        <div class="filet-double mb-7" aria-hidden="true"></div>
         <!-- jauge : part du stock qui dort -->
-        <div class="mb-6" aria-hidden="true">
-          <div class="h-2 w-full bg-creme-fonce">
+        <div class="mb-7" aria-hidden="true">
+          <div class="h-[5px] w-full bg-creme-fonce">
             <div class="jauge h-full bg-bordeaux" data-calc-jauge style="width:15%"></div>
           </div>
           <p class="surtitre mt-2 flex justify-between text-encre-douce"><span>Part qui dort</span><span>Reste du stock</span></p>
         </div>
-        <div class="grid gap-6 sm:grid-cols-2" aria-hidden="true">
+        <div class="grid gap-7 sm:grid-cols-2" aria-hidden="true">
           <div>
             <p class="surtitre text-encre-douce">Argent qui dort en cave</p>
-            <p class="mt-2 font-serif text-[clamp(2rem,9vw,2.6rem)] leading-none font-medium break-words text-bordeaux" data-calc-tresorerie>
+            <p class="calc-chiffre mt-2 text-[clamp(2rem,9vw,2.6rem)] break-words text-bordeaux" data-calc-tresorerie>
               4 500 €
             </p>
-            <p class="mt-2 text-[0.92rem] leading-snug text-encre-douce">dans des bouteilles qui ne sortent pas.</p>
+            <p class="mt-2 text-[0.95rem] leading-snug text-encre-douce">dans des bouteilles qui ne sortent pas.</p>
           </div>
           <div>
             <p class="surtitre text-encre-douce">Temps sur une année</p>
-            <p class="mt-2 font-serif text-[clamp(2rem,9vw,2.6rem)] leading-none font-medium text-bordeaux" data-calc-heures-an>
+            <p class="calc-chiffre mt-2 text-[clamp(2rem,9vw,2.6rem)] text-bordeaux" data-calc-heures-an>
               192 h
             </p>
-            <p class="mt-2 text-[0.92rem] leading-snug text-encre-douce" data-calc-journees>
+            <p class="mt-2 text-[0.95rem] leading-snug text-encre-douce" data-calc-journees>
               soit environ 24 journées de 8 heures.
             </p>
           </div>
@@ -116,24 +120,25 @@ import TitreSection from './TitreSection.astro';
         <p class="sr-only" role="status" aria-atomic="true" data-calc-resume></p>
       </div>
 
-      <p class="mt-6 text-[0.875rem] leading-snug text-encre-douce">
+      <p class="mt-7 text-[0.9rem] leading-snug text-encre-douce">
         Notre hypothèse : 48 semaines d’ouverture par an. Les valeurs de départ sont des exemples, pas des moyennes :
         mettez les vôtres.
       </p>
       <noscript>
-        <p class="mt-3 text-[0.875rem] text-encre-douce">
+        <p class="mt-3 text-[0.9rem] text-encre-douce">
           Le calcul a besoin de JavaScript. Les chiffres ci-dessus correspondent aux valeurs d’exemple.
         </p>
       </noscript>
     </form>
 
-    <div data-reveal data-reveal-delai="2" class="max-w-lg lg:col-start-1 lg:row-start-2 lg:self-start lg:border-t lg:border-creme/25 lg:pt-6">
-      <p class="text-creme-sourde">
+    <div data-reveal data-reveal-delai="3" class="max-w-lg lg:col-start-1 lg:row-start-2 lg:self-start lg:pt-2">
+      <span class="mb-6 block h-px w-14 bg-dore" aria-hidden="true"></span>
+      <p class="text-creme/85">
         <span class="font-semibold text-creme">Ce que nous visons avec Cuvée :</span> remettre une partie de cette somme en
         circulation et vous rendre une partie de ces heures. Combien exactement ? Nous ne le savons pas encore. C’est
         précisément ce que le pilote doit mesurer, lieu par lieu.
       </p>
-      <a href="/pilote#inscription" class="lien lien-seul mt-3 text-creme">Le mesurer avec nous</a>
+      <a href="/pilote#inscription" class="lien-cap mt-4 text-creme">Le mesurer avec nous</a>
     </div>
   </div>
 </section>
@@ -187,6 +192,7 @@ import TitreSection from './TitreSection.astro';
       const valeurStock = lireNombre(stock.value, MAX_STOCK);
       const immobilise = Math.round((valeurStock * pourcentage) / 100 / 10) * 10;
       jauge.style.width = `${pourcentage}%`;
+      dormant.style.setProperty('--p', `${(pourcentage / 80) * 100}%`);
       tresorerie.textContent = valeurStock ? euros.format(immobilise) : '—';
 
       const total = Math.round(lireNombre(heures.value, MAX_HEURES) * SEMAINES_OUVERTES);
@@ -252,13 +258,120 @@ import TitreSection from './TitreSection.astro';
           requestAnimationFrame(pas);
         };
         requestAnimationFrame(pas);
-      }, { threshold: 0.5 });
-      obs.observe(formulaire);
+      }, { threshold: 0.6 });
+      obs.observe(tresorerie.closest('[data-calc-resultats]') ?? formulaire);
     }
   }
 </script>
 
 <style>
+  /* La fiche : papier encadré d'un double filet doré, typographie maison */
+  .calc-fiche {
+    border: 0;
+    box-shadow:
+      inset 0 0 0 7px var(--color-papier),
+      inset 0 0 0 8px var(--color-dore),
+      0 30px 60px -30px rgb(0 0 0 / 0.55);
+  }
+  .calc-fiche :global(.filet-double) {
+    height: 5px;
+  }
+  .calcul :global(.etiquette-champ) {
+    margin-bottom: 0.25rem;
+    font-family: var(--font-texte);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.5;
+  }
+  .calcul :global(.aide-champ) {
+    font-size: 0.9rem;
+  }
+  .calcul :global(.champ) {
+    min-height: 3.5rem;
+    padding: 0.3rem 0 0.2rem;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--color-encre-douce);
+    border-radius: 0;
+    font-family: var(--font-titre);
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--color-encre);
+    transition:
+      border-color 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+  .calcul :global(.champ:hover) {
+    border-color: var(--color-encre);
+  }
+  .calcul :global(.champ:focus-visible) {
+    border-color: var(--color-bordeaux);
+    box-shadow: 0 1px 0 0 var(--color-bordeaux);
+    outline: none;
+  }
+  .calc-unite {
+    font-family: var(--font-titre);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--color-encre-douce);
+  }
+  .calc-chiffre {
+    font-family: var(--font-titre);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* curseur rectangulaire, piste bordeaux / filet */
+  .calc-curseur {
+    --p: 18.75%;
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+  }
+  .calc-curseur::-webkit-slider-runnable-track {
+    height: 2px;
+    background: linear-gradient(to right, var(--color-bordeaux) var(--p), var(--color-bordure) var(--p));
+  }
+  .calc-curseur::-moz-range-track {
+    height: 2px;
+    background: var(--color-bordure);
+  }
+  .calc-curseur::-moz-range-progress {
+    height: 2px;
+    background: var(--color-bordeaux);
+  }
+  .calc-curseur::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 1.1rem;
+    height: 1.7rem;
+    margin-top: -0.85rem;
+    border: 1px solid var(--color-dore);
+    border-radius: 1px;
+    background: var(--color-bordeaux);
+    transition: scale 0.2s ease;
+  }
+  .calc-curseur::-moz-range-thumb {
+    width: 1.1rem;
+    height: 1.7rem;
+    border: 1px solid var(--color-dore);
+    border-radius: 1px;
+    background: var(--color-bordeaux);
+  }
+  .calc-curseur:hover::-webkit-slider-thumb,
+  .calc-curseur:active::-webkit-slider-thumb {
+    scale: 1.12;
+  }
+  .calc-curseur:focus-visible {
+    outline: 2px solid var(--color-bordeaux);
+    outline-offset: 4px;
+  }
+
   .jauge {
     transition: width 0.5s cubic-bezier(0.3, 0.7, 0.2, 1);
   }

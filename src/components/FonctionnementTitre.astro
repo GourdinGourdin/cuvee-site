@@ -1,16 +1,27 @@
 ---
-/** Titre de section de /comment-ca-marche : numérotation propre à la page (01 / 03), filet doré qui se trace. */
-interface Props { numero: string; libelle: string; id: string; titre: string; sombre?: boolean }
-const { numero, libelle, id, titre } = Astro.props;
+/** Titre de section de /comment-ca-marche : chiffre romain, surtitre, titre en capitales, signature, chapô (slot). */
+interface Props {
+  numero?: string;
+  libelle: string;
+  id: string;
+  titre: string;
+  signature?: string;
+  sombre?: boolean;
+  centre?: boolean;
+}
+const { numero, libelle, id, titre, signature, sombre = false, centre = true } = Astro.props;
 ---
-<div class="max-w-3xl">
-  <p class="surtitre flex items-center gap-3 text-bordeaux" data-reveal>
-    <span class="chiffres">{numero} / 03</span>
-    <span class="titre-filet h-px w-8 bg-dore" aria-hidden="true"></span>
-    <span>{libelle}</span>
-  </p>
-  <h2 id={id} data-reveal data-reveal-delai="1" class="mt-4 text-[2rem] leading-[1.1] font-medium tracking-[-0.015em] sm:text-[2.6rem] lg:text-5xl">
+<div class:list={['mx-auto max-w-3xl', centre ? 'text-center' : 'mx-0 text-left', sombre ? 'text-creme' : 'text-encre']}>
+  {numero && <p class:list={['chapitre-num mb-3', sombre ? 'text-dore-clair' : 'text-bordeaux']} data-reveal>{numero}</p>}
+  <p class:list={['surtitre', sombre ? 'text-creme/80' : 'text-encre-douce']} data-reveal data-reveal-delai="1">{libelle}</p>
+  <h2
+    id={id}
+    class:list={['mt-5 text-[clamp(1.7rem,3.4vw,2.8rem)]', sombre ? 'text-creme' : 'text-bordeaux']}
+    data-reveal
+    data-reveal-delai="2"
+  >
     <Fragment set:html={titre} />
   </h2>
+  {signature && <span class:list={['signature mt-2', centre ? 'mx-auto' : '', sombre && '!text-dore-clair']} data-reveal data-reveal-delai="3">{signature}</span>}
   <slot />
 </div>

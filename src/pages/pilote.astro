@@ -4,16 +4,22 @@ import EnTete from '../components/maison/EnTete.astro';
 import PiedDePage from '../components/maison/PiedDePage.astro';
 import CtaMobile from '../components/CtaMobile.astro';
 import PageEntete from '../components/PageEntete.astro';
-import PageCta from '../components/PageCta.astro';
 import Pilote from '../components/Pilote.astro';
 ---
 <Base titre="Le programme pilote · Cuvée" description="Rejoignez le programme pilote de Cuvée : conditions, ce que nous attendons des premiers lieux, et formulaire d’inscription.">
   <EnTete />
   <main id="contenu">
-    <PageEntete surtitre="Programme pilote" titre="Construire Cuvée <em>avec les premiers lieux</em>." chapo="Nous cherchons quelques bars à vin et caves à manger indépendants pour essayer Cuvée, dire ce qui manque et façonner le produit." />
+    <PageEntete
+      surtitre="Programme pilote"
+      titre="Construire Cuvée avec les premiers lieux"
+      signature="avec vous"
+      chapo="Nous cherchons quelques bars à vin et caves à manger indépendants pour essayer Cuvée, dire ce qui manque et façonner le produit."
+      image="/media/assiette-ardoise.jpg"
+      numero="III"
+      vt="media-pilote"
+    />
     <Pilote />
   </main>
   <PiedDePage />
   <CtaMobile />
 </Base>
-

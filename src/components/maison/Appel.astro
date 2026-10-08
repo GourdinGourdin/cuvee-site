@@ -4,14 +4,15 @@ import { lienInscription } from '../../data/site';
 ---
 <section class="grid bg-bordeaux text-creme lg:grid-cols-2" aria-labelledby="appel-titre" data-page-cta>
   <div class="flex flex-col items-center justify-center px-6 py-24 text-center sm:px-12 lg:py-32">
-    <h2 id="appel-titre" class="text-[clamp(1.8rem,3.4vw,2.8rem)]" data-reveal>Prêt à essayer avec nous&nbsp;?</h2>
-    <span class="signature mt-2 !text-dore-clair" data-reveal data-reveal-delai="1">deux minutes, pas plus</span>
+    <p class="surtitre text-dore-clair" data-reveal>Programme pilote</p>
+    <h2 id="appel-titre" class="mt-4 text-[clamp(1.8rem,3.4vw,2.8rem)]" data-reveal-lignes>Prêt à essayer avec nous&nbsp;?</h2>
+    <span class="signature mt-2 !text-dore-clair" data-reveal="ecriture" style="--d: 9">deux minutes, pas plus</span>
     <p class="mt-8 max-w-md text-creme/85" data-reveal data-reveal-delai="2">
       Quelques lieux, quelques mois, et une équipe qui construit l’outil avec vous, pendant le service.
     </p>
     <a href={lienInscription} class="btn btn-creme mt-10" data-reveal data-reveal-delai="3">Rejoindre le programme pilote</a>
   </div>
-  <div class="media-cadre min-h-[70vh]">
+  <div class="media-cadre min-h-[70vh]" data-reveal="rideau">
     <Video src="/media/casier-main.mp4" affiche="/media/casier-main-poster.jpg" />
   </div>
 </section>

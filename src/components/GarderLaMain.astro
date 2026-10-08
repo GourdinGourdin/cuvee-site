@@ -1,5 +1,6 @@
 ---
 import FonctionnementTitre from './FonctionnementTitre.astro';
+import Video from './maison/Video.astro';
 import { avecPlaceholders } from '../lib/texte';
 
 const principes = [
@@ -51,67 +52,75 @@ const couleursStatut: Record<Statut, string> = {
   refuse: 'text-bordeaux',
 };
 ---
-<section id="controle" aria-labelledby="controle-titre" class="py-20 lg:py-28">
-  <div class="conteneur grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
-    <div>
+<section id="controle" aria-labelledby="controle-titre" class="bg-creme">
+  <div class="grid lg:grid-cols-2">
+    <div class="flex flex-col justify-center px-6 py-24 sm:px-12 lg:px-16 lg:py-32 xl:px-24">
       <FonctionnementTitre
-        numero="03"
         libelle="Vous gardez la main"
         id="controle-titre"
-        titre="C’est votre cave. Cuvée propose, <em class='text-bordeaux'>vous décidez</em>."
+        titre="C’est votre cave. Cuvée propose, vous décidez."
+        signature="le dernier mot vous revient"
+        centre={false}
       />
 
-      <dl class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+      <dl class="mt-12 grid gap-9">
         {
           principes.map((p, i) => (
-            <div class="principe border-t border-encre pt-4" data-reveal data-reveal-delai={String((i % 4) + 1)}>
-              <dt class="font-serif text-xl leading-snug font-medium">{p.titre}</dt>
-              <dd class="mt-2 text-encre-douce" set:html={avecPlaceholders(p.texte)} />
+            <div class="principe grid grid-cols-[2.6rem_minmax(0,1fr)] gap-x-4 border-t border-dore pt-5" data-reveal data-reveal-delai={String((i % 4) + 1)}>
+              <span class="chapitre-num pt-0.5 text-[1.25rem] text-bordeaux" aria-hidden="true">{['I', 'II', 'III', 'IV'][i]}</span>
+              <div>
+                <dt class="font-[family-name:var(--font-titre)] text-[1rem] leading-snug font-extrabold tracking-[0.05em] text-encre uppercase">{p.titre}</dt>
+                <dd class="mt-2 text-[1.02rem] text-encre-douce" set:html={avecPlaceholders(p.texte)} />
+              </div>
             </div>
           ))
         }
       </dl>
     </div>
 
-    <figure class="papier journal self-start lg:sticky lg:top-28" aria-labelledby="journal-legende" data-journal>
-      <div class="flex items-center justify-between gap-3 border-b-2 border-encre px-5 py-4 sm:px-6">
-        <figcaption id="journal-legende">
-          <span class="block font-serif text-xl font-medium">Journal de cave</span>
-          <span class="chiffres text-[0.8rem] text-encre-douce">Une semaine type · exemple illustratif</span>
-        </figcaption>
-        <svg width="34" height="34" viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="1.3" class="shrink-0 text-dore" aria-hidden="true">
-          <rect x="6" y="3" width="22" height="28" rx="1.5" />
-          <path d="M10 3v28M14 10h10M14 15h10M14 20h10M14 25h6" />
-        </svg>
-      </div>
-      <ol role="list" class="journal-lignes divide-y divide-filet">
-        {
-          journal.map((e, i) => (
-            <li style={`--i:${i}`} class="journal-ligne grid grid-cols-[4rem_minmax(0,1fr)] gap-x-3 gap-y-1.5 px-5 py-3.5 sm:grid-cols-[4.5rem_minmax(0,1fr)_auto] sm:items-center sm:px-6">
-              <span class="chiffres text-[0.8rem] leading-tight text-encre-douce">
-                {e.jour}
-                <br />
-                {e.heure}
-              </span>
-              <span class="text-[0.95rem] leading-snug" data-frappe>{e.action}</span>
-              <span class:list={['cachet col-start-2 sm:col-start-3', couleursStatut[e.statut]]}>
-                {e.statut === 'valide' && (
-                  <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-                    <path d="M1.5 5.2l2.2 2.2L8.5 2.5" fill="none" stroke="currentColor" stroke-width="1.6" />
-                  </svg>
-                )}
-                {e.statut === 'refuse' && (
-                  <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-                    <path d="M2 2l6 6M8 2L2 8" fill="none" stroke="currentColor" stroke-width="1.6" />
-                  </svg>
-                )}
-                {libellesStatut[e.statut]}
-              </span>
-            </li>
-          ))
-        }
-      </ol>
-    </figure>
+    <div class="media-cadre zoom-lent relative flex min-h-[40rem] items-center justify-center px-4 py-16 sm:px-10 lg:min-h-0 lg:py-24">
+      <Video src="/media/mise-en-place.mp4" affiche="/media/mise-en-place-poster.jpg" />
+      <div class="absolute inset-0 bg-chai/60" aria-hidden="true"></div>
+      <figure class="papier journal relative z-10 w-full max-w-md self-center shadow-2xl" aria-labelledby="journal-legende" data-journal data-reveal="echelle">
+        <div class="flex items-center justify-between gap-3 border-b-2 border-encre px-5 py-4 sm:px-6">
+          <figcaption id="journal-legende">
+            <span class="block font-[family-name:var(--font-titre)] text-[1.05rem] font-extrabold tracking-[0.06em] text-bordeaux uppercase">Journal de cave</span>
+            <span class="text-[0.82rem] text-encre-douce">Une semaine type · exemple illustratif</span>
+          </figcaption>
+          <svg width="34" height="34" viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="1.3" class="shrink-0 text-dore" aria-hidden="true">
+            <rect x="6" y="3" width="22" height="28" rx="1.5" />
+            <path d="M10 3v28M14 10h10M14 15h10M14 20h10M14 25h6" />
+          </svg>
+        </div>
+        <ol role="list" class="journal-lignes divide-y divide-filet">
+          {
+            journal.map((e, i) => (
+              <li style={`--i:${i}`} class="journal-ligne grid grid-cols-[4rem_minmax(0,1fr)] gap-x-3 gap-y-1.5 px-5 py-3.5 sm:grid-cols-[4.5rem_minmax(0,1fr)_auto] sm:items-center sm:px-6">
+                <span class="text-[0.8rem] leading-tight font-semibold text-encre-douce">
+                  {e.jour}
+                  <br />
+                  {e.heure}
+                </span>
+                <span class="text-[0.95rem] leading-snug" data-frappe>{e.action}</span>
+                <span class:list={['cachet col-start-2 sm:col-start-3', couleursStatut[e.statut]]}>
+                  {e.statut === 'valide' && (
+                    <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+                      <path d="M1.5 5.2l2.2 2.2L8.5 2.5" fill="none" stroke="currentColor" stroke-width="1.6" />
+                    </svg>
+                  )}
+                  {e.statut === 'refuse' && (
+                    <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+                      <path d="M2 2l6 6M8 2L2 8" fill="none" stroke="currentColor" stroke-width="1.6" />
+                    </svg>
+                  )}
+                  {libellesStatut[e.statut]}
+                </span>
+              </li>
+            ))
+          }
+        </ol>
+      </figure>
+    </div>
   </div>
 </section>
 

@@ -1,13 +1,30 @@
 @import "tailwindcss";
 
+/* ==================================================================
+   Système de design Cuvée, style « maison »
+   - Tokens (palette, typographies) dans @theme
+   - Règles de base : le style maison est le style PAR DÉFAUT du site
+     (la classe .maison du <body> n'est plus qu'un alias sans effet)
+   - Composants partagés (boutons, liens, papier, fiches, formulaires…)
+   - Utilitaires de page : .section, .titre-section, .fiche, .filet-dore,
+     .chiffre-cle (documentés plus bas)
+   - Animations d'apparition (API dans src/scripts/animations.ts)
+   Le kit « médias » (media-cadre, voile, rail, chapitre-num) est dans maison.css.
+   ================================================================== */
+
 /* ------------------------------------------------------------------
-   Palette et typographie Cuvée
-   Papier crème, encre presque noire, bordeaux profond,
-   vert bouteille et doré sobre (doré : filets décoratifs uniquement,
-   jamais du texte sur fond clair, le contraste serait insuffisant).
+   Palette et typographie
+   Contrastes calculés (WCAG 2.x, ratio texte/fond) :
+     encre / creme 14.5 · encre / papier 16.3 · encre-douce / creme 7.6 · encre-douce / papier 8.5
+     bordeaux / creme 9.3 · bordeaux / papier 10.4 · creme / bordeaux 9.3 · creme / chai 13.1
+     creme / bordeaux-nuit 12.5 · dore-clair / chai 11.5 · dore-clair / bordeaux 8.2
+     dore-texte / creme 4.6 · dore-texte / papier 5.2
+     erreur / creme 6.8 · vert / creme 8.2 · bordure / champ 4.0 (bordure de champ, seuil 3:1)
+   À ÉVITER : dore / creme 2.8 et dore / papier 3.1 (insuffisants, décor uniquement) ;
+   encre-douce sur chai 1.7 (illisible : sur fond sombre, utiliser creme ou creme/80).
    ------------------------------------------------------------------ */
 @theme {
-  --color-creme: #f5e9e4; /* rosé pâle, remplace #f5efe3 */
+  --color-creme: #f5e9e4; /* rosé pâle */
   --color-creme-fonce: #ecd9d2;
   --color-papier: #fbf8f2;
   --color-encre: #1f1a17;
@@ -19,41 +36,70 @@
   --color-bordeaux-clair: #f3e4e2;
   --color-vert: #2e4a3b;
   --color-vert-clair: #e2eadf;
-  --color-dore: #a88a4a;
+  --color-dore: #a88a4a; /* décor (filets, bordures, fond sombre) : jamais du texte sur fond clair */
   --color-dore-clair: #e9ddbf;
+  --color-dore-texte: #82652a; /* doré assombri : texte doré sur fond clair (4.6:1 sur creme) */
   --color-creme-sourde: #d9d0bf;
   --color-erreur: #9b1c2c;
   --color-chai: #2a2220;
   --color-bordeaux-nuit: #4a1420;
 
-  --font-serif: "Fraunces Variable", Georgia, "Times New Roman", serif;
-  --font-sans: "Source Sans 3 Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
   --font-titre: "Outfit Variable", "Outfit", system-ui, sans-serif;
-  --font-texte: "Josefin Sans Variable", "Josefin Sans", system-ui, sans-serif;
+  --font-texte: "Josefin Sans Variable", "Josefin Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-script: "Mr Dafoe", "Brush Script MT", cursive;
+  /* anciens noms : les composants qui disent font-serif / font-sans / font-mono prennent la typo maison */
+  --font-serif: "Outfit Variable", "Outfit", system-ui, sans-serif;
+  --font-sans: "Josefin Sans Variable", "Josefin Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Josefin Sans Variable", "Josefin Sans", system-ui, sans-serif;
 }
 
+/* ------------------------------------------------------------------
+   Base
+   ------------------------------------------------------------------ */
 @layer base {
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5rem;
+    /* barre de défilement fine */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-bordeaux) var(--color-creme-fonce);
   }
 
   body {
-    font-size: 1.0625rem;
-    line-height: 1.6;
+    font-family: var(--font-texte);
+    font-size: 1.125rem;
+    line-height: 1.7;
     font-synthesis: none;
-    /* grain de papier très léger */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .12 0 0 0 0 .1 0 0 0 0 .09 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background: var(--color-creme);
+    color: var(--color-encre);
   }
 
+  /* titres : Outfit 800, capitales, interlettrage ouvert */
   h1,
   h2,
   h3 {
-    font-family: var(--font-serif);
-    font-optical-sizing: auto;
+    font-family: var(--font-titre);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1.12;
     text-wrap: balance;
+  }
+
+  h4 {
+    font-family: var(--font-titre);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1.25;
+  }
+
+  /* l'ancien <em> bordeaux italique des titres : neutralisé (ni italique, ni couleur imposée) */
+  h1 em,
+  h2 em,
+  h3 em,
+  h4 em {
+    font-style: normal;
   }
 
   p,
@@ -61,39 +107,55 @@
     text-wrap: pretty;
   }
 
-  em {
-    font-style: italic;
-  }
-
-  html {
-    scroll-padding-top: 4.75rem;
-  }
-
-  /* en-tête collant sur grand écran : les ancres et le focus ne passent pas dessous */
-  @media (min-width: 64rem) {
-    html {
-      scroll-padding-top: 5.5rem;
-    }
-  }
-
+  /* focus visible : bordeaux sur clair, doré clair sur fond sombre */
   :focus-visible {
     outline: 2px solid var(--color-bordeaux);
     outline-offset: 3px;
-    border-radius: 2px;
   }
 
-  .sur-fond-sombre :focus-visible {
-    outline-color: var(--color-creme);
+  :is(.sur-fond-sombre, .sur-image, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit, [data-entete][data-plein="false"], dialog)
+    :focus-visible {
+    outline-color: var(--color-dore-clair);
   }
 
   /* les fiches claires posées sur un fond sombre gardent un focus bordeaux */
-  .sur-fond-sombre .papier :focus-visible {
+  :is(.sur-fond-sombre, .sur-image, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) :is(.papier, .fiche) :focus-visible {
     outline-color: var(--color-bordeaux);
   }
 
   ::selection {
     background: var(--color-bordeaux);
     color: var(--color-creme);
+  }
+
+  :is(.sur-fond-sombre, .sur-image, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) ::selection {
+    background: var(--color-dore-clair);
+    color: var(--color-chai);
+  }
+
+  :is(.sur-fond-sombre, .sur-image, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) :is(.papier, .fiche) ::selection {
+    background: var(--color-bordeaux);
+    color: var(--color-creme);
+  }
+
+  /* barre de défilement fine (WebKit : éléments à défilement interne) */
+  ::-webkit-scrollbar {
+    width: 0.6rem;
+    height: 0.6rem;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-bordeaux);
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-creme-fonce);
+  }
+
+  /* cases et boutons radio aux couleurs de la maison */
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--color-bordeaux);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -112,17 +174,73 @@
 }
 
 @layer components {
+  /* ----------------------------------------------------------------
+     Mise en page
+     ---------------------------------------------------------------- */
   .conteneur {
     width: 100%;
-    max-width: 72rem;
+    max-width: 76rem;
     margin-inline: auto;
-    padding-inline: 1rem;
+    padding-inline: 1.25rem;
   }
 
   @media (min-width: 40rem) {
     .conteneur {
-      padding-inline: 1.5rem;
+      padding-inline: 2rem;
     }
+  }
+
+  /* .section : rythme vertical des sections de page (py-24, lg:py-32).
+     <section class="section"> ; se combine avec bg-creme / bg-chai / bg-bordeaux. */
+  .section {
+    padding-block: 6rem;
+  }
+
+  @media (min-width: 64rem) {
+    .section {
+      padding-block: 8rem;
+    }
+  }
+
+  /* .titre-section : taille de h2 de section au style maison (capitales Outfit 800).
+     <h2 class="titre-section">…</h2> ; fonctionne aussi sur un autre élément. */
+  .titre-section {
+    font-family: var(--font-titre);
+    font-weight: 800;
+    font-size: clamp(1.7rem, 3vw, 2.6rem);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1.12;
+    text-wrap: balance;
+  }
+
+  /* .filet-dore : petit trait doré de 3,5 rem à placer sous un titre.
+     <span class="filet-dore" aria-hidden="true"></span> ; ajouter mx-auto pour le centrer.
+     Après une .signature (inclinée), garder ce margin-top de 2rem pour ne pas la toucher. */
+  .filet-dore {
+    display: block;
+    width: 3.5rem;
+    height: 2px;
+    margin-top: 2rem;
+    background: var(--color-dore);
+  }
+
+  /* .chiffre-cle : grand nombre en Outfit 300 (couleur à choisir : text-bordeaux, text-creme…).
+     <p class="chiffre-cle">3 mois</p> */
+  .chiffre-cle {
+    font-family: var(--font-titre);
+    font-weight: 300;
+    font-size: clamp(3.25rem, 7vw, 5.5rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  /* Double filet doré, comme le cadre d'une étiquette */
+  .filet-double {
+    height: 4px;
+    border-top: 1px solid var(--color-dore);
+    border-bottom: 1px solid var(--color-dore);
   }
 
   .lien-evitement {
@@ -130,46 +248,85 @@
     left: 1rem;
     top: -4rem;
     z-index: 100;
-    padding: 0.75rem 1rem;
+    padding: 0.85rem 1.25rem;
     background: var(--color-encre);
     color: var(--color-creme);
+    font-size: 0.82rem;
     font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
   }
 
   .lien-evitement:focus {
     top: 1rem;
+    outline-color: var(--color-dore-clair);
   }
 
-  /* Petit libellé en capitales, façon fiche de cave */
+  /* ----------------------------------------------------------------
+     Typographie annexe
+     ---------------------------------------------------------------- */
+  /* Surtitre : petites capitales très espacées */
   .surtitre {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    line-height: 1.4;
+    font-family: var(--font-texte);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    line-height: 1.5;
     text-transform: uppercase;
   }
 
-  .chiffres {
-    font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
+  /* dans les fiches, un interlettrage plus serré */
+  :is(.papier, .fiche) .surtitre {
+    letter-spacing: 0.1em;
   }
 
-  /* Boutons */
+  .chiffres {
+    font-family: var(--font-texte);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  /* Signature manuscrite sous un titre. Doré assombri sur fond clair (AA),
+     doré clair sur fond sombre ; sur une image sous voile, crème. */
+  .signature {
+    display: block;
+    font-family: var(--font-script);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1.1;
+    font-size: clamp(2.4rem, 4vw, 3.4rem);
+    color: var(--color-dore-texte);
+    rotate: -3deg;
+  }
+
+  :is(.sur-fond-sombre, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) .signature {
+    color: var(--color-dore-clair);
+  }
+
+  .sur-image .signature {
+    color: var(--color-creme);
+  }
+
+  /* ----------------------------------------------------------------
+     Boutons : rectangulaires, capitales
+     ---------------------------------------------------------------- */
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    min-height: 3rem;
-    padding: 0.75rem 1.4rem;
+    gap: 0.6rem;
+    min-height: 3.25rem;
+    padding: 1.05rem 1.8rem 0.9rem;
     border: 1px solid transparent;
-    border-radius: 2px;
+    border-radius: 1px;
+    font-family: var(--font-texte);
+    font-size: 0.875rem;
     font-weight: 600;
-    font-size: 1rem;
+    letter-spacing: 0.16em;
     line-height: 1.2;
     text-align: center;
     text-decoration: none;
+    text-transform: uppercase;
     cursor: pointer;
     position: relative;
     isolation: isolate;
@@ -189,7 +346,7 @@
     background: var(--remplissage, transparent);
     transform: scaleX(0);
     transform-origin: left center;
-    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .btn:hover::before,
@@ -199,6 +356,12 @@
 
   .btn:active {
     translate: 0 1px;
+  }
+
+  .btn[disabled],
+  .btn[aria-disabled="true"] {
+    opacity: 0.55;
+    cursor: not-allowed;
   }
 
   .btn-primaire {
@@ -220,31 +383,75 @@
     background: transparent;
   }
 
-  .btn-contour:hover {
+  .btn-contour:hover,
+  .btn-contour:focus-visible {
     color: var(--color-creme);
   }
 
-  .btn-petit {
-    min-height: 2.75rem;
-    padding: 0.5rem 1rem;
-    font-size: 0.9375rem;
+  /* contour sur fond sombre : crème, qui se remplit de crème au survol */
+  :is(.sur-fond-sombre, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) .btn-contour {
+    --remplissage: var(--color-creme);
+    border-color: var(--color-creme);
+    color: var(--color-creme);
   }
 
+  :is(.sur-fond-sombre, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) .btn-contour:hover,
+  :is(.sur-fond-sombre, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) .btn-contour:focus-visible {
+    color: var(--color-bordeaux);
+  }
+
+  /* une fiche ou un papier claire posé sur fond sombre réinitialise le contexte clair */
+  :is(.sur-fond-sombre, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) :is(.papier, .fiche) .btn-contour {
+    --remplissage: var(--color-encre);
+    border-color: var(--color-encre);
+    color: var(--color-encre);
+  }
+
+  :is(.sur-fond-sombre, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) :is(.papier, .fiche) .btn-contour:hover,
+  :is(.sur-fond-sombre, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) :is(.papier, .fiche) .btn-contour:focus-visible {
+    color: var(--color-creme);
+  }
+
+  /* sur image sous voile */
+  .btn-voile {
+    --remplissage: var(--color-creme);
+    border-color: var(--color-creme);
+    color: var(--color-creme);
+    background: transparent;
+  }
+
+  .btn-voile:hover,
+  .btn-voile:focus-visible {
+    color: var(--color-bordeaux);
+  }
+
+  .btn-petit,
   .btn-mini {
     min-height: 2.75rem;
-    padding: 0.5rem 0.9rem;
-    font-size: 0.9375rem;
+    padding: 0.7rem 1.2rem 0.6rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
   }
 
-  /* souligné doré au repos ; au survol, un second trait se dessine de gauche à droite */
+  /* ----------------------------------------------------------------
+     Liens
+     ---------------------------------------------------------------- */
+  /* Lien dans une phrase : souligné doré (assombri sur clair pour rester visible) ;
+     au survol, un second trait se dessine de gauche à droite. */
   .lien {
     font-weight: 600;
     text-decoration: none;
     padding-bottom: 0.12em;
     background:
       linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat,
-      linear-gradient(var(--color-dore), var(--color-dore)) 0 100% / 100% 1px no-repeat;
+      linear-gradient(var(--color-dore-texte), var(--color-dore-texte)) 0 100% / 100% 1px no-repeat;
     transition: background-size 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  :is(.sur-fond-sombre, .sur-image, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) .lien {
+    background:
+      linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat,
+      linear-gradient(var(--color-dore-clair), var(--color-dore-clair)) 0 100% / 100% 1px no-repeat;
   }
 
   .lien:hover,
@@ -259,37 +466,83 @@
     min-height: 2.75rem;
   }
 
-  /* Papier : fiches, bons de commande, journal */
+  /* lien « DÉCOUVRIR » en capitales, souligné */
+  .lien-cap {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    gap: 0.6rem;
+    font-family: var(--font-texte);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: inherit;
+    background: linear-gradient(currentColor, currentColor) 0 calc(100% - 0.55rem) / 100% 1px no-repeat;
+    transition: background-size 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .lien-cap:hover,
+  .lien-cap:focus-visible {
+    background-size: 35% 1px;
+  }
+
+  /* ----------------------------------------------------------------
+     Papier et fiches
+     ---------------------------------------------------------------- */
+  /* Papier : bon de commande, facture, journal (objets « posés ») */
   .papier {
     position: relative;
     background: var(--color-papier);
     border: 1px solid var(--color-filet);
   }
 
+  /* un papier posé sur un fond sombre reste lisible (texte encre) */
+  :is(.sur-fond-sombre, .sur-image) :is(.papier, .fiche) {
+    color: var(--color-encre);
+  }
+
+  /* ombre très douce d'un papier posé */
+  .papier-ombre {
+    box-shadow:
+      0 1px 2px rgb(42 34 32 / 0.06),
+      0 18px 36px -18px rgb(42 34 32 / 0.28);
+  }
+
+  /* .fiche : carte au style maison : fond papier, filet doré fin, coins droits, ombre très douce.
+     <div class="fiche">…</div> (le padding par défaut se règle avec p-*). */
+  .fiche {
+    position: relative;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    background: var(--color-papier);
+    border: 1px solid color-mix(in srgb, var(--color-dore) 55%, var(--color-filet));
+    border-radius: 0;
+    box-shadow:
+      0 1px 2px rgb(42 34 32 / 0.05),
+      0 16px 32px -20px rgb(42 34 32 / 0.25);
+  }
+
   /* seules les fiches cliquables se soulèvent au survol (appareils à souris) */
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    a.papier {
+    a.papier,
+    a.fiche {
       transition:
-        translate 0.25s ease,
-        box-shadow 0.25s ease;
+        translate 0.3s ease,
+        box-shadow 0.3s ease;
     }
 
-    a.papier:hover {
+    a.papier:hover,
+    a.fiche:hover {
       translate: 0 -3px;
     }
 
-    a.papier-ombre:hover {
+    a.papier-ombre:hover,
+    a.fiche:hover {
       box-shadow:
-        6px 8px 0 var(--color-creme-fonce),
-        6px 8px 0 1px var(--color-filet);
+        0 2px 4px rgb(42 34 32 / 0.07),
+        0 24px 40px -18px rgb(42 34 32 / 0.34);
     }
-  }
-
-  /* ombre nette de feuille posée, plutôt qu'un flou */
-  .papier-ombre {
-    box-shadow:
-      4px 4px 0 var(--color-creme-fonce),
-      4px 4px 0 1px var(--color-filet);
   }
 
   /* bord cranté d'une facture */
@@ -312,19 +565,19 @@
     line-height: 1.7em;
   }
 
-  /* cachet mono à bordure fine (statuts, pistes) */
+  /* cachet à bordure fine (statuts, pistes) */
   .cachet {
     display: inline-flex;
     width: fit-content;
     align-items: center;
     gap: 0.35rem;
-    padding: 0.1rem 0.4rem;
+    padding: 0.15rem 0.5rem 0.1rem;
     border: 1px solid currentColor;
     border-radius: 1px;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
+    font-family: var(--font-texte);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
     line-height: 1.4;
     text-transform: uppercase;
     white-space: nowrap;
@@ -368,29 +621,25 @@
     }
   }
 
-  /* Double filet doré, comme le cadre d'une étiquette */
-  .filet-double {
-    height: 4px;
-    border-top: 1px solid var(--color-dore);
-    border-bottom: 1px solid var(--color-dore);
-  }
-
   .ligne-pointillee {
     border-bottom: 1px dotted var(--color-bordure);
   }
 
-  /* Placeholder visible : à remplacer avant mise en ligne */
+  /* Placeholder visible (composant ACompleter.astro) : à remplacer avant mise en ligne.
+     Surligné jaune volontairement : il ne doit pas passer inaperçu (encre / jaune 14:1). */
   .a-completer {
     display: inline;
-    padding: 0.05em 0.35em;
+    padding: 0.08em 0.5em;
     background: #ffe7a3;
     color: var(--color-encre);
     border: 1px dashed #9a7b1c;
-    border-radius: 2px;
-    font-family: var(--font-mono);
-    font-size: 0.82em;
-    font-weight: 500;
-    letter-spacing: 0;
+    border-left: 3px solid var(--color-bordeaux);
+    border-radius: 0;
+    font-family: var(--font-texte);
+    font-size: 0.85em;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    line-height: 1.9;
     text-transform: none;
     font-style: normal;
     box-decoration-break: clone;
@@ -403,10 +652,10 @@
     pointer-events: none;
     padding: 0.3rem 0.8rem;
     border: 3px double var(--color-vert);
-    border-radius: 4px;
+    border-radius: 2px;
     color: var(--color-vert);
-    font-family: var(--font-mono);
-    font-weight: 500;
+    font-family: var(--font-titre);
+    font-weight: 800;
     font-size: 1rem;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -426,19 +675,27 @@
     }
   }
 
-  /* Formulaire */
+  /* ----------------------------------------------------------------
+     Formulaires
+     ---------------------------------------------------------------- */
   .etiquette-champ {
     display: block;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-texte);
+    font-size: 0.8125rem;
     font-weight: 600;
-    font-size: 0.975rem;
-    line-height: 1.35;
+    letter-spacing: 0.12em;
+    line-height: 1.4;
+    text-transform: uppercase;
   }
 
   .aide-champ {
     display: block;
+    margin-top: 0.15rem;
     font-weight: 400;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.01em;
+    text-transform: none;
     color: var(--color-encre-douce);
   }
 
@@ -446,15 +703,22 @@
     display: block;
     width: 100%;
     min-height: 3rem;
-    padding: 0.65rem 0.8rem;
-    background: #fffdf8;
+    padding: 0.65rem 0.85rem;
+    background: var(--color-papier);
     border: 1px solid var(--color-bordure);
-    border-radius: 2px;
+    border-radius: 1px;
     color: var(--color-encre);
     font: inherit;
-    font-size: 1rem;
+    font-size: 1.0625rem;
     line-height: 1.4;
-    transition: border-color 0.15s ease;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .champ::placeholder {
+    color: var(--color-encre-douce);
+    opacity: 0.75;
   }
 
   .champ:hover {
@@ -463,12 +727,13 @@
 
   .champ:focus-visible {
     border-color: var(--color-bordeaux);
-    outline-offset: 0;
+    box-shadow: 0 0 0 1px var(--color-bordeaux);
+    outline-offset: 1px;
   }
 
   .champ[aria-invalid="true"] {
     border-color: var(--color-erreur);
-    border-width: 2px;
+    box-shadow: inset 0 -2px 0 var(--color-erreur);
   }
 
   select.champ {
@@ -484,11 +749,30 @@
     resize: vertical;
   }
 
+  /* case à cocher / bouton radio : à poser dans un <label class="case"> avec l'input en premier */
+  .case {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    min-height: 2.75rem;
+    padding-block: 0.5rem;
+    cursor: pointer;
+  }
+
+  .case input[type="checkbox"],
+  .case input[type="radio"] {
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.2rem;
+  }
+
   .message-erreur {
-    margin-top: 0.35rem;
+    margin-top: 0.4rem;
     color: var(--color-erreur);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 600;
+    line-height: 1.4;
   }
 
   /* vide, le message ne prend pas de place mais reste dans le DOM pour les lecteurs d'écran */
@@ -497,11 +781,6 @@
   }
 
   /* Accordéons de la FAQ */
-  .menu-mobile[open] > summary {
-    background: var(--color-encre);
-    color: var(--color-creme);
-  }
-
   .faq-item summary {
     list-style: none;
     cursor: pointer;
@@ -528,33 +807,31 @@
   .faq-item[open] .faq-signe::after {
     transform: rotate(0deg);
   }
+}
 
-  /* Pages légales */
-  .texte-courant h2 {
-    margin-top: 2.5rem;
-    font-size: 1.5rem;
-    font-weight: 500;
-    line-height: 1.2;
-  }
+/* ------------------------------------------------------------------
+   Barre de lecture dorée (haut de page)
+   ------------------------------------------------------------------ */
+.progression {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: 2px;
+  background: var(--color-dore);
+  transform-origin: left;
+  transform: scaleX(var(--p, 0));
+  pointer-events: none;
+}
 
-  .texte-courant p,
-  .texte-courant ul {
-    margin-top: 1rem;
+@media (prefers-reduced-motion: reduce) {
+  .progression {
+    display: none;
   }
+}
 
-  .texte-courant ul {
-    padding-left: 1.25rem;
-    list-style: disc;
-  }
-
-  .texte-courant li + li {
-    margin-top: 0.35rem;
-  }
-
-  .texte-courant a {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-  }
+/* le menu plein écran bloque le défilement de la page (classe posée par animations.ts) */
+html.menu-ouvert {
+  overflow: hidden;
 }
 
 /* ------------------------------------------------------------------
@@ -562,56 +839,9 @@
    Masquage uniquement si <html class="anim"> : JS actif et mouvement autorisé.
    ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: no-preference) {
-  /* transitions entre pages (CSS natif ; repli : navigation classique).
-     Le contenu glisse sous un en-tête qui reste en place ; l'indicateur d'onglet morphe. */
+  /* transitions entre pages : les animations sont dans animations.css */
   @view-transition {
     navigation: auto;
-  }
-
-  ::view-transition-old(root) {
-    animation: 0.22s cubic-bezier(0.4, 0, 1, 1) both page-sortie;
-  }
-
-  ::view-transition-new(root) {
-    animation: 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0.06s both page-entree;
-  }
-
-  @keyframes page-sortie {
-    to {
-      opacity: 0;
-      transform: translateY(-0.5rem);
-    }
-  }
-
-  @keyframes page-entree {
-    from {
-      opacity: 0;
-      transform: translateY(1rem);
-    }
-  }
-
-  @media (min-width: 64rem) {
-    [data-entete] {
-      view-transition-name: entete;
-    }
-    ::view-transition-group(entete) {
-      animation-duration: 0s;
-    }
-    ::view-transition-old(entete) {
-      display: none;
-    }
-    ::view-transition-new(entete) {
-      animation: none;
-    }
-  }
-
-  .nav-indicateur {
-    view-transition-name: nav-indicateur;
-  }
-
-  ::view-transition-group(nav-indicateur) {
-    animation-duration: 0.5s;
-    animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
   }
 
   html.anim [data-reveal],
@@ -636,33 +866,6 @@
   html.anim [data-reveal="gauche"] { --dx: -2rem; --dy: 0; }
   html.anim [data-reveal="droite"] { --dx: 2rem; --dy: 0; }
   html.anim [data-reveal="echelle"] { --dy: 0; --ech: 0.94; }
-
-  .entete-filet-page {
-    transform-origin: left;
-    animation: filet-page 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.35s both;
-  }
-  @keyframes filet-page {
-    from { transform: scaleX(0); }
-  }
-  html.anim .entete-chiffre {
-    animation: chiffre-entree 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s both;
-  }
-  @keyframes chiffre-entree {
-    from { opacity: 0; transform: translateY(1.5rem); }
-  }
-  html.anim .menu-liste li {
-    animation: menu-entree 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-    animation-delay: calc(var(--i) * 70ms + 80ms);
-  }
-  @keyframes menu-entree {
-    from { opacity: 0; transform: translateY(1.25rem); }
-  }
-  .menu-mobile[open] .menu-panneau {
-    animation: menu-voile 0.35s ease both;
-  }
-  @keyframes menu-voile {
-    from { opacity: 0; }
-  }
 
   html.anim [data-reveal-delai="1"] { --d: 1; }
   html.anim [data-reveal-delai="2"] { --d: 2; }
@@ -700,281 +903,4 @@
   [data-parallaxe] {
     will-change: translate;
   }
-}
-
-/* ------------------------------------------------------------------
-   Charpente : en-tête, onglets, menu mobile, progression, pied de page
-   ------------------------------------------------------------------ */
-html.menu-ouvert {
-  overflow: hidden;
-}
-
-.entete-site {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  --h: 4rem;
-}
-@media (min-width: 64rem) {
-  .entete-site {
-    --h: 4.75rem;
-  }
-}
-.entete-site[data-compact='true'] {
-  --h: 3.5rem;
-}
-@media (min-width: 64rem) {
-  .entete-site[data-compact='true'] {
-    --h: 3.75rem;
-  }
-}
-/* le fond flouté est un pseudo-calque (un backdrop-filter sur l'en-tête enfermerait le menu plein écran) */
-.entete-fond {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: color-mix(in srgb, var(--color-creme) 94%, transparent);
-  border-bottom: 1px solid var(--color-filet);
-  transition: background-color 0.35s ease, border-color 0.35s ease;
-}
-.entete-site[data-compact='true'] .entete-fond {
-  background: color-mix(in srgb, var(--color-creme) 82%, transparent);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
-  backdrop-filter: blur(14px) saturate(1.2);
-  border-bottom-color: transparent;
-}
-.entete-filet {
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--color-dore), transparent);
-  opacity: 0;
-  transition: opacity 0.35s ease;
-}
-.entete-site[data-compact='true'] .entete-filet {
-  opacity: 1;
-}
-.entete-barre {
-  display: flex;
-  height: var(--h);
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  transition: height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* onglets : repli sans JS = souligné sur l'onglet actif ; avec JS = trait doré glissant */
-.nav-liste {
-  position: relative;
-}
-.onglet {
-  position: relative;
-}
-.onglet::after {
-  content: '';
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  height: 2px;
-  background: var(--color-bordeaux);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.onglet[aria-current='page']::after {
-  transform: scaleX(1);
-}
-[data-indic='oui'] .onglet::after {
-  display: none;
-}
-.nav-indicateur {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 2px;
-  width: 0;
-  opacity: 0;
-  list-style: none;
-  background: linear-gradient(90deg, var(--color-bordeaux), var(--color-dore));
-  transition:
-    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    width 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.25s ease;
-  pointer-events: none;
-}
-
-/* menu mobile plein écran, façon sommaire de magazine */
-.menu-mobile summary {
-  position: relative;
-  z-index: 10;
-  cursor: pointer;
-}
-.menu-libelle-fermer,
-.menu-mobile[open] .menu-libelle-ouvrir {
-  display: none;
-}
-.menu-mobile[open] .menu-libelle-fermer {
-  display: inline;
-}
-.menu-panneau {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  overflow-y: auto;
-  padding-top: calc(var(--h) + 1.5rem);
-  padding-bottom: 2rem;
-  background: var(--color-creme);
-  background-image: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--color-dore-clair) 55%, transparent), transparent 55%);
-}
-.menu-interieur {
-  display: flex;
-  min-height: 100%;
-  flex-direction: column;
-}
-.menu-liste {
-  margin-top: 1rem;
-  border-top: 1px solid var(--color-dore);
-}
-.menu-liste li {
-  border-bottom: 1px solid var(--color-filet);
-}
-.menu-liste a {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  min-height: 3.5rem;
-  padding-block: 0.7rem;
-  font-family: var(--font-serif);
-  font-size: clamp(1.9rem, 9vw, 2.6rem);
-  line-height: 1.1;
-  letter-spacing: -0.015em;
-}
-.menu-num {
-  width: 2.6rem;
-  flex: none;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  color: var(--color-bordure);
-}
-.menu-liste a[aria-current='page'] {
-  color: var(--color-bordeaux);
-  font-style: italic;
-}
-.menu-liste a[aria-current='page'] .menu-num {
-  color: var(--color-bordeaux);
-}
-.menu-cta {
-  margin-top: 2rem;
-  width: 100%;
-}
-.menu-note {
-  margin-top: auto;
-  padding-top: 2rem;
-  font-size: 0.9rem;
-  color: var(--color-encre-douce);
-}
-
-/* barre de lecture dorée */
-.progression {
-  position: fixed;
-  inset: 0 0 auto 0;
-  z-index: 60;
-  height: 2px;
-  background: var(--color-dore);
-  transform-origin: left;
-  transform: scaleX(var(--p, 0));
-  pointer-events: none;
-}
-@media (prefers-reduced-motion: reduce) {
-  .progression {
-    display: none;
-  }
-}
-
-/* en-tête de page : chiffre romain en filigrane */
-.entete-page {
-  position: relative;
-  overflow: hidden;
-}
-.entete-chiffre {
-  position: absolute;
-  right: 3vw;
-  top: 50%;
-  translate: 0 -52%;
-  opacity: 0.45;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(9rem, 26vw, 19rem);
-  line-height: 1;
-  color: transparent;
-  -webkit-text-stroke: 1px color-mix(in srgb, var(--color-dore) 55%, transparent);
-  pointer-events: none;
-  user-select: none;
-}
-@media (min-width: 64rem) {
-  .entete-chiffre {
-    opacity: 1;
-  }
-}
-
-/* bandeau de fin de page */
-.page-cta {
-  position: relative;
-  overflow: hidden;
-}
-.page-cta::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 90% 0%, rgb(255 255 255 / 0.1), transparent 55%);
-  pointer-events: none;
-}
-.page-cta-filet {
-  height: 1px;
-  background: linear-gradient(90deg, var(--color-dore-clair), transparent);
-  opacity: 0.7;
-}
-
-/* pied de page */
-.pied-mot {
-  position: absolute;
-  inset-inline: 0;
-  bottom: -0.18em;
-  text-align: center;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(7rem, 31vw, 24rem);
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: transparent;
-  -webkit-text-stroke: 1px color-mix(in srgb, var(--color-creme) 16%, transparent);
-  pointer-events: none;
-  user-select: none;
-  white-space: nowrap;
-}
-.pied-lien {
-  display: inline-flex;
-  align-items: baseline;
-  transition: color 0.25s ease, translate 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.pied-lien::before {
-  content: '';
-  width: 0;
-  height: 1px;
-  align-self: center;
-  margin-right: 0;
-  background: var(--color-dore);
-  transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1), margin-right 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.pied-lien:hover,
-.pied-lien:focus-visible {
-  color: #fff;
-  translate: 0.2rem 0;
-}
-.pied-lien:hover::before,
-.pied-lien:focus-visible::before {
-  width: 1rem;
-  margin-right: 0.5rem;
 }

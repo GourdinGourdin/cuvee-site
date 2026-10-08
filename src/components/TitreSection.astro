@@ -1,23 +1,36 @@
 ---
+/**
+ * Titre de section au style maison : surtitre en capitales espacées, h2 en capitales, signature
+ * manuscrite optionnelle, petit filet doré qui se trace.
+ * `numero` est conservé pour compatibilité (non affiché). `sombre` / `clair` : texte crème sur fond sombre.
+ * `centre` : titre centré.
+ */
 interface Props {
-  numero: string;
+  numero?: string;
   libelle: string;
   id: string;
   titre: string;
+  signature?: string;
   sombre?: boolean;
+  clair?: boolean;
+  centre?: boolean;
   class?: string;
 }
-const { numero, libelle, id, titre, sombre = false, class: classe = '' } = Astro.props;
+const { libelle, id, titre, signature, sombre = false, clair = false, centre = false, class: classe = '' } = Astro.props;
+const surSombre = sombre || clair;
 ---
-<div class:list={['max-w-3xl', classe]}>
-  <p data-reveal class:list={['surtitre flex items-center gap-3', sombre ? 'text-dore-clair' : 'text-bordeaux']}>
-    <span>N° {numero}</span>
-    <span class:list={['titre-filet h-px w-8', sombre ? 'bg-dore-clair' : 'bg-dore']} aria-hidden="true"></span>
-    <span>{libelle}</span>
-  </p>
-  <h2 id={id} data-reveal data-reveal-delai="1" class="mt-4 text-[2rem] leading-[1.1] font-medium tracking-[-0.015em] sm:text-[2.6rem] lg:text-5xl">
+<div class:list={['titre-section max-w-3xl', centre ? 'mx-auto text-center' : '', classe]}>
+  <p data-reveal class:list={['surtitre', surSombre ? 'text-dore-clair' : 'text-bordeaux']}>{libelle}</p>
+  <h2
+    id={id}
+    data-reveal
+    data-reveal-delai="1"
+    class:list={['mt-4 text-[clamp(1.6rem,3.2vw,2.6rem)]', surSombre ? 'text-creme' : 'text-encre']}
+  >
     <Fragment set:html={titre} />
   </h2>
+  {signature && <span class:list={['signature mt-2', surSombre ? '!text-dore-clair' : '', centre ? 'mx-auto' : '']} data-reveal data-reveal-delai="2">{signature}</span>}
+  <span class:list={['titre-filet mt-6 block h-px w-14', surSombre ? 'bg-dore-clair' : 'bg-dore', centre ? 'mx-auto [transform-origin:center]' : '']} aria-hidden="true"></span>
   <slot />
 </div>
 
@@ -25,6 +38,10 @@ const { numero, libelle, id, titre, sombre = false, class: classe = '' } = Astro
   .titre-filet {
     transform-origin: left;
     animation: filet-trace 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
+  }
+  .titre-section h2 em {
+    font-style: normal;
+    color: inherit;
   }
   @keyframes filet-trace {
     from { transform: scaleX(0); }

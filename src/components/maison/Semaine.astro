@@ -14,10 +14,10 @@ const jours = [
   <div class="mx-auto flex max-w-[76rem] flex-wrap items-end justify-between gap-6 px-4">
     <div>
       <p class="surtitre text-dore-clair" data-reveal>Exemples illustratifs</p>
-      <h2 id="semaine-titre" class="mt-4 text-[clamp(1.7rem,3vw,2.6rem)]" data-reveal data-reveal-delai="1">Une semaine avec Cuvée</h2>
-      <span class="signature mt-1" data-reveal data-reveal-delai="2">de lundi à vendredi</span>
+      <h2 id="semaine-titre" class="mt-4 text-[clamp(1.7rem,3vw,2.6rem)]" data-reveal-lignes>Une semaine avec Cuvée</h2>
+      <span class="signature mt-1" data-reveal="ecriture" style="--d: 9">de lundi à vendredi</span>
     </div>
-    <div class="flex gap-2" data-reveal>
+    <div class="flex gap-2" data-reveal data-reveal-delai="3">
       <button type="button" class="rail-bouton" data-rail-prec aria-label="Jour précédent">
         <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z" /></svg>
       </button>
@@ -29,8 +29,8 @@ const jours = [
 
   <ol class="rail mt-12" role="list" data-rail tabindex="0" aria-label="Les jours de la semaine">
     {
-      jours.map((j) => (
-        <li class="flex flex-col gap-5">
+      jours.map((j, i) => (
+        <li class="semaine-jour flex flex-col gap-5" data-reveal data-reveal-delai={String(i + 1)}>
           <div class="media-cadre aspect-[3/4]">
             {j.video ? (
               <Video src={`/media/${j.video}.mp4`} affiche={`/media/${j.video}-poster.jpg`} />
@@ -43,6 +43,7 @@ const jours = [
             </div>
           </div>
           <div>
+            <span class="mb-4 block h-px w-10 bg-dore" aria-hidden="true"></span>
             <h3 class="text-lg">{j.titre}</h3>
             <p class="mt-2 text-[1rem] leading-relaxed text-creme/75">{j.texte}</p>
           </div>
@@ -50,9 +51,18 @@ const jours = [
       ))
     }
   </ol>
+
+  <div class="mx-auto mt-6 max-w-[76rem] px-4" aria-hidden="true">
+    <div class="rail-progres"><span data-rail-barre></span></div>
+  </div>
 </section>
 
 <style>
+  /* le rail s'aligne sur le titre (conteneur 76 rem + gouttière de 1 rem) */
+  .rail {
+    padding-inline: max(1rem, calc((100vw - 76rem) / 2 + 1rem));
+    scroll-padding-inline: max(1rem, calc((100vw - 76rem) / 2 + 1rem));
+  }
   .rail-bouton {
     display: inline-flex;
     width: 3.25rem;
@@ -63,20 +73,77 @@ const jours = [
     color: var(--color-creme);
     transition:
       background-color 0.3s ease,
-      color 0.3s ease;
+      color 0.3s ease,
+      opacity 0.3s ease;
   }
   .rail-bouton:hover {
     background: var(--color-creme);
     color: var(--color-chai);
+  }
+  .rail-bouton:disabled {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .semaine-jour .media-cadre img,
+  .semaine-jour .media-cadre video {
+    transition: scale 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .semaine-jour:hover .media-cadre img,
+    .semaine-jour:hover .media-cadre video {
+      scale: 1.05;
+    }
+  }
+
+  /* repère de progression du rail */
+  .rail-progres {
+    position: relative;
+    height: 1px;
+    background: rgb(245 233 228 / 0.2);
+  }
+  .rail-progres > span {
+    position: absolute;
+    inset: -1px auto -1px 0;
+    width: var(--l, 30%);
+    background: var(--color-dore);
+    translate: var(--x, 0) 0;
   }
 </style>
 
 <script>
   const rail = document.querySelector<HTMLElement>('[data-rail]');
   if (rail) {
+    const prec = document.querySelector<HTMLButtonElement>('[data-rail-prec]');
+    const suiv = document.querySelector<HTMLButtonElement>('[data-rail-suiv]');
+    const barre = document.querySelector<HTMLElement>('[data-rail-barre]');
     const pas = () => (rail.querySelector('li')?.getBoundingClientRect().width ?? 320) + 20;
     const comportement: ScrollBehavior = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-    document.querySelector('[data-rail-prec]')?.addEventListener('click', () => rail.scrollBy({ left: -pas(), behavior: comportement }));
-    document.querySelector('[data-rail-suiv]')?.addEventListener('click', () => rail.scrollBy({ left: pas(), behavior: comportement }));
+    prec?.addEventListener('click', () => rail.scrollBy({ left: -pas(), behavior: comportement }));
+    suiv?.addEventListener('click', () => rail.scrollBy({ left: pas(), behavior: comportement }));
+
+    // boutons grisés aux extrémités, repère de progression sous le rail
+    let attente = false;
+    const maj = () => {
+      attente = false;
+      const max = rail.scrollWidth - rail.clientWidth;
+      const p = max > 0 ? rail.scrollLeft / max : 0;
+      if (prec) prec.disabled = rail.scrollLeft <= 2;
+      if (suiv) suiv.disabled = rail.scrollLeft >= max - 2;
+      if (barre) {
+        const part = rail.scrollWidth > 0 ? Math.min(rail.clientWidth / rail.scrollWidth, 1) : 1;
+        barre.style.setProperty('--l', `${(part * 100).toFixed(1)}%`);
+        barre.style.setProperty('--x', `${(p * (1 / part - 1) * 100).toFixed(1)}%`);
+      }
+    };
+    const demander = () => {
+      if (!attente) {
+        attente = true;
+        requestAnimationFrame(maj);
+      }
+    };
+    rail.addEventListener('scroll', demander, { passive: true });
+    window.addEventListener('resize', demander);
+    maj();
   }
 </script>

@@ -5,14 +5,23 @@ interface Props {
 }
 const { image, alt = '' } = Astro.props;
 ---
-<section class="media-cadre voile sur-image zoom-lent relative flex min-h-[90vh] items-center justify-center px-4 py-32 text-center text-creme" data-reveal>
-  <img src={image} alt={alt} loading="lazy" decoding="async" />
+<section class="citation media-cadre voile sur-image zoom-lent relative flex min-h-[90vh] items-center justify-center px-5 py-32 text-center text-creme" data-reveal="rideau">
+  <img src={image} alt={alt} loading="lazy" decoding="async" data-parallaxe="-0.12" />
   <figure class="relative z-10 mx-auto max-w-4xl">
+    <span class="mx-auto mb-10 block h-14 w-px bg-dore-clair/80" data-reveal="filet-v" data-reveal-delai="1" aria-hidden="true"></span>
     <blockquote>
-      <p class="font-[family-name:var(--font-titre)] text-[clamp(1.5rem,3.4vw,2.8rem)] leading-[1.25] font-extrabold tracking-[0.05em] uppercase">
+      <p class="font-[family-name:var(--font-titre)] text-[clamp(1.5rem,3.4vw,2.8rem)] leading-[1.25] font-extrabold tracking-[0.05em] uppercase" data-reveal-lignes>
         Votre métier, c’est de choisir les vins et de les faire découvrir, pas de compter des cartons.
       </p>
     </blockquote>
-    <figcaption class="signature mt-6">le suivi, Cuvée veut s’en charger</figcaption>
+    <figcaption class="signature mx-auto mt-6" data-reveal="ecriture" style="--d: 14">le suivi, Cuvée veut s’en charger</figcaption>
   </figure>
 </section>
+
+<style>
+  /* l'image dépasse du cadre pour que la parallaxe ne laisse jamais de bord vide */
+  .citation > img {
+    inset: -15% 0 auto 0;
+    height: 130%;
+  }
+</style>

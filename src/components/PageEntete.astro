@@ -1,36 +1,128 @@
 ---
-/** En-tête éditorial d’une page intérieure : surtitre, grand titre, chapô, chiffre romain de l’onglet en filigrane. Le titre accepte du HTML (<em>). */
-import { navigation } from '../data/site';
+/**
+ * En-tête plein cadre d'une page intérieure : image (ou vidéo) sombre sous voile, texte crème centré.
+ * Chiffre romain du chapitre, surtitre, h1 en capitales, signature manuscrite, chapô, lien « Découvrir »
+ * qui descend vers la suite de la page.
+ *
+ * Props :
+ *  - surtitre, titre (HTML autorisé, pas d'<em> décoratif : il est neutralisé), chapo, signature
+ *  - image : chemin /media/xxx.jpg · video : { src, affiche } (prioritaire sur l'image)
+ *  - numero : chiffre romain du chapitre (I à V) · vt : view-transition-name posé sur le média
+ *  - compact : version courte (~45svh) sans lien « Découvrir » (pages légales, 404)
+ *  - id : id du h1 (défaut « page-titre »)
+ */
+import Video from './maison/Video.astro';
+
 interface Props {
   surtitre: string;
   titre: string;
-  chapo: string;
+  chapo?: string;
+  signature?: string;
+  image?: string;
+  video?: { src: string; affiche: string };
+  numero?: string;
+  vt?: string;
+  compact?: boolean;
   id?: string;
 }
-const { surtitre, titre, chapo, id = 'page-titre' } = Astro.props;
-const chemin = Astro.url.pathname.replace(/\/+$/, '') || '/';
-const rang = navigation.findIndex((n) => (n.href === '/' ? chemin === '/' : chemin === n.href || chemin.startsWith(n.href + '/')));
-const romain = ['I', 'II', 'III', 'IV', 'V', 'VI'][rang] ?? '';
+const {
+  surtitre,
+  titre,
+  chapo,
+  signature,
+  image = '/media/cave-voutee.jpg',
+  video,
+  numero,
+  vt,
+  compact = false,
+  id = 'page-titre',
+} = Astro.props;
+const idSuite = `${id}-suite`;
 ---
-<header class="entete-page border-b border-filet bg-creme pt-14 pb-12 lg:pt-20 lg:pb-16">
-  {romain && <span class="entete-chiffre" aria-hidden="true">{romain}</span>}
-  <div class="conteneur relative">
-    <div class="max-w-3xl">
-      <p class="surtitre flex items-center gap-3 text-bordeaux" data-reveal>
-        <span>{surtitre}</span>
-        <span class="entete-filet-page h-px w-14 bg-dore" aria-hidden="true"></span>
-      </p>
-      <h1
-        id={id}
-        class="mt-5 text-[2.5rem] leading-[1.05] font-medium tracking-[-0.02em] sm:text-6xl lg:text-[4.25rem] [&_em]:text-bordeaux"
-        data-reveal-lignes
-        data-reveal
-      >
-        <Fragment set:html={titre} />
-      </h1>
-      <p class="mt-6 max-w-2xl text-lg leading-relaxed text-encre-douce sm:text-xl" data-reveal data-reveal-delai="3">
-        {chapo}
-      </p>
-    </div>
+<section
+  class:list={['page-entete sur-image relative isolate flex flex-col text-creme', compact ? 'page-entete--compact' : '']}
+  aria-labelledby={id}
+>
+  <div class="page-entete-media media-cadre voile zoom-lent absolute inset-0 -z-10" style={vt ? `view-transition-name:${vt}` : undefined} data-page-media>
+    {video ? <Video src={video.src} affiche={video.affiche} prioritaire /> : <img src={image} alt="" fetchpriority="high" decoding="async" />}
   </div>
-</header>
+
+  <div class="relative z-10 flex flex-1 flex-col items-center justify-center px-5 pt-32 pb-16 text-center sm:px-8 lg:pt-36">
+    {
+      numero && (
+        <p class="chapitre-num flex items-center gap-4 text-creme/85" data-reveal>
+          <span class="h-px w-8 bg-dore-clair/80" aria-hidden="true"></span>
+          <span>CHAPITRE {numero}</span>
+          <span class="h-px w-8 bg-dore-clair/80" aria-hidden="true"></span>
+        </p>
+      )
+    }
+    <p class:list={['surtitre text-creme/90', numero ? 'mt-6' : '']} data-reveal data-reveal-delai="1">{surtitre}</p>
+    <h1 id={id} class="page-entete-titre mt-6 max-w-4xl" data-reveal-lignes>
+      <Fragment set:html={titre} />
+    </h1>
+    {signature && <span class="signature mt-4" data-reveal data-reveal-delai="3">{signature}</span>}
+    {chapo && <p class="mt-8 max-w-2xl text-lg leading-relaxed text-creme/90 sm:text-xl" data-reveal data-reveal-delai="4">{chapo}</p>}
+  </div>
+
+  {
+    !compact && (
+      <div class="relative z-10 flex justify-center pb-6" data-reveal data-reveal-delai="5">
+        <a href={`#${idSuite}`} class="lien-cap text-creme/90" data-page-entete-suite>Découvrir</a>
+      </div>
+    )
+  }
+</section>
+{!compact && <div id={idSuite} aria-hidden="true" data-page-entete-ancre></div>}
+
+<script>
+  // Léger dézoom du média à l'arrivée (la classe est posée ici : le média ne se révèle pas par fondu,
+  // pour ne pas gêner la transition de page).
+  document.querySelectorAll<HTMLElement>('[data-page-media]').forEach((el) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('est-visible')));
+  });
+</script>
+
+<style>
+  .page-entete {
+    min-height: 70svh;
+    background: var(--color-chai);
+  }
+  @media (min-width: 48rem) {
+    .page-entete {
+      min-height: 78svh;
+    }
+  }
+  .page-entete--compact {
+    min-height: 42svh;
+  }
+  @media (min-width: 48rem) {
+    .page-entete--compact {
+      min-height: 45svh;
+    }
+  }
+  /* assombrissement supplémentaire sous le texte : le contraste reste ≥ 4.5:1 même sur une photo claire */
+  .page-entete-media::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: rgb(42 34 32 / 0.4);
+    pointer-events: none;
+  }
+  .page-entete-titre {
+    font-size: clamp(1.9rem, 4.8vw, 3.9rem);
+    line-height: 1.1;
+  }
+  .page-entete--compact .page-entete-titre {
+    font-size: clamp(1.8rem, 4.2vw, 3.2rem);
+  }
+  /* pas d'italique décoratif dans le titre */
+  .page-entete-titre :global(em) {
+    font-style: normal;
+    color: inherit;
+  }
+  .page-entete :global(.chapitre-num) {
+    font-weight: 400;
+  }
+</style>
