@@ -1,0 +1,35 @@
+---
+import Embleme from './Embleme.astro';
+import ACompleter from '../ACompleter.astro';
+import { site, navigation, lienInscription } from '../../data/site';
+
+const annee = new Date().getFullYear();
+---
+<footer class="sur-fond-sombre bg-chai px-4 pt-20 pb-10 text-creme">
+  <div class="mx-auto flex max-w-[76rem] flex-col items-center text-center">
+    <a href="/" class="flex flex-col items-center gap-2 text-creme no-underline" aria-label="Cuvée, retour à l’accueil">
+      <Embleme taille={22} />
+      <span class="font-[family-name:var(--font-titre)] text-2xl font-extrabold tracking-[0.32em] [margin-right:-0.32em]">CUVÉE</span>
+    </a>
+    <span class="signature mt-4 text-[2.2rem]!">assistant de cave</span>
+
+    <nav aria-label="Pied de page" class="mt-12">
+      <ul role="list" class="flex flex-wrap justify-center gap-x-8 gap-y-2">
+        {navigation.filter((n) => n.href !== '/').map((n) => <li><a href={n.href} class="lien-cap">{n.libelle}</a></li>)}
+      </ul>
+    </nav>
+
+    <p class="mt-8 text-creme/75">
+      {site.emailContact ? <a href={`mailto:${site.emailContact}`} class="lien">{site.emailContact}</a> : <ACompleter texte="email de contact" />}
+      <span class="mx-3" aria-hidden="true">·</span>
+      <a href={lienInscription} class="lien">Rejoindre le programme pilote</a>
+    </p>
+
+    <div class="filet-double mt-14 w-full opacity-50" aria-hidden="true"></div>
+    <div class="mt-6 flex w-full flex-col gap-3 text-[0.875rem] text-creme/60 sm:flex-row sm:items-center sm:justify-between">
+      <p>© {annee} Cuvée · <a href="/mentions-legales/" class="lien">Mentions légales</a> · <a href="/confidentialite/" class="lien">Confidentialité</a></p>
+      <p>Photos et vidéos : Pexels (licence libre), à remplacer par nos propres prises de vue.</p>
+    </div>
+    <p class="mt-4 text-[0.875rem] text-creme/60">L’abus d’alcool est dangereux pour la santé, à consommer avec modération.</p>
+  </div>
+</footer>

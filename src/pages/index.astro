@@ -1,23 +1,38 @@
 ---
 import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
-import Hero from '../components/Hero.astro';
-import Probleme from '../components/Probleme.astro';
+import EnTete from '../components/maison/EnTete.astro';
+import Ouverture from '../components/maison/Ouverture.astro';
+import Manifeste from '../components/maison/Manifeste.astro';
+import Chapitres from '../components/maison/Chapitres.astro';
+import Citation from '../components/maison/Citation.astro';
+import Proposition from '../components/maison/Proposition.astro';
+import Semaine from '../components/maison/Semaine.astro';
 import Calculateur from '../components/Calculateur.astro';
-import PageApercu from '../components/PageApercu.astro';
-import PageCta from '../components/PageCta.astro';
-import Footer from '../components/Footer.astro';
+import Pistes from '../components/maison/Pistes.astro';
+import Appel from '../components/maison/Appel.astro';
+import PiedDePage from '../components/maison/PiedDePage.astro';
 import CtaMobile from '../components/CtaMobile.astro';
+import '../styles/maison.css';
 ---
 <Base>
-  <Header />
-  <main id="contenu">
-    <Hero />
-    <Probleme />
-    <Calculateur />
-    <PageApercu />
-    <PageCta />
-  </main>
-  <Footer />
-  <CtaMobile />
+  <div class="maison">
+    <EnTete />
+    <main id="contenu">
+      <Ouverture />
+      <Manifeste />
+      <Chapitres />
+      <Citation image="/media/cave-voutee.jpg" />
+      <Proposition />
+      <Semaine />
+      <Calculateur />
+      <Pistes />
+      <Appel />
+    </main>
+    <PiedDePage />
+    <CtaMobile />
+  </div>
 </Base>
+
+<script>
+  import '../scripts/demo.ts';
+</script>

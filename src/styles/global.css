@@ -7,12 +7,12 @@
    jamais du texte sur fond clair, le contraste serait insuffisant).
    ------------------------------------------------------------------ */
 @theme {
-  --color-creme: #f5efe3;
-  --color-creme-fonce: #ebe2d0;
+  --color-creme: #f5e9e4; /* rosé pâle, remplace #f5efe3 */
+  --color-creme-fonce: #ecd9d2;
   --color-papier: #fbf8f2;
   --color-encre: #1f1a17;
   --color-encre-douce: #51473f;
-  --color-filet: #d6c8ae;
+  --color-filet: #e3cfc7;
   --color-bordure: #8a7d69;
   --color-bordeaux: #6e1f2f;
   --color-bordeaux-fonce: #561724;
@@ -23,10 +23,15 @@
   --color-dore-clair: #e9ddbf;
   --color-creme-sourde: #d9d0bf;
   --color-erreur: #9b1c2c;
+  --color-chai: #2a2220;
+  --color-bordeaux-nuit: #4a1420;
 
   --font-serif: "Fraunces Variable", Georgia, "Times New Roman", serif;
   --font-sans: "Source Sans 3 Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --font-titre: "Outfit Variable", "Outfit", system-ui, sans-serif;
+  --font-texte: "Josefin Sans Variable", "Josefin Sans", system-ui, sans-serif;
+  --font-script: "Mr Dafoe", "Brush Script MT", cursive;
 }
 
 @layer base {

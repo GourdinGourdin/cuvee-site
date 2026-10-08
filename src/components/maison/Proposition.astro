@@ -1,0 +1,32 @@
+---
+import BonDeCommande from '../BonDeCommande.astro';
+---
+<section id="proposition" class="relative overflow-hidden bg-creme" aria-labelledby="proposition-titre">
+  <div class="grid lg:grid-cols-[1.05fr_1fr]">
+    <div class="media-cadre zoom-lent relative min-h-[70vh] px-4 py-16 sm:px-10 lg:min-h-[100vh] lg:py-24" data-reveal>
+      <img src="/media/mur-bouteilles.jpg" alt="" loading="lazy" decoding="async" />
+      <div class="absolute inset-0 bg-chai/35" aria-hidden="true"></div>
+      <div class="relative z-10 mx-auto flex h-full max-w-md items-center lg:max-w-lg">
+        <BonDeCommande />
+      </div>
+    </div>
+    <div class="flex flex-col justify-center px-6 py-20 sm:px-12 lg:px-20 xl:px-24">
+      <p class="surtitre text-encre-douce" data-reveal>Un exemple, lundi à 7 h 02</p>
+      <h2 id="proposition-titre" class="mt-5 text-[clamp(1.7rem,3vw,2.6rem)] text-bordeaux" data-reveal data-reveal-delai="1">
+        La commande est prête avant vous
+      </h2>
+      <span class="signature mt-2" data-reveal data-reveal-delai="2">au carton près</span>
+      <p class="mt-8 max-w-lg text-encre-douce" data-reveal data-reveal-delai="3">
+        Cuvée compare ce qui sort et ce qui reste, voit venir la rupture et prépare le bon pour le domaine,{' '}
+        <strong class="font-semibold text-encre">franco compris</strong>. Vous ajustez une quantité, vous validez, il part par
+        email ou WhatsApp.
+      </p>
+      <ul class="mt-8 grid max-w-lg gap-3 text-encre-douce" role="list" data-reveal data-reveal-delai="4">
+        <li class="flex gap-3 border-b border-filet pb-3"><span class="font-semibold text-bordeaux">01</span> Vos ventes, lues depuis la caisse</li>
+        <li class="flex gap-3 border-b border-filet pb-3"><span class="font-semibold text-bordeaux">02</span> Vos entrées, lues sur les factures</li>
+        <li class="flex gap-3 border-b border-filet pb-3"><span class="font-semibold text-bordeaux">03</span> Votre feu vert, toujours</li>
+      </ul>
+      <a href="/comment-ca-marche" class="lien-cap mt-8 self-start text-encre" data-reveal data-reveal-delai="5">Voir le fonctionnement</a>
+    </div>
+  </div>
+</section>
