@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CtaMobile from '../components/CtaMobile.astro';
+import PageEntete from '../components/PageEntete.astro';
+import PageCta from '../components/PageCta.astro';
+import FAQ from '../components/FAQ.astro';
+---
+<Base titre="Questions fréquentes · Cuvée" description="Les réponses aux questions avant de rejoindre le pilote Cuvée : données, tarif, intégration à la caisse, contrôle des commandes.">
+  <Header />
+  <main id="contenu">
+    <PageEntete surtitre="Questions" titre="Ce que l’on nous demande <em>avant de s’inscrire</em>." chapo="Données, caisse, tarif, contrôle : les réponses franches, y compris sur ce que Cuvée ne fait pas encore." />
+    <FAQ />
+    <PageCta titre="Une question qui n’est pas là ?" texte="Dites-le-nous dans le formulaire du pilote : nous répondons et nous complétons cette page." />
+  </main>
+  <Footer />
+  <CtaMobile />
+</Base>
+

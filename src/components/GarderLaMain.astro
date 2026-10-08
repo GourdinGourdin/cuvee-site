@@ -63,8 +63,8 @@ const couleursStatut: Record<Statut, string> = {
 
       <dl class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
         {
-          principes.map((p) => (
-            <div class="border-t border-encre pt-4">
+          principes.map((p, i) => (
+            <div class="principe border-t border-encre pt-4" data-reveal data-reveal-delai={String((i % 4) + 1)}>
               <dt class="font-serif text-xl leading-snug font-medium">{p.titre}</dt>
               <dd class="mt-2 text-encre-douce" set:html={avecPlaceholders(p.texte)} />
             </div>
@@ -73,7 +73,7 @@ const couleursStatut: Record<Statut, string> = {
       </dl>
     </div>
 
-    <figure class="papier self-start lg:sticky lg:top-28" aria-labelledby="journal-legende">
+    <figure class="papier journal self-start lg:sticky lg:top-28" aria-labelledby="journal-legende" data-journal>
       <div class="flex items-center justify-between gap-3 border-b-2 border-encre px-5 py-4 sm:px-6">
         <figcaption id="journal-legende">
           <span class="block font-serif text-xl font-medium">Journal de cave</span>
@@ -84,10 +84,10 @@ const couleursStatut: Record<Statut, string> = {
           <path d="M10 3v28M14 10h10M14 15h10M14 20h10M14 25h6" />
         </svg>
       </div>
-      <ol role="list" class="divide-y divide-filet">
+      <ol role="list" class="journal-lignes divide-y divide-filet">
         {
-          journal.map((e) => (
-            <li class="grid grid-cols-[4rem_minmax(0,1fr)] gap-x-3 gap-y-1.5 px-5 py-3.5 sm:grid-cols-[4.5rem_minmax(0,1fr)_auto] sm:items-center sm:px-6">
+          journal.map((e, i) => (
+            <li style={`--i:${i}`} class="journal-ligne grid grid-cols-[4rem_minmax(0,1fr)] gap-x-3 gap-y-1.5 px-5 py-3.5 sm:grid-cols-[4.5rem_minmax(0,1fr)_auto] sm:items-center sm:px-6">
               <span class="chiffres text-[0.8rem] leading-tight text-encre-douce">
                 {e.jour}
                 <br />
@@ -114,3 +114,62 @@ const couleursStatut: Record<Statut, string> = {
     </figure>
   </div>
 </section>
+
+<style is:global>
+  /* Le journal se remplit ligne à ligne quand il entre à l’écran (la classe est posée par le script ; sans lui, tout est visible). */
+  .journal.journal-pret .journal-ligne {
+    opacity: 0;
+    translate: 0 8px;
+    transition:
+      opacity 0.5s ease calc(var(--i) * 0.38s + 0.2s),
+      translate 0.5s ease calc(var(--i) * 0.38s + 0.2s);
+  }
+  .journal.journal-pret .journal-ligne .cachet {
+    opacity: 0;
+    transform: scale(1.6) rotate(-6deg);
+    transition:
+      opacity 0.25s ease calc(var(--i) * 0.38s + 0.65s),
+      transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.3) calc(var(--i) * 0.38s + 0.65s);
+  }
+  .journal.journal-rempli .journal-ligne {
+    opacity: 1;
+    translate: 0 0;
+  }
+  .journal.journal-rempli .journal-ligne .cachet {
+    opacity: 1;
+    transform: none;
+  }
+  .journal-ligne { position: relative; }
+  .journal-ligne:hover { background: rgb(233 221 191 / 0.28); }
+  .principe { transition: border-color 0.3s ease; }
+  .principe:hover { border-color: var(--color-bordeaux); }
+  @media (prefers-reduced-motion: reduce) {
+    .journal.journal-pret .journal-ligne,
+    .journal.journal-pret .journal-ligne .cachet {
+      opacity: 1 !important;
+      translate: none !important;
+      transform: none !important;
+    }
+  }
+</style>
+
+<script>
+  const journal = document.querySelector<HTMLElement>('[data-journal]');
+  if (journal) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+      // rien à animer : le journal reste affiché tel quel
+    } else {
+      journal.classList.add('journal-pret');
+      const obs = new IntersectionObserver(
+        (entrees) => {
+          if (entrees.some((e) => e.isIntersecting)) {
+            journal.classList.add('journal-rempli');
+            obs.disconnect();
+          }
+        },
+        { threshold: 0.25 },
+      );
+      obs.observe(journal);
+    }
+  }
+</script>

@@ -10,13 +10,23 @@ interface Props {
 const { numero, libelle, id, titre, sombre = false, class: classe = '' } = Astro.props;
 ---
 <div class:list={['max-w-3xl', classe]}>
-  <p class:list={['surtitre flex items-center gap-3', sombre ? 'text-dore-clair' : 'text-bordeaux']}>
+  <p data-reveal class:list={['surtitre flex items-center gap-3', sombre ? 'text-dore-clair' : 'text-bordeaux']}>
     <span>N° {numero}</span>
-    <span class:list={['h-px w-8', sombre ? 'bg-dore-clair' : 'bg-dore']} aria-hidden="true"></span>
+    <span class:list={['titre-filet h-px w-8', sombre ? 'bg-dore-clair' : 'bg-dore']} aria-hidden="true"></span>
     <span>{libelle}</span>
   </p>
-  <h2 id={id} class="mt-4 text-[2rem] leading-[1.1] font-medium tracking-[-0.015em] sm:text-[2.6rem] lg:text-5xl">
+  <h2 id={id} data-reveal data-reveal-delai="1" class="mt-4 text-[2rem] leading-[1.1] font-medium tracking-[-0.015em] sm:text-[2.6rem] lg:text-5xl">
     <Fragment set:html={titre} />
   </h2>
   <slot />
 </div>
+
+<style is:global>
+  .titre-filet {
+    transform-origin: left;
+    animation: filet-trace 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
+  }
+  @keyframes filet-trace {
+    from { transform: scaleX(0); }
+  }
+</style>

@@ -22,43 +22,58 @@ const scenes = [
   },
 ];
 ---
-<section id="probleme" aria-labelledby="probleme-titre" class="border-t border-filet bg-creme-fonce py-20 lg:py-28">
+<section id="probleme" aria-labelledby="probleme-titre" class="relative overflow-hidden border-t border-filet bg-creme-fonce py-20 lg:py-28">
   <div class="conteneur">
-    <TitreSection
-      numero="1"
-      libelle="Le problème"
-      id="probleme-titre"
-      titre="Une belle carte des vins, et beaucoup d’heures derrière."
-    >
-      <p class="mt-5 max-w-2xl text-lg text-encre-douce">
-        Trois situations que nous voulons régler. Si elles vous parlent, ou si nous nous trompons, dites-le-nous.
-      </p>
-    </TitreSection>
+    <div data-reveal>
+      <TitreSection
+        numero="1"
+        libelle="Le problème"
+        id="probleme-titre"
+        titre="Une belle carte des vins, et beaucoup d’heures derrière."
+      >
+        <p class="mt-5 max-w-2xl text-lg text-encre-douce">
+          Trois situations que nous voulons régler. Si elles vous parlent, ou si nous nous trompons, dites-le-nous.
+        </p>
+      </TitreSection>
+    </div>
 
-    <ul role="list" class="mt-12 grid gap-10 lg:grid-cols-3 lg:gap-0">
+    <ol role="list" class="mt-14 grid gap-12 lg:grid-cols-3 lg:gap-0">
       {
         scenes.map((scene, i) => (
           <li
+            data-reveal
+            data-reveal-delai={String(i + 1)}
             class:list={[
-              'border-t border-dotted border-bordure pt-5 lg:border-t-0 lg:px-8 lg:pt-0',
+              'relative border-t border-encre pt-5 lg:px-8',
               i === 0 && 'lg:pl-0',
-              i > 0 && 'lg:border-l lg:border-solid lg:border-filet',
+              i > 0 && 'lg:border-l lg:border-l-filet',
               i === 2 && 'lg:pr-0',
             ]}
           >
-            <p class="surtitre text-bordeaux">{scene.moment}</p>
+            <span class="chiffre-contour font-serif text-[4.5rem] leading-none font-light select-none" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <p class="surtitre mt-4 text-bordeaux">{scene.moment}</p>
             <h3 class="mt-3 text-2xl leading-snug font-medium">{scene.titre}</h3>
             <p class="mt-3 text-encre-douce">{scene.texte}</p>
           </li>
         ))
       }
-    </ul>
+    </ol>
 
-    <div class="mt-14 max-w-3xl border-t border-filet pt-8">
-      <p class="font-serif text-xl leading-snug sm:text-2xl">
-        Votre métier, c’est de choisir les vins et de les faire découvrir, pas de compter des cartons. Le suivi, Cuvée veut
-        s’en charger.
+    <figure class="relative mt-16 max-w-3xl border-t border-dore pt-8 pl-0 sm:pl-14" data-reveal="gauche">
+      <span class="absolute -top-2 left-0 hidden font-serif text-8xl leading-none text-bordeaux/25 sm:block" aria-hidden="true">“</span>
+      <p class="font-serif text-2xl leading-snug font-light sm:text-3xl">
+        Votre métier, c’est de choisir les vins et de les faire découvrir, pas de compter des cartons.{' '}
+        <em class="font-normal text-bordeaux">Le suivi, Cuvée veut s’en charger.</em>
       </p>
-    </div>
+    </figure>
   </div>
 </section>
+
+<style>
+  .chiffre-contour {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--color-bordeaux);
+  }
+</style>

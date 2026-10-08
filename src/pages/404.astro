@@ -11,7 +11,12 @@ import Footer from '../components/Footer.astro';
       Cette référence n’est pas <em class="text-bordeaux">en cave</em>.
     </h1>
     <p class="mt-6 max-w-xl text-lg text-encre-douce">La page que vous cherchez n’existe pas ou a été déplacée.</p>
-    <a href="/" class="btn btn-primaire mt-8">Retour à l’accueil</a>
+    <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+      <a href="/" class="btn btn-primaire">Retour à l’accueil</a>
+      <a href="/comment-ca-marche" class="lien lien-seul">Comment ça marche</a>
+      <a href="/pilote" class="lien lien-seul">Le pilote</a>
+      <a href="/questions" class="lien lien-seul">Questions</a>
+    </div>
   </main>
   <Footer />
 </Base>

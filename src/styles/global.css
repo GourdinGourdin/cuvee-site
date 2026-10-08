@@ -166,38 +166,56 @@
     text-align: center;
     text-decoration: none;
     cursor: pointer;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     transition:
-      background-color 0.15s ease,
-      color 0.15s ease,
-      border-color 0.15s ease;
+      color 0.25s ease,
+      border-color 0.25s ease,
+      translate 0.2s ease;
+  }
+
+  /* remplissage qui balaie le bouton de gauche à droite au survol */
+  .btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--remplissage, transparent);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .btn:hover::before,
+  .btn:focus-visible::before {
+    transform: scaleX(1);
+  }
+
+  .btn:active {
+    translate: 0 1px;
   }
 
   .btn-primaire {
+    --remplissage: var(--color-bordeaux-fonce);
     background: var(--color-bordeaux);
     color: var(--color-creme);
   }
 
-  .btn-primaire:hover {
-    background: var(--color-bordeaux-fonce);
-  }
-
   .btn-creme {
+    --remplissage: var(--color-papier);
     background: var(--color-creme);
     color: var(--color-bordeaux);
   }
 
-  .btn-creme:hover {
-    background: var(--color-papier);
-  }
-
   .btn-contour {
+    --remplissage: var(--color-encre);
     border-color: var(--color-encre);
     color: var(--color-encre);
     background: transparent;
   }
 
   .btn-contour:hover {
-    background: var(--color-encre);
     color: var(--color-creme);
   }
 
@@ -213,17 +231,20 @@
     font-size: 0.9375rem;
   }
 
+  /* souligné doré au repos ; au survol, un second trait se dessine de gauche à droite */
   .lien {
     font-weight: 600;
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.3em;
-    text-decoration-color: var(--color-dore);
-    transition: text-decoration-color 0.15s ease;
+    text-decoration: none;
+    padding-bottom: 0.12em;
+    background:
+      linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat,
+      linear-gradient(var(--color-dore), var(--color-dore)) 0 100% / 100% 1px no-repeat;
+    transition: background-size 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
 
-  .lien:hover {
-    text-decoration-color: currentColor;
+  .lien:hover,
+  .lien:focus-visible {
+    background-size: 100% 1px, 100% 1px;
   }
 
   /* lien isolé (hors phrase) : zone tactile de 44 px */
@@ -238,6 +259,25 @@
     position: relative;
     background: var(--color-papier);
     border: 1px solid var(--color-filet);
+  }
+
+  /* seules les fiches cliquables se soulèvent au survol (appareils à souris) */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    a.papier {
+      transition:
+        translate 0.25s ease,
+        box-shadow 0.25s ease;
+    }
+
+    a.papier:hover {
+      translate: 0 -3px;
+    }
+
+    a.papier-ombre:hover {
+      box-shadow:
+        6px 8px 0 var(--color-creme-fonce),
+        6px 8px 0 1px var(--color-filet);
+    }
   }
 
   /* ombre nette de feuille posée, plutôt qu'un flou */
@@ -509,5 +549,96 @@
   .texte-courant a {
     text-decoration: underline;
     text-underline-offset: 0.2em;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Animations (API documentée dans src/scripts/animations.ts)
+   Masquage uniquement si <html class="anim"> : JS actif et mouvement autorisé.
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  /* transitions douces entre pages (CSS natif, repli : navigation classique) */
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-old(root) {
+    animation: 0.2s ease both fondu-sortie;
+  }
+
+  ::view-transition-new(root) {
+    animation: 0.35s ease 0.05s both fondu-entree;
+  }
+
+  @keyframes fondu-sortie {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fondu-entree {
+    from {
+      opacity: 0;
+    }
+  }
+
+  html.anim [data-reveal],
+  html.anim [data-compteur] {
+    --dx: 0;
+    --dy: 1.25rem;
+    --ech: 1;
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(var(--ech));
+    transition:
+      opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
+      translate 0.25s ease,
+      box-shadow 0.25s ease;
+    transition-delay: calc(var(--d, 0) * 90ms);
+  }
+
+  html.anim [data-compteur]:not([data-reveal]) {
+    --dy: 0.5rem;
+  }
+
+  html.anim [data-reveal="gauche"] { --dx: -2rem; --dy: 0; }
+  html.anim [data-reveal="droite"] { --dx: 2rem; --dy: 0; }
+  html.anim [data-reveal="echelle"] { --dy: 0; --ech: 0.94; }
+
+  html.anim [data-reveal-delai="1"] { --d: 1; }
+  html.anim [data-reveal-delai="2"] { --d: 2; }
+  html.anim [data-reveal-delai="3"] { --d: 3; }
+  html.anim [data-reveal-delai="4"] { --d: 4; }
+  html.anim [data-reveal-delai="5"] { --d: 5; }
+  html.anim [data-reveal-delai="6"] { --d: 6; }
+
+  html.anim [data-reveal].est-visible,
+  html.anim [data-compteur].est-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* titre révélé mot par mot : chaque mot monte depuis un masque */
+  html.anim .mot {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding-bottom: 0.12em;
+    margin-bottom: -0.12em;
+  }
+
+  html.anim .mot-i {
+    display: inline-block;
+    transform: translateY(110%);
+    transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: calc(var(--i, 0) * 55ms + var(--d, 0) * 90ms);
+  }
+
+  html.anim [data-reveal-lignes].est-visible .mot-i {
+    transform: none;
+  }
+
+  [data-parallaxe] {
+    will-change: translate;
   }
 }

@@ -14,11 +14,15 @@ export const site = {
   indexable: false,
 };
 
+/** Onglets du site. `href` sert aussi à détecter la page active dans le Header. */
 export const navigation = [
-  { libelle: 'Le problème', href: '/#probleme' },
-  { libelle: 'Le calcul', href: '/#calcul' },
-  { libelle: 'Comment ça marche', href: '/#fonctionnement' },
-  { libelle: 'Exemples', href: '/#exemples' },
-  { libelle: 'Le pilote', href: '/#pilote' },
-  { libelle: 'Questions', href: '/#faq' },
+  { libelle: 'Accueil', href: '/' },
+  { libelle: 'Comment ça marche', href: '/comment-ca-marche' },
+  { libelle: 'Le pilote', href: '/pilote' },
+  { libelle: 'Équipe', href: '/equipe' },
+  { libelle: 'Questions', href: '/questions' },
 ];
+
+/** Adresse de l’inscription, partagée par tous les boutons du site. */
+export const lienInscription = '/pilote#inscription';
+

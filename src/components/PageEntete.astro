@@ -1,0 +1,31 @@
+---
+/** En-tête éditorial d’une page intérieure : surtitre, grand titre, chapô. Le titre accepte du HTML (<em>). */
+interface Props {
+  surtitre: string;
+  titre: string;
+  chapo: string;
+  id?: string;
+}
+const { surtitre, titre, chapo, id = 'page-titre' } = Astro.props;
+---
+<header class="border-b border-filet bg-creme pt-14 pb-12 lg:pt-20 lg:pb-16">
+  <div class="conteneur">
+    <div class="max-w-3xl">
+      <p class="surtitre flex items-center gap-3 text-bordeaux" data-reveal>
+        <span>{surtitre}</span>
+        <span class="h-px w-10 bg-dore" aria-hidden="true"></span>
+      </p>
+      <h1
+        id={id}
+        class="mt-5 text-[2.5rem] leading-[1.05] font-medium tracking-[-0.02em] sm:text-6xl lg:text-[4.25rem] [&_em]:text-bordeaux"
+        data-reveal
+        data-reveal-delai="1"
+      >
+        <Fragment set:html={titre} />
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg leading-relaxed text-encre-douce sm:text-xl" data-reveal data-reveal-delai="2">
+        {chapo}
+      </p>
+    </div>
+  </div>
+</header>

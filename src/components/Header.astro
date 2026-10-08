@@ -1,11 +1,13 @@
 ---
 import Logo from './Logo.astro';
-import { navigation } from '../data/site';
+import { navigation, lienInscription } from '../data/site';
 
 interface Props {
   simple?: boolean;
 }
 const { simple = false } = Astro.props;
+const chemin = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const actif = (href: string) => (href === '/' ? chemin === '/' : chemin === href || chemin.startsWith(href + '/'));
 ---
 <header class="relative z-40 border-b border-filet bg-creme lg:sticky lg:top-0">
   <div class="conteneur flex h-16 items-center justify-between gap-4 lg:h-[4.5rem]">
@@ -21,10 +23,14 @@ const { simple = false } = Astro.props;
       ) : (
         <>
           <nav aria-label="Navigation principale" class="hidden lg:block">
-            <ul role="list" class="flex items-center gap-6 text-[0.975rem]">
+            <ul role="list" class="flex items-center gap-7 text-[0.975rem]">
               {navigation.map((item) => (
                 <li>
-                  <a href={item.href} class="inline-block py-2 text-encre-douce transition-colors hover:text-bordeaux">
+                  <a
+                    href={item.href}
+                    class="onglet inline-block py-2 text-encre-douce transition-colors hover:text-bordeaux aria-[current=page]:font-semibold aria-[current=page]:text-bordeaux"
+                    aria-current={actif(item.href) ? 'page' : undefined}
+                  >
                     {item.libelle}
                   </a>
                 </li>
@@ -44,7 +50,12 @@ const { simple = false } = Astro.props;
                 <ul role="list" class="conteneur grid py-2">
                   {navigation.map((item) => (
                     <li class="border-b border-filet last:border-0">
-                      <a href={item.href} class="flex min-h-12 items-center font-serif text-xl" data-menu-lien>
+                      <a
+                        href={item.href}
+                        class="flex min-h-12 items-center font-serif text-xl aria-[current=page]:text-bordeaux aria-[current=page]:before:mr-3 aria-[current=page]:before:h-px aria-[current=page]:before:w-6 aria-[current=page]:before:bg-bordeaux aria-[current=page]:before:content-['']"
+                        aria-current={actif(item.href) ? 'page' : undefined}
+                        data-menu-lien
+                      >
                         {item.libelle}
                       </a>
                     </li>
@@ -52,7 +63,7 @@ const { simple = false } = Astro.props;
                 </ul>
               </nav>
             </details>
-            <a href="/#inscription" class="btn btn-primaire btn-petit">
+            <a href={lienInscription} class="btn btn-primaire btn-petit">
               <span class="sm:hidden">Le pilote</span>
               <span class="hidden sm:inline">Rejoindre le pilote</span>
             </a>
@@ -62,6 +73,38 @@ const { simple = false } = Astro.props;
     }
   </div>
 </header>
+
+<style>
+  .onglet {
+    position: relative;
+  }
+  .onglet::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--color-bordeaux);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .onglet:hover::after {
+    transform: scaleX(0.4);
+  }
+  .onglet[aria-current='page']::after {
+    transform: scaleX(1);
+    animation: souligne 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes souligne {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+</style>
 
 <script>
   // Le menu mobile est un <details> natif ; on le referme après un clic sur un lien ou avec Échap.

@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CtaMobile from '../components/CtaMobile.astro';
+import PageEntete from '../components/PageEntete.astro';
+import PageCta from '../components/PageCta.astro';
+import CommentCaMarche from '../components/CommentCaMarche.astro';
+import Exemples from '../components/Exemples.astro';
+import GarderLaMain from '../components/GarderLaMain.astro';
+---
+<Base titre="Comment ça marche · Cuvée" description="De la facture au bon de commande : comment Cuvée suit votre cave, repère les bouteilles qui dorment et prépare les commandes, avec vous aux commandes.">
+  <Header />
+  <main id="contenu">
+    <PageEntete surtitre="Comment ça marche" titre="De la facture au bon de commande, <em>sans perdre la main</em>." chapo="Cuvée lit vos factures, suit votre stock et prépare vos commandes. Vous relisez, vous corrigez, vous validez." />
+    <CommentCaMarche />
+    <Exemples />
+    <GarderLaMain />
+    <PageCta />
+  </main>
+  <Footer />
+  <CtaMobile />
+</Base>
+
+<script>
+  import '../scripts/demo.ts';
+</script>

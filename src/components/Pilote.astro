@@ -38,7 +38,8 @@ const demande = [
 
       <!-- TODO : n’afficher ce tampon que si le nombre de places est réellement limité. -->
       <p
-        class="chiffres w-fit shrink-0 -rotate-2 border-[3px] border-double border-dore-clair px-4 py-2 text-center text-[0.8rem] tracking-[0.15em] text-dore-clair uppercase"
+        data-reveal="echelle"
+        class="pilote-tampon chiffres w-fit shrink-0 -rotate-2 border-[3px] border-double border-dore-clair px-4 py-2 text-center text-[0.8rem] tracking-[0.15em] text-dore-clair uppercase"
       >
         <ACompleter texte="N" /> places
       </p>
@@ -47,12 +48,12 @@ const demande = [
     <div class="mt-14 grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-14">
       <div class="grid content-start gap-10">
         <div>
-          <h3 class="border-b border-creme/30 pb-3 text-2xl font-medium">Ce que nous vous proposons</h3>
+          <h3 data-reveal class="border-b border-creme/30 pb-3 text-2xl font-medium">Ce que nous vous proposons</h3>
           <ul role="list" class="mt-5 grid gap-4">
             {
-              propose.map((item) => (
-                <li class="flex gap-3 text-creme-sourde">
-                  <span class="mt-[0.6rem] h-px w-4 shrink-0 bg-dore-clair" aria-hidden="true" />
+              propose.map((item, i) => (
+                <li data-reveal data-reveal-delai={String(Math.min(i + 1, 6))} class="pilote-item flex gap-3 text-creme-sourde">
+                  <span class="pilote-tiret mt-[0.6rem] h-px w-4 shrink-0 bg-dore-clair" aria-hidden="true" />
                   <span set:html={avecPlaceholders(item)} />
                 </li>
               ))
@@ -60,12 +61,12 @@ const demande = [
           </ul>
         </div>
         <div>
-          <h3 class="border-b border-creme/30 pb-3 text-2xl font-medium">Ce que nous vous demandons</h3>
+          <h3 data-reveal class="border-b border-creme/30 pb-3 text-2xl font-medium">Ce que nous vous demandons</h3>
           <ul role="list" class="mt-5 grid gap-4">
             {
-              demande.map((item) => (
-                <li class="flex gap-3 text-creme-sourde">
-                  <span class="mt-[0.6rem] h-px w-4 shrink-0 bg-dore-clair" aria-hidden="true" />
+              demande.map((item, i) => (
+                <li data-reveal data-reveal-delai={String(Math.min(i + 1, 6))} class="pilote-item flex gap-3 text-creme-sourde">
+                  <span class="pilote-tiret mt-[0.6rem] h-px w-4 shrink-0 bg-dore-clair" aria-hidden="true" />
                   <span set:html={avecPlaceholders(item)} />
                 </li>
               ))
@@ -78,3 +79,10 @@ const demande = [
     </div>
   </div>
 </section>
+
+<style is:global>
+  .pilote-tiret { transition: width 0.3s ease; }
+  .pilote-item:hover .pilote-tiret { width: 1.5rem; }
+  .pilote-tampon { transition: rotate 0.4s ease; rotate: 0deg; }
+  .pilote-tampon:hover { rotate: 2deg; }
+</style>

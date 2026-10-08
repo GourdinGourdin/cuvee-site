@@ -5,13 +5,14 @@ import TitreSection from './TitreSection.astro';
   <div
     class="conteneur grid gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:grid-rows-[auto_1fr] lg:gap-x-16 lg:gap-y-10"
   >
-    <div>
+    <div data-reveal="gauche">
       <TitreSection numero="2" libelle="Faites le calcul" id="calcul-titre" titre="Combien dort dans votre cave ?" sombre />
       <p class="mt-6 max-w-lg text-lg text-creme-sourde">Trois chiffres, de tête. Rien n’est enregistré ni envoyé.</p>
     </div>
 
     <form
-      class="papier p-5 text-encre sm:p-8 lg:col-start-2 lg:row-span-2 lg:row-start-1"
+      data-reveal="droite"
+      class="papier papier-ombre p-5 text-encre sm:p-8 lg:col-start-2 lg:row-span-2 lg:row-start-1"
       aria-label="Calculateur : argent qui dort en cave"
       data-calculateur
       novalidate
@@ -86,6 +87,13 @@ import TitreSection from './TitreSection.astro';
       </div>
 
       <div class="mt-8 border-t-2 border-encre pt-6">
+        <!-- jauge : part du stock qui dort -->
+        <div class="mb-6" aria-hidden="true">
+          <div class="h-2 w-full bg-creme-fonce">
+            <div class="jauge h-full bg-bordeaux" data-calc-jauge style="width:15%"></div>
+          </div>
+          <p class="surtitre mt-2 flex justify-between text-encre-douce"><span>Part qui dort</span><span>Reste du stock</span></p>
+        </div>
         <div class="grid gap-6 sm:grid-cols-2" aria-hidden="true">
           <div>
             <p class="surtitre text-encre-douce">Argent qui dort en cave</p>
@@ -119,13 +127,13 @@ import TitreSection from './TitreSection.astro';
       </noscript>
     </form>
 
-    <div class="max-w-lg lg:col-start-1 lg:row-start-2 lg:self-start lg:border-t lg:border-creme/25 lg:pt-6">
+    <div data-reveal data-reveal-delai="2" class="max-w-lg lg:col-start-1 lg:row-start-2 lg:self-start lg:border-t lg:border-creme/25 lg:pt-6">
       <p class="text-creme-sourde">
         <span class="font-semibold text-creme">Ce que nous visons avec Cuvée :</span> remettre une partie de cette somme en
         circulation et vous rendre une partie de ces heures. Combien exactement ? Nous ne le savons pas encore. C’est
         précisément ce que le pilote doit mesurer, lieu par lieu.
       </p>
-      <a href="#inscription" class="lien lien-seul mt-3 text-creme">Le mesurer avec nous</a>
+      <a href="/pilote#inscription" class="lien lien-seul mt-3 text-creme">Le mesurer avec nous</a>
     </div>
   </div>
 </section>
@@ -142,6 +150,9 @@ import TitreSection from './TitreSection.astro';
     const heuresAn = formulaire.querySelector<HTMLElement>('[data-calc-heures-an]')!;
     const journees = formulaire.querySelector<HTMLElement>('[data-calc-journees]')!;
     const resume = formulaire.querySelector<HTMLElement>('[data-calc-resume]')!;
+    const jauge = formulaire.querySelector<HTMLElement>('[data-calc-jauge]')!;
+    const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let touche = false;
     const badgeExemple = formulaire.querySelector<HTMLElement>('[data-calc-exemple]')!;
 
     const SEMAINES_OUVERTES = 48;
@@ -175,6 +186,7 @@ import TitreSection from './TitreSection.astro';
 
       const valeurStock = lireNombre(stock.value, MAX_STOCK);
       const immobilise = Math.round((valeurStock * pourcentage) / 100 / 10) * 10;
+      jauge.style.width = `${pourcentage}%`;
       tresorerie.textContent = valeurStock ? euros.format(immobilise) : '—';
 
       const total = Math.round(lireNombre(heures.value, MAX_HEURES) * SEMAINES_OUVERTES);
@@ -186,6 +198,13 @@ import TitreSection from './TitreSection.astro';
           ? "soit moins d’une journée."
           : 'Indiquez vos heures par semaine.';
 
+      if (annoncer && !reduit) {
+        [tresorerie, heuresAn].forEach((el) => {
+          el.classList.remove('pop');
+          void el.offsetWidth;
+          el.classList.add('pop');
+        });
+      }
       if (!annoncer) return;
       window.clearTimeout(minuterie);
       minuterie = window.setTimeout(() => {
@@ -202,10 +221,54 @@ import TitreSection from './TitreSection.astro';
     });
 
     formulaire.addEventListener('input', () => {
+      touche = true;
       badgeExemple.hidden = true;
       calculer();
     });
     formulaire.addEventListener('submit', (e) => e.preventDefault());
     calculer(false);
+
+    // À la première apparition, les chiffres d’exemple se comptent à l’écran (sauf saisie entre-temps).
+    if (!reduit && 'IntersectionObserver' in window) {
+      const finT = tresorerie.textContent ?? '';
+      const finH = heuresAn.textContent ?? '';
+      const nT = lireNombre(stock.value, MAX_STOCK) * 0.15;
+      const nH = lireNombre(heures.value, MAX_HEURES) * SEMAINES_OUVERTES;
+      const obs = new IntersectionObserver((entrees) => {
+        if (!entrees.some((e) => e.isIntersecting)) return;
+        obs.disconnect();
+        const debut = performance.now();
+        const pas = (t: number) => {
+          if (touche) return;
+          const k = Math.min((t - debut) / 1100, 1);
+          const e = 1 - Math.pow(1 - k, 3);
+          if (k >= 1) {
+            tresorerie.textContent = finT;
+            heuresAn.textContent = finH;
+            return;
+          }
+          tresorerie.textContent = euros.format(Math.round((nT * e) / 10) * 10);
+          heuresAn.textContent = `${nombre.format(Math.round(nH * e))} h`;
+          requestAnimationFrame(pas);
+        };
+        requestAnimationFrame(pas);
+      }, { threshold: 0.5 });
+      obs.observe(formulaire);
+    }
   }
 </script>
+
+<style>
+  .jauge {
+    transition: width 0.5s cubic-bezier(0.3, 0.7, 0.2, 1);
+  }
+  .pop {
+    animation: pop 0.45s ease-out;
+  }
+  @keyframes pop {
+    from {
+      opacity: 0.35;
+      transform: translateY(6px);
+    }
+  }
+</style>

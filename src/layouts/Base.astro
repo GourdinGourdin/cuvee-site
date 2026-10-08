@@ -51,11 +51,25 @@ const imageOg = new URL('/og-image.png', Astro.site);
         new URLSearchParams(window.location.search).get('v') === 'b' ? 'b' : 'a';
     </script>
 
+    <script is:inline>
+      // Animations : classe posée seulement si JS actif et mouvement autorisé. Sans elle, tout reste visible.
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('anim');
+        // filet de sécurité : si le script d'animation n'a pas démarré, on rend tout visible
+        setTimeout(function () {
+          if (!document.documentElement.classList.contains('anim-pret')) document.documentElement.classList.remove('anim');
+        }, 3000);
+      }
+    </script>
+
     <link rel="preload" href={frauncesWoff2} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={sourceSansWoff2} as="font" type="font/woff2" crossorigin />
   </head>
   <body class="bg-creme font-sans text-encre antialiased">
     <a href="#contenu" class="lien-evitement">Aller au contenu</a>
     <slot />
+    <script>
+      import '../scripts/animations.ts';
+    </script>
   </body>
 </html>

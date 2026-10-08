@@ -25,7 +25,7 @@ const caisses = [
   { valeur: 'aucune', libelle: 'Pas de logiciel de caisse / je ne sais pas' },
 ];
 ---
-<div id="inscription" class="papier self-start p-5 text-encre sm:p-8" data-contact={contact}>
+<div id="inscription" class="papier carte-form self-start p-5 text-encre sm:p-8" data-contact={contact}>
   <div data-form-zone>
     <h3 class="font-serif text-[1.75rem] leading-tight font-medium">Rejoindre le programme pilote</h3>
     <p class="mt-2 text-encre-douce">
@@ -149,8 +149,12 @@ const caisses = [
     </form>
   </div>
 
-  <div hidden data-form-succes>
-    <p class="surtitre text-vert">Demande reçue</p>
+  <div hidden data-form-succes class="form-succes">
+    <svg class="succes-rond" width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <circle cx="32" cy="32" r="29" pathLength="1" />
+      <path d="M19 33l9 9 17-20" pathLength="1" />
+    </svg>
+    <p class="surtitre mt-4 text-vert">Demande reçue</p>
     <h3 class="mt-3 font-serif text-[1.9rem] leading-tight font-medium" tabindex="-1" data-succes-titre>Merci !</h3>
     <p class="mt-4 text-lg text-encre-douce">
       Votre demande est bien arrivée. Nous vous recontactons sous <mark class="a-completer"
@@ -170,6 +174,133 @@ const caisses = [
     <span class="tampon top-8 right-6" aria-hidden="true">Reçu</span>
   </div>
 </div>
+
+
+<style is:global>
+  /* Champs : fond de fiche, soulignement bordeaux qui se trace au focus, étiquette qui prend la couleur */
+  [data-inscription] .champ {
+    background-color: #fffdf8;
+    background-image: linear-gradient(var(--color-bordeaux), var(--color-bordeaux));
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: 0% 3px;
+    border-color: var(--color-bordure);
+    border-radius: 2px;
+    transition:
+      background-size 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.25s ease;
+  }
+  [data-inscription] select.champ {
+    background-image:
+      linear-gradient(var(--color-bordeaux), var(--color-bordeaux)),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%231f1a17' stroke-width='1.6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, no-repeat;
+    background-position: left bottom, right 0.9rem center;
+    background-size: 0% 3px, 12px 8px;
+  }
+  [data-inscription] .champ:focus,
+  [data-inscription] .champ:focus-visible {
+    background-size: 100% 3px;
+    background-color: #fff;
+    border-color: var(--color-bordeaux);
+    box-shadow: 0 6px 14px -10px rgb(110 31 47 / 0.55);
+    outline: 2px solid var(--color-bordeaux);
+    outline-offset: 2px;
+  }
+  [data-inscription] select.champ:focus,
+  [data-inscription] select.champ:focus-visible {
+    background-size: 100% 3px, 12px 8px;
+  }
+  [data-inscription] > div:focus-within > .etiquette-champ {
+    color: var(--color-bordeaux);
+  }
+  .etiquette-champ {
+    transition: color 0.2s ease;
+  }
+  /* erreur : trait plein rouge, message qui glisse, léger tremblement une seule fois */
+  [data-inscription] .champ[aria-invalid="true"] {
+    background-size: 100% 3px;
+    background-image: linear-gradient(var(--color-erreur), var(--color-erreur));
+    animation: champ-tremble 0.35s ease;
+  }
+  [data-inscription] select.champ[aria-invalid="true"] {
+    background-image:
+      linear-gradient(var(--color-erreur), var(--color-erreur)),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%231f1a17' stroke-width='1.6'/%3E%3C/svg%3E");
+    background-size: 100% 3px, 12px 8px;
+  }
+  [data-inscription] .message-erreur:not(:empty) {
+    animation: erreur-glisse 0.3s ease both;
+  }
+  @keyframes champ-tremble {
+    25% { translate: -3px 0; }
+    75% { translate: 3px 0; }
+  }
+  @keyframes erreur-glisse {
+    from { opacity: 0; translate: 0 -4px; }
+  }
+  /* champ « Lequel ? » : il apparaît en douceur */
+  [data-caisse-autre]:not([hidden]) {
+    animation: erreur-glisse 0.35s ease both;
+  }
+  [data-envoyer] {
+    position: relative;
+    overflow: hidden;
+  }
+  [data-envoyer]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgb(245 239 227 / 0.22) 50%, transparent 70%);
+    translate: -110% 0;
+    transition: translate 0.6s ease;
+  }
+  [data-envoyer]:hover::after {
+    translate: 110% 0;
+  }
+  [data-envoyer]:disabled {
+    opacity: 0.75;
+    cursor: progress;
+  }
+
+  /* Succès : le formulaire laisse place à un accusé, avec coche tracée et tampon */
+  .form-succes:not([hidden]) {
+    animation: succes-entre 0.5s ease both;
+  }
+  @keyframes succes-entre {
+    from { opacity: 0; translate: 0 12px; }
+  }
+  .succes-rond circle,
+  .succes-rond path {
+    stroke: var(--color-vert);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+  .est-valide .succes-rond circle {
+    animation: trace 0.7s ease-out both;
+  }
+  .est-valide .succes-rond path {
+    animation: trace 0.45s ease-out 0.55s both;
+  }
+  @keyframes trace {
+    from { stroke-dashoffset: 1; }
+  }
+  .est-valide .form-succes .tampon {
+    animation-delay: 0.9s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-inscription] .champ[aria-invalid="true"],
+    .est-valide .succes-rond circle,
+    .est-valide .succes-rond path {
+      animation: none !important;
+    }
+  }
+</style>
 
 <script>
   const ENDPOINT: string = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';

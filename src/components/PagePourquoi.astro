@@ -1,0 +1,22 @@
+---
+import TitreSection from './TitreSection.astro';
+import ACompleter from './ACompleter.astro';
+---
+<section aria-labelledby="pourquoi-titre" class="border-t border-filet bg-creme-fonce py-20 lg:py-28">
+  <div class="conteneur grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:gap-16">
+    <div data-reveal>
+      <TitreSection numero="2" libelle="Pourquoi" id="pourquoi-titre" titre="Pourquoi nous faisons <em>ça</em>." />
+    </div>
+    <div class="grid gap-5 text-lg leading-relaxed text-encre-douce" data-reveal data-reveal-delai="1">
+      <p>
+        <ACompleter texte="l’histoire personnelle : le déclic, le lieu ou la personne qui a montré le problème de la cave" />
+      </p>
+      <p>
+        <ACompleter texte="ce que vous avez observé chez les cavistes et sommeliers, sans chiffre inventé" />
+      </p>
+      <p>
+        <ACompleter texte="ce que vous voulez que Cuvée change concrètement pour un lieu indépendant" />
+      </p>
+    </div>
+  </div>
+</section>

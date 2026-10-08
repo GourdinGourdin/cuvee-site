@@ -32,6 +32,12 @@ const dormantes = [
     suggestion: 'Le placer en évidence au comptoir, pour la vente à emporter.',
   },
 ];
+
+const jours = [
+  { cle: 'mardi', nom: 'Mardi', sujet: 'Facture lue' },
+  { cle: 'mercredi', nom: 'Mercredi', sujet: 'Bouteilles qui dorment' },
+  { cle: 'jeudi', nom: 'Jeudi', sujet: 'Livraison en retard' },
+];
 ---
 <section id="exemples" aria-labelledby="exemples-titre" class="border-y border-filet bg-creme-fonce py-20 lg:py-28">
   <div class="conteneur">
@@ -41,15 +47,35 @@ const dormantes = [
       id="exemples-titre"
       titre="Ce que vous verriez passer dans la semaine."
     >
-      <p class="mt-5 max-w-2xl text-lg text-encre-douce">
-        Trois exemples de propositions, en plus de la commande du haut de page. Les vins, les domaines et les chiffres
+      <p class="mt-5 max-w-2xl text-lg text-encre-douce" data-reveal data-reveal-delai="2">
+        Trois exemples de propositions, en plus de la commande présentée sur l’accueil. Les vins, les domaines et les chiffres
         sont inventés ; les boutons ne déclenchent rien.
       </p>
     </TitreSection>
 
-    <div class="mt-12 grid gap-6 lg:grid-cols-3 lg:items-start">
+    <!-- Sélecteur de jour : affiché par le script sur mobile seulement (sans JavaScript, les trois fiches restent visibles). -->
+    <div class="onglets-jours mt-10 lg:hidden" role="tablist" aria-label="Exemples par jour" data-onglets hidden>
+      {
+        jours.map((j, i) => (
+          <button
+            type="button"
+            role="tab"
+            id={`onglet-${j.cle}`}
+            class="onglet-jour"
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            data-onglet={i}
+          >
+            <span class="surtitre">{j.nom}</span>
+            <span class="onglet-sous">{j.sujet}</span>
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="grille-exemples mt-12 grid gap-6 lg:grid-cols-3 lg:items-start" data-grille-exemples>
       <!-- 1. Facture lue (mardi) : ticket au bord cranté -->
-      <article class="papier bord-crante flex flex-col" data-demo aria-labelledby="ex-facture">
+      <article class="papier bord-crante flex flex-col carte-ex carte-ex-1" data-demo data-reveal data-reveal-delai="1" aria-labelledby="ex-facture">
         <header class="flex items-center justify-between gap-3 border-b border-dashed border-filet px-5 py-3">
           <p class="surtitre text-bordeaux">Facture lue</p>
           <p class="cachet text-encre-douce">Exemple</p>
@@ -116,7 +142,7 @@ const dormantes = [
       </article>
 
       <!-- 2. Bouteilles qui dorment (mercredi) : fiche de cave perforée -->
-      <article class="papier flex flex-col" data-demo aria-labelledby="ex-dormantes">
+      <article class="papier flex flex-col carte-ex carte-ex-2" data-demo data-reveal data-reveal-delai="2" aria-labelledby="ex-dormantes">
         <div class="perforation" aria-hidden="true"></div>
         <header class="flex items-center justify-between gap-3 border-b border-filet px-5 py-3">
           <p class="surtitre text-bordeaux">Bouteilles qui dorment</p>
@@ -172,7 +198,7 @@ const dormantes = [
       </article>
 
       <!-- 3. Livraison en retard (jeudi) : lettre sur papier ligné -->
-      <article class="papier flex flex-col" data-demo aria-labelledby="ex-relance">
+      <article class="papier flex flex-col carte-ex carte-ex-3" data-demo data-reveal data-reveal-delai="3" aria-labelledby="ex-relance">
         <header class="flex items-center justify-between gap-3 border-b border-filet px-5 py-3">
           <p class="surtitre text-bordeaux">Livraison en retard</p>
           <p class="cachet text-encre-douce">Exemple</p>
@@ -215,3 +241,99 @@ const dormantes = [
     </div>
   </div>
 </section>
+
+<style is:global>
+  /* Cartes posées sur la table : légère rotation (propriété rotate, sans conflit avec les animations d’entrée) */
+  @media (min-width: 64rem) {
+    .carte-ex-1 { rotate: -0.7deg; }
+    .carte-ex-2 { rotate: 0.5deg; margin-top: 0.75rem; }
+    .carte-ex-3 { rotate: -0.4deg; }
+  }
+  .carte-ex {
+    transition: rotate 0.35s ease, box-shadow 0.35s ease, translate 0.35s ease;
+    box-shadow: 0 1px 0 var(--color-filet), 0 10px 22px -14px rgb(31 26 23 / 0.35);
+  }
+  @media (hover: hover) {
+    .carte-ex:hover {
+      rotate: 0deg;
+      translate: 0 -4px;
+      box-shadow: 0 1px 0 var(--color-filet), 0 18px 28px -14px rgb(31 26 23 / 0.4);
+    }
+  }
+  .carte-ex.est-valide {
+    border-color: var(--color-vert);
+  }
+
+  /* Tampon : il tombe sur la fiche, avec un léger rebond et un anneau d’encre */
+  .est-valide .tampon {
+    animation: tampon-tombe 0.55s cubic-bezier(0.22, 0.9, 0.3, 1) forwards;
+    box-shadow: 0 0 0 0 rgb(46 74 59 / 0.5);
+  }
+  .est-valide .tampon::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 6px;
+    border: 2px solid var(--color-vert);
+    opacity: 0;
+    animation: tampon-onde 0.7s ease-out 0.25s forwards;
+  }
+  @keyframes tampon-tombe {
+    0% { opacity: 0; transform: rotate(-4deg) scale(2.4); }
+    55% { opacity: 1; transform: rotate(-13deg) scale(0.93); }
+    75% { transform: rotate(-10deg) scale(1.04); }
+    100% { opacity: 0.92; transform: rotate(-11deg) scale(1); }
+  }
+  @keyframes tampon-onde {
+    0% { opacity: 0.6; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.35); }
+  }
+
+  /* Sélecteur d’onglets (mobile) */
+  .onglets-jours {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    border-bottom: 2px solid var(--color-encre);
+  }
+  .onglets-jours[hidden] { display: none; }
+  .onglet-jour {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-height: 3.5rem;
+    padding: 0.55rem 0.5rem 0.65rem;
+    text-align: left;
+    color: var(--color-encre-douce);
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+  .onglet-jour::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -2px;
+    height: 4px;
+    background: var(--color-bordeaux);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .onglet-jour[aria-selected="true"] { color: var(--color-bordeaux); }
+  .onglet-jour[aria-selected="true"]::after { transform: scaleX(1); }
+  .onglet-sous { font-size: 0.8rem; line-height: 1.2; }
+  .onglet-jour:hover { background: rgb(255 255 255 / 0.4); }
+
+  @media (max-width: 63.99rem) {
+    .grille-exemples[data-onglets-actifs] > article[data-actif="false"] { display: none; }
+    .grille-exemples[data-onglets-actifs] { margin-top: 1.5rem; }
+    .grille-exemples[data-onglets-actifs] > article[data-actif="true"] { animation: carte-entre 0.4s ease both; }
+  }
+  @keyframes carte-entre {
+    from { opacity: 0; translate: 0 10px; }
+  }
+</style>
+
+<script>
+  import '../scripts/demo.ts';
+</script>

@@ -10,18 +10,18 @@ import { avecPlaceholders } from '../lib/texte';
       <p class="mt-6 max-w-md text-lg text-encre-douce">
         Une question qui n’est pas ici ? Posez-la dans le formulaire, nous répondrons lors du premier échange.
       </p>
-      <a href="#inscription" class="lien lien-seul mt-3">Aller au formulaire</a>
+      <a href="/pilote#inscription" class="lien lien-seul mt-3">Aller au formulaire</a>
     </div>
 
     <div class="border-t-2 border-encre">
       {
-        faq.map((item) => (
-          <details class="faq-item group border-b border-filet">
-            <summary class="flex items-start justify-between gap-6 py-5 font-serif text-xl leading-snug font-medium transition-colors hover:text-bordeaux sm:text-[1.35rem]">
+        faq.map((item, i) => (
+          <details class="faq-item group border-b border-filet" data-reveal data-reveal-delai={String(Math.min(i + 1, 6))}>
+            <summary class="faq-question flex items-start justify-between gap-6 py-5 font-serif text-xl leading-snug font-medium transition-colors hover:text-bordeaux sm:text-[1.35rem]">
               <span>{item.question}</span>
               <span class="faq-signe relative mt-3 h-3.5 w-3.5 shrink-0 text-bordeaux" aria-hidden="true" />
             </summary>
-            <div class="grid gap-3 pr-8 pb-6 text-encre-douce">
+            <div class="faq-reponse grid gap-3 pr-8 pb-6 text-encre-douce">
               {item.reponse.map((paragraphe) => (
                 <p set:html={avecPlaceholders(paragraphe)} />
               ))}
@@ -32,3 +32,55 @@ import { avecPlaceholders } from '../lib/texte';
     </div>
   </div>
 </section>
+
+<style is:global>
+  /* Ouverture animée : navigateurs récents (::details-content + interpolate-size) ; ailleurs, l’ouverture reste instantanée. */
+  @supports (interpolate-size: allow-keywords) {
+    .faq-item {
+      interpolate-size: allow-keywords;
+    }
+    .faq-item::details-content {
+      block-size: 0;
+      overflow: clip;
+      opacity: 0;
+      transition:
+        block-size 0.35s ease,
+        opacity 0.3s ease,
+        content-visibility 0.35s allow-discrete;
+    }
+    .faq-item[open]::details-content {
+      block-size: auto;
+      opacity: 1;
+    }
+  }
+  /* L’icône + tourne d’un huitième de tour et devient une croix */
+  .faq-item .faq-signe {
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1.2);
+  }
+  .faq-item[open] .faq-signe {
+    transform: rotate(135deg);
+  }
+  .faq-item[open] .faq-signe::after {
+    transform: rotate(90deg);
+  }
+  .faq-question {
+    background-image: linear-gradient(var(--color-bordeaux), var(--color-bordeaux));
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: 0% 2px;
+    transition: background-size 0.35s ease, color 0.2s ease;
+  }
+  .faq-item[open] .faq-question,
+  .faq-question:hover {
+    background-size: 100% 2px;
+  }
+  .faq-item[open] .faq-question {
+    color: var(--color-bordeaux);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .faq-item::details-content,
+    .faq-item .faq-signe {
+      transition: none !important;
+    }
+  }
+</style>

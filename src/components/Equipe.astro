@@ -14,7 +14,7 @@ const membres = [1, 2, 3];
         id="equipe-titre"
         titre="Une petite équipe, qui veut construire avec le métier."
       />
-      <p class="mt-6 text-lg text-encre-douce">
+      <p class="mt-6 text-lg text-encre-douce" data-reveal data-reveal-delai="2">
         Nous ne voulons pas inventer un outil dans un bureau puis venir vous le vendre. Nous voulons le mettre au point
         dans de vrais lieux, avec les gens qui les font tourner.
       </p>
@@ -25,10 +25,10 @@ const membres = [1, 2, 3];
 
     <ul role="list" class="grid content-start gap-4 sm:grid-cols-3 lg:grid-cols-1">
       {
-        membres.map(() => (
-          <li class="flex items-center gap-4 border-b border-filet pb-4">
+        membres.map((_, i) => (
+          <li data-reveal data-reveal-delai={String(i + 1)} class="equipe-membre flex items-center gap-4 border-b border-filet pb-4">
             <span
-              class="grid h-14 w-14 shrink-0 place-items-center border-[3px] border-double border-dore font-serif text-xl text-bordeaux italic"
+              class="equipe-pastille grid h-14 w-14 shrink-0 place-items-center border-[3px] border-double border-dore font-serif text-xl text-bordeaux italic"
               aria-hidden="true"
             >
               ?
@@ -45,3 +45,13 @@ const membres = [1, 2, 3];
     </ul>
   </div>
 </section>
+
+<style is:global>
+  .equipe-pastille {
+    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.3), background-color 0.3s ease;
+  }
+  .equipe-membre:hover .equipe-pastille {
+    transform: rotate(-6deg) scale(1.05);
+    background: var(--color-dore-clair);
+  }
+</style>

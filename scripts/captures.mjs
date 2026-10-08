@@ -11,6 +11,11 @@ import { mkdir } from 'node:fs/promises';
 const base = process.argv[2] ?? 'http://localhost:4321';
 const pages = [
   { nom: 'accueil', chemin: '/' },
+  { nom: 'comment-ca-marche', chemin: '/comment-ca-marche' },
+  { nom: 'pilote', chemin: '/pilote' },
+  { nom: 'equipe', chemin: '/equipe' },
+  { nom: 'questions', chemin: '/questions' },
+  { nom: '404', chemin: '/page-inexistante', seulement: 'mobile' },
   { nom: 'accueil-variante-b', chemin: '/?v=b', seulement: 'mobile' },
   { nom: 'mentions-legales', chemin: '/mentions-legales/', seulement: 'mobile' },
 ];

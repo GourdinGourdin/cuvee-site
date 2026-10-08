@@ -1,47 +1,85 @@
 ---
 import BonDeCommande from './BonDeCommande.astro';
 import ACompleter from './ACompleter.astro';
+import AccueilEtiquette from './AccueilEtiquette.astro';
 ---
-<section aria-labelledby="hero-titre" class="relative overflow-hidden">
-  <div
-    class="conteneur grid gap-14 pt-9 pb-16 sm:pt-14 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)] lg:items-center lg:gap-16 lg:pt-16 lg:pb-24"
-  >
-    <div>
-      <p class="surtitre text-bordeaux">Pour les caves à manger et les bars à vin</p>
+<section aria-labelledby="hero-titre" class="hero relative overflow-hidden">
+  <!-- halo bordeaux très discret -->
+  <div class="pointer-events-none absolute -top-32 -right-40 h-[34rem] w-[34rem] rounded-full bg-bordeaux/[0.06] blur-3xl" aria-hidden="true"></div>
 
-      <!-- Test de message : ?v=b affiche la variante B (voir le script dans Base.astro). -->
-      <h1
-        id="hero-titre"
-        class="mt-5 text-[2.35rem] leading-[1.06] font-medium tracking-[-0.02em] sm:text-[3.4rem] lg:text-[4.1rem]"
-      >
-        <span class="titre-a">
-          Moins de bouteilles qui <em class="text-bordeaux">dorment</em>, moins d’heures sur les commandes.
-        </span>
-        <span class="titre-b">
-          Et si vos commandes aux domaines étaient prêtes <em class="text-bordeaux">dès le lundi matin</em> ?
-        </span>
-      </h1>
-
-      <p class="mt-6 max-w-xl text-lg leading-relaxed text-encre-douce sm:text-xl">
-        Cuvée est un assistant de cave conçu pour suivre votre stock à partir de votre caisse et de vos factures, repérer
-        les bouteilles qui ne tournent plus et préparer vos commandes aux domaines. Vous relisez, vous validez : rien ne
-        part sans vous.
-      </p>
-
-      <div class="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-7">
-        <a href="#inscription" class="btn btn-primaire w-full sm:w-auto" data-hero-cta>Rejoindre le programme pilote</a>
-        <a href="#exemples" class="lien lien-seul">Voir un exemple concret</a>
-      </div>
-
-      <p class="mt-8 flex max-w-xl gap-3 border-t border-filet pt-5 text-[0.95rem] leading-snug text-encre-douce">
-        <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-vert" aria-hidden="true"></span>
-        <span>
-          Cuvée est en construction. Nous cherchons <ACompleter texte="nombre" /> bars à vin et caves à manger pour le mettre
-          au point avec nous, pendant le service.
-        </span>
-      </p>
+  <div class="conteneur relative pt-6 pb-16 sm:pt-9 lg:pb-24">
+    <!-- bandeau de magazine -->
+    <div class="surtitre flex items-center gap-3 border-b border-encre pb-3 text-encre-douce" data-reveal>
+      <span class="text-bordeaux">Cuvée</span>
+      <span class="h-px flex-1 bg-dore" aria-hidden="true"></span>
+      <span class="hidden sm:inline">Caves à manger &amp; bars à vin</span>
+      <span class="sm:hidden">Programme pilote</span>
     </div>
 
-    <BonDeCommande />
+    <div class="mt-9 grid gap-14 lg:mt-14 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-16">
+      <div>
+        <p class="surtitre text-bordeaux" data-reveal>Pour les caves à manger et les bars à vin</p>
+
+        <!-- Test de message : ?v=b affiche la variante B (voir le script dans Base.astro). -->
+        <h1
+          id="hero-titre"
+          class="hero-titre mt-5 text-[2.5rem] leading-[1.03] font-light tracking-[-0.025em] sm:text-[4rem] lg:text-[4.75rem]"
+        >
+          <span class="titre-a">
+            Moins de bouteilles qui <em class="font-normal text-bordeaux">dorment</em>, moins d’heures sur les commandes.
+          </span>
+          <span class="titre-b">
+            Et si vos commandes aux domaines étaient prêtes <em class="font-normal text-bordeaux">dès le lundi matin</em> ?
+          </span>
+        </h1>
+
+        <div class="mt-8 grid gap-8 sm:grid-cols-[auto_minmax(0,1fr)] sm:gap-8">
+          <span class="hidden w-px bg-dore sm:block" aria-hidden="true"></span>
+          <div>
+            <p class="max-w-xl text-lg leading-relaxed text-encre-douce sm:text-xl" data-reveal data-reveal-delai="1">
+              Cuvée est un assistant de cave conçu pour suivre votre stock à partir de votre caisse et de vos factures,
+              repérer les bouteilles qui ne tournent plus et préparer vos commandes aux domaines. Vous relisez, vous
+              validez : rien ne part sans vous.
+            </p>
+
+            <div class="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-7" data-reveal data-reveal-delai="2">
+              <a href="/pilote#inscription" class="btn btn-primaire w-full sm:w-auto" data-hero-cta>Rejoindre le programme pilote</a>
+              <a href="/comment-ca-marche#exemples" class="lien lien-seul">Voir un exemple concret</a>
+            </div>
+
+            <p class="mt-8 flex max-w-xl gap-3 border-t border-filet pt-5 text-[0.95rem] leading-snug text-encre-douce" data-reveal data-reveal-delai="3">
+              <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-vert" aria-hidden="true"></span>
+              <span>
+                Cuvée est en construction. Nous cherchons <ACompleter texte="nombre" /> bars à vin et caves à manger pour
+                le mettre au point avec nous, pendant le service.
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative lg:pt-6">
+        <!-- étiquette dessinée, derrière le bon (grand écran) -->
+        <div class="absolute -top-4 -right-16 z-0 hidden w-44 rotate-[8deg] opacity-90 drop-shadow-sm xl:block" data-parallaxe aria-hidden="true">
+          <AccueilEtiquette />
+        </div>
+        <div class="relative z-10" data-reveal="droite">
+          <BonDeCommande />
+        </div>
+        <p class="surtitre mt-8 text-center text-bordeaux/80 lg:text-right" aria-hidden="true">Fig. 1 — Exemple de proposition</p>
+      </div>
+    </div>
   </div>
 </section>
+
+<style>
+  .hero-titre {
+    animation: monter 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  @keyframes monter {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+</style>

@@ -1,7 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import ACompleter from './ACompleter.astro';
-import { site } from '../data/site';
+import { site, navigation, lienInscription } from '../data/site';
 
 const annee = new Date().getFullYear();
 ---
@@ -27,13 +27,14 @@ const annee = new Date().getFullYear();
               )
             }
           </li>
-          <li><a href="/#inscription" class="lien">Rejoindre le programme pilote</a></li>
+          <li><a href={lienInscription} class="lien">Rejoindre le programme pilote</a></li>
         </ul>
       </div>
 
       <div>
         <p class="surtitre text-dore">Informations</p>
         <ul class="mt-4 grid gap-2.5">
+          {navigation.filter((n) => n.href !== '/').map((n) => <li><a href={n.href} class="lien">{n.libelle}</a></li>)}
           <li><a href="/mentions-legales/" class="lien">Mentions légales</a></li>
           <li><a href="/confidentialite/" class="lien">Confidentialité</a></li>
         </ul>

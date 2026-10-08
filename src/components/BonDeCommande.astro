@@ -52,8 +52,8 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
         </thead>
         <tbody>
           {
-            lignes.map((l) => (
-              <tr class="ligne-pointillee align-top">
+            lignes.map((l, i) => (
+              <tr class="ligne-pointillee ligne-ecrite align-top" style={`--i:${i}`}>
                 <th scope="row" class="py-2.5 pr-2 font-semibold">
                   {l.vin}
                   <span class="block text-[0.85rem] font-normal text-encre-douce">{l.ventes} vendues en 4 semaines</span>
@@ -70,10 +70,10 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
           }
         </tbody>
         <tfoot>
-          <tr>
+          <tr class="total-ligne">
             <th scope="row" class="pt-3 align-top font-semibold">Total</th>
             <td colspan="2" class="pt-3 pl-3 text-right">
-              <span class="chiffres font-medium whitespace-nowrap">{total} bouteilles</span>
+              <span class="chiffres font-medium whitespace-nowrap"><span data-total-nb>{total}</span> bouteilles</span>
               <span class="block text-[0.85rem] text-encre-douce">{cartons(total)} cartons de {BOUTEILLES_PAR_CARTON}</span>
             </td>
           </tr>
@@ -113,6 +113,54 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
       <p class="mt-3 min-h-[1.25rem] text-[0.875rem] text-vert" role="status" data-demo-statut></p>
     </div>
 
-    <span class="tampon top-[44%] right-5 sm:right-8" aria-hidden="true">Validé</span>
+    <span class="tampon tampon-auto bottom-8 right-8 max-sm:hidden" aria-hidden="true">Validé</span>
   </article>
 </div>
+
+<style>
+  /* les lignes s’écrivent de gauche à droite, l’une après l’autre */
+  .ligne-ecrite {
+    animation: ecrire 0.8s cubic-bezier(0.3, 0.6, 0.2, 1) both;
+    animation-delay: calc(0.7s + var(--i) * 0.55s);
+  }
+  .total-ligne {
+    animation: ecrire 0.6s ease-out both;
+    animation-delay: 2.5s;
+  }
+  @keyframes ecrire {
+    from {
+      clip-path: inset(0 100% 0 0);
+      opacity: 0.2;
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+      opacity: 1;
+    }
+  }
+  /* tampon posé automatiquement, comme si la commande venait d’être relue */
+  .tampon-auto {
+    animation: tamponner-auto 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.25) 3.6s forwards;
+  }
+  @keyframes tamponner-auto {
+    to {
+      opacity: 0.92;
+      transform: rotate(-11deg) scale(1);
+    }
+  }
+</style>
+
+<script>
+  // Le total se calcule à l’écran ; sans animation (ou sans JS), la valeur finale reste affichée.
+  const nb = document.querySelector<HTMLElement>('[data-total-nb]');
+  if (nb && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const fin = Number(nb.textContent);
+    const debut = performance.now() + 2500;
+    nb.textContent = '0';
+    const pas = (t: number) => {
+      const k = Math.min(Math.max((t - debut) / 700, 0), 1);
+      nb.textContent = String(Math.round(fin * k));
+      if (k < 1) requestAnimationFrame(pas);
+    };
+    requestAnimationFrame(pas);
+  }
+</script>
