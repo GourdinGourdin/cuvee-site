@@ -1,0 +1,47 @@
+---
+import BonDeCommande from './BonDeCommande.astro';
+import ACompleter from './ACompleter.astro';
+---
+<section aria-labelledby="hero-titre" class="relative overflow-hidden">
+  <div
+    class="conteneur grid gap-14 pt-9 pb-16 sm:pt-14 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)] lg:items-center lg:gap-16 lg:pt-16 lg:pb-24"
+  >
+    <div>
+      <p class="surtitre text-bordeaux">Pour les caves à manger et les bars à vin</p>
+
+      <!-- Test de message : ?v=b affiche la variante B (voir le script dans Base.astro). -->
+      <h1
+        id="hero-titre"
+        class="mt-5 text-[2.35rem] leading-[1.06] font-medium tracking-[-0.02em] sm:text-[3.4rem] lg:text-[4.1rem]"
+      >
+        <span class="titre-a">
+          Moins de bouteilles qui <em class="text-bordeaux">dorment</em>, moins d’heures sur les commandes.
+        </span>
+        <span class="titre-b">
+          Et si vos commandes aux domaines étaient prêtes <em class="text-bordeaux">dès le lundi matin</em> ?
+        </span>
+      </h1>
+
+      <p class="mt-6 max-w-xl text-lg leading-relaxed text-encre-douce sm:text-xl">
+        Cuvée est un assistant de cave conçu pour suivre votre stock à partir de votre caisse et de vos factures, repérer
+        les bouteilles qui ne tournent plus et préparer vos commandes aux domaines. Vous relisez, vous validez : rien ne
+        part sans vous.
+      </p>
+
+      <div class="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-7">
+        <a href="#inscription" class="btn btn-primaire w-full sm:w-auto" data-hero-cta>Rejoindre le programme pilote</a>
+        <a href="#exemples" class="lien lien-seul">Voir un exemple concret</a>
+      </div>
+
+      <p class="mt-8 flex max-w-xl gap-3 border-t border-filet pt-5 text-[0.95rem] leading-snug text-encre-douce">
+        <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-vert" aria-hidden="true"></span>
+        <span>
+          Cuvée est en construction. Nous cherchons <ACompleter texte="nombre" /> bars à vin et caves à manger pour le mettre
+          au point avec nous, pendant le service.
+        </span>
+      </p>
+    </div>
+
+    <BonDeCommande />
+  </div>
+</section>

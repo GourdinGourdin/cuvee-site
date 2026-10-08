@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Probleme from '../components/Probleme.astro';
+import Calculateur from '../components/Calculateur.astro';
+import CommentCaMarche from '../components/CommentCaMarche.astro';
+import Exemples from '../components/Exemples.astro';
+import GarderLaMain from '../components/GarderLaMain.astro';
+import Equipe from '../components/Equipe.astro';
+import Pilote from '../components/Pilote.astro';
+import FAQ from '../components/FAQ.astro';
+import Footer from '../components/Footer.astro';
+import CtaMobile from '../components/CtaMobile.astro';
+---
+<Base>
+  <Header />
+  <main id="contenu">
+    <Hero />
+    <Probleme />
+    <Calculateur />
+    <CommentCaMarche />
+    <Exemples />
+    <GarderLaMain />
+    <Equipe />
+    <Pilote />
+    <FAQ />
+  </main>
+  <Footer />
+  <CtaMobile />
+</Base>
+
+<script>
+  import '../scripts/demo.ts';
+</script>

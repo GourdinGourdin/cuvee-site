@@ -1,0 +1,47 @@
+---
+import TitreSection from './TitreSection.astro';
+import ACompleter from './ACompleter.astro';
+
+// TODO : remplacer par les vrais membres de l’équipe (prénom, rôle, parcours en une ligne).
+const membres = [1, 2, 3];
+---
+<section id="equipe" aria-labelledby="equipe-titre" class="border-t border-filet py-20 lg:py-24">
+  <div class="conteneur grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
+    <div>
+      <TitreSection
+        numero="6"
+        libelle="Qui on est"
+        id="equipe-titre"
+        titre="Une petite équipe, qui veut construire avec le métier."
+      />
+      <p class="mt-6 text-lg text-encre-douce">
+        Nous ne voulons pas inventer un outil dans un bureau puis venir vous le vendre. Nous voulons le mettre au point
+        dans de vrais lieux, avec les gens qui les font tourner.
+      </p>
+      <p class="mt-4 text-lg text-encre-douce">
+        <ACompleter texte="qui vous êtes en deux phrases : parcours, lien avec le vin, pourquoi ce projet" />
+      </p>
+    </div>
+
+    <ul role="list" class="grid content-start gap-4 sm:grid-cols-3 lg:grid-cols-1">
+      {
+        membres.map(() => (
+          <li class="flex items-center gap-4 border-b border-filet pb-4">
+            <span
+              class="grid h-14 w-14 shrink-0 place-items-center border-[3px] border-double border-dore font-serif text-xl text-bordeaux italic"
+              aria-hidden="true"
+            >
+              ?
+            </span>
+            <span class="text-[0.95rem] leading-snug">
+              <ACompleter texte="prénom nom" />
+              <span class="mt-1.5 block">
+                <ACompleter texte="rôle, parcours en une ligne" />
+              </span>
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

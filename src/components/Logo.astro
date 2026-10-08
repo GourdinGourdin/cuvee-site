@@ -1,0 +1,34 @@
+---
+interface Props {
+  clair?: boolean;
+  class?: string;
+}
+const { clair = false, class: classe = '' } = Astro.props;
+---
+<span class:list={['inline-flex items-center gap-2.5', classe]}>
+  <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true" class="shrink-0">
+    <path
+      d="M6 2H26A4 4 0 0 0 30 6V26A4 4 0 0 0 26 30H6A4 4 0 0 0 2 26V6A4 4 0 0 0 6 2Z"
+      fill={clair ? '#f5efe3' : '#6e1f2f'}
+    />
+    <path
+      d="M7.5 5.5H24.5A3 3 0 0 0 26.5 7.5V24.5A3 3 0 0 0 24.5 26.5H7.5A3 3 0 0 0 5.5 24.5V7.5A3 3 0 0 0 7.5 5.5Z"
+      fill="none"
+      stroke="#a88a4a"
+      stroke-width="0.9"
+    />
+    <text
+      x="16"
+      y="21.6"
+      text-anchor="middle"
+      font-family="Fraunces Variable, Georgia, serif"
+      font-size="16"
+      font-style="italic"
+      font-weight="500"
+      fill={clair ? '#6e1f2f' : '#f5efe3'}>C</text
+    >
+  </svg>
+  <span class:list={['font-serif text-[1.6rem] leading-none font-semibold tracking-tight', clair ? 'text-creme' : 'text-encre']}
+    >Cuvée</span
+  >
+</span>

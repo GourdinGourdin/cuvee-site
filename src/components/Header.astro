@@ -1,0 +1,78 @@
+---
+import Logo from './Logo.astro';
+import { navigation } from '../data/site';
+
+interface Props {
+  simple?: boolean;
+}
+const { simple = false } = Astro.props;
+---
+<header class="relative z-40 border-b border-filet bg-creme lg:sticky lg:top-0">
+  <div class="conteneur flex h-16 items-center justify-between gap-4 lg:h-[4.5rem]">
+    <a href="/" class="inline-flex min-h-11 items-center rounded-sm" aria-label="Cuvée, retour à l’accueil">
+      <Logo />
+    </a>
+
+    {
+      simple ? (
+        <a href="/" class="lien lien-seul text-[0.975rem]">
+          Retour à l’accueil
+        </a>
+      ) : (
+        <>
+          <nav aria-label="Navigation principale" class="hidden lg:block">
+            <ul role="list" class="flex items-center gap-6 text-[0.975rem]">
+              {navigation.map((item) => (
+                <li>
+                  <a href={item.href} class="inline-block py-2 text-encre-douce transition-colors hover:text-bordeaux">
+                    {item.libelle}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div class="flex items-center gap-2">
+            <details class="menu-mobile lg:hidden" data-menu>
+              <summary class="btn btn-contour btn-petit list-none [&::-webkit-details-marker]:hidden">
+                Menu
+              </summary>
+              <nav
+                aria-label="Navigation principale"
+                class="absolute inset-x-0 top-full border-b border-filet bg-creme shadow-[0_12px_20px_-16px_rgb(31_26_23/0.4)]"
+              >
+                <ul role="list" class="conteneur grid py-2">
+                  {navigation.map((item) => (
+                    <li class="border-b border-filet last:border-0">
+                      <a href={item.href} class="flex min-h-12 items-center font-serif text-xl" data-menu-lien>
+                        {item.libelle}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </details>
+            <a href="/#inscription" class="btn btn-primaire btn-petit">
+              <span class="sm:hidden">Le pilote</span>
+              <span class="hidden sm:inline">Rejoindre le pilote</span>
+            </a>
+          </div>
+        </>
+      )
+    }
+  </div>
+</header>
+
+<script>
+  // Le menu mobile est un <details> natif ; on le referme après un clic sur un lien ou avec Échap.
+  const menu = document.querySelector<HTMLDetailsElement>('[data-menu]');
+  if (menu) {
+    menu.querySelectorAll('[data-menu-lien]').forEach((lien) => lien.addEventListener('click', () => (menu.open = false)));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.open) {
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      }
+    });
+  }
+</script>

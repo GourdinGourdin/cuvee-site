@@ -1,0 +1,64 @@
+---
+import TitreSection from './TitreSection.astro';
+
+const scenes = [
+  {
+    moment: 'Lundi, 9 h',
+    titre: 'La matinée des commandes',
+    texte:
+      "Le tableur d’un côté, les factures de la semaine de l’autre. On recompte, on devine ce qui va partir, on écrit à six domaines. À midi, ce n’est pas fini.",
+  },
+  {
+    moment: 'Vendredi, 21 h',
+    titre: "La rupture qu’on n’a pas vue venir",
+    texte:
+      "Le blanc qui part le mieux au verre est terminé. Personne n’avait vu le stock baisser, et la prochaine livraison n’arrive que mardi.",
+  },
+  {
+    moment: 'Au fond de la réserve',
+    titre: 'Les cartons qui prennent la poussière',
+    texte:
+      "Des bouteilles achetées sur un coup de cœur il y a un an. Personne ne pense à les proposer. C’est de l’argent qui dort.",
+  },
+];
+---
+<section id="probleme" aria-labelledby="probleme-titre" class="border-t border-filet bg-creme-fonce py-20 lg:py-28">
+  <div class="conteneur">
+    <TitreSection
+      numero="1"
+      libelle="Le problème"
+      id="probleme-titre"
+      titre="Une belle carte des vins, et beaucoup d’heures derrière."
+    >
+      <p class="mt-5 max-w-2xl text-lg text-encre-douce">
+        Trois situations que nous voulons régler. Si elles vous parlent, ou si nous nous trompons, dites-le-nous.
+      </p>
+    </TitreSection>
+
+    <ul role="list" class="mt-12 grid gap-10 lg:grid-cols-3 lg:gap-0">
+      {
+        scenes.map((scene, i) => (
+          <li
+            class:list={[
+              'border-t border-dotted border-bordure pt-5 lg:border-t-0 lg:px-8 lg:pt-0',
+              i === 0 && 'lg:pl-0',
+              i > 0 && 'lg:border-l lg:border-solid lg:border-filet',
+              i === 2 && 'lg:pr-0',
+            ]}
+          >
+            <p class="surtitre text-bordeaux">{scene.moment}</p>
+            <h3 class="mt-3 text-2xl leading-snug font-medium">{scene.titre}</h3>
+            <p class="mt-3 text-encre-douce">{scene.texte}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="mt-14 max-w-3xl border-t border-filet pt-8">
+      <p class="font-serif text-xl leading-snug sm:text-2xl">
+        Votre métier, c’est de choisir les vins et de les faire découvrir, pas de compter des cartons. Le suivi, Cuvée veut
+        s’en charger.
+      </p>
+    </div>
+  </div>
+</section>

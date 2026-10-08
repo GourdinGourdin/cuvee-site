@@ -1,0 +1,61 @@
+---
+import PageTexte from '../layouts/PageTexte.astro';
+import ACompleter from '../components/ACompleter.astro';
+---
+<PageTexte
+  titre="Confidentialité"
+  surtitre="Vos données"
+  description="Ce que Cuvée fait des informations transmises via le formulaire du programme pilote."
+>
+  <p>
+    Cette page explique ce que nous faisons des informations que vous nous transmettez via le formulaire d’inscription
+    au programme pilote. En bref : elles servent uniquement à vous recontacter.
+  </p>
+
+  <h2>Responsable du traitement</h2>
+  <p><ACompleter texte="nom de la structure ou des personnes responsables, et adresse email de contact" /></p>
+
+  <h2>Données collectées</h2>
+  <ul>
+    <li>Votre prénom et votre nom, le nom et la ville de votre établissement, son type ;</li>
+    <li>le nombre approximatif de références et votre logiciel de caisse ;</li>
+    <li>votre adresse email et, si vous le souhaitez, votre numéro de téléphone ;</li>
+    <li>votre réponse à la question facultative sur ce qui vous prend du temps ;</li>
+    <li>
+      des informations techniques sur votre visite : la version du titre affichée et, le cas échéant, la campagne qui
+      vous a amené ici (paramètres « utm »).
+    </li>
+  </ul>
+
+  <h2>Pourquoi</h2>
+  <p>
+    Pour vous recontacter au sujet du programme pilote, sélectionner les lieux participants et comprendre quels messages
+    parlent le mieux aux professionnels. Ces données ne sont ni vendues ni utilisées à d’autres fins.
+  </p>
+  <p>
+    Base légale : les mesures précontractuelles prises à votre demande, puisque c’est vous qui nous contactez.
+    <ACompleter texte="à valider" />
+  </p>
+
+  <h2>Durée de conservation</h2>
+  <p><ACompleter texte="ex. 3 ans après le dernier contact, puis suppression" /></p>
+
+  <h2>Qui y a accès</h2>
+  <p>
+    L’équipe Cuvée uniquement, ainsi que le service qui reçoit les formulaires :
+    <ACompleter texte="nom du prestataire (ex. Formspree), pays d’hébergement et garanties en cas de transfert hors UE" />
+  </p>
+
+  <h2>Cookies</h2>
+  <p>
+    Ce site ne dépose aucun cookie de mesure d’audience ni de publicité. Les polices de caractères sont hébergées sur le
+    site lui-même.
+  </p>
+
+  <h2>Vos droits</h2>
+  <p>
+    Vous pouvez à tout moment demander l’accès à vos données, leur rectification ou leur suppression, ou vous opposer à
+    leur utilisation, en écrivant à <ACompleter texte="email de contact" />. Si vous estimez que vos droits ne sont pas
+    respectés, vous pouvez adresser une réclamation à la CNIL (cnil.fr).
+  </p>
+</PageTexte>

@@ -1,0 +1,26 @@
+---
+import Base from './Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  titre: string;
+  description: string;
+  surtitre: string;
+}
+const { titre, description, surtitre } = Astro.props;
+---
+<Base titre={`${titre} · Cuvée`} description={description}>
+  <Header simple />
+  <main id="contenu" class="conteneur py-14 lg:py-20">
+    <div class="max-w-3xl">
+      <p class="surtitre text-bordeaux">{surtitre}</p>
+      <h1 class="mt-4 text-4xl leading-tight font-medium sm:text-5xl">{titre}</h1>
+      <div class="filet-double mt-8 w-24" aria-hidden="true"></div>
+      <div class="texte-courant mt-8 text-encre-douce">
+        <slot />
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Base>

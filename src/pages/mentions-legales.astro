@@ -1,0 +1,39 @@
+---
+import PageTexte from '../layouts/PageTexte.astro';
+import ACompleter from '../components/ACompleter.astro';
+---
+<PageTexte titre="Mentions légales" surtitre="Informations" description="Mentions légales du site Cuvée.">
+  <p>
+    <ACompleter texte="à faire relire : les informations ci-dessous dépendent du statut juridique du projet" />
+  </p>
+
+  <h2>Éditeur du site</h2>
+  <ul>
+    <li>Nom ou dénomination sociale : <ACompleter texte="nom de la société ou des personnes éditrices" /></li>
+    <li>Forme juridique et capital : <ACompleter texte="ex. SAS au capital de …, ou projet étudiant non immatriculé" /></li>
+    <li>Adresse : <ACompleter texte="adresse du siège" /></li>
+    <li>Immatriculation : <ACompleter texte="RCS / SIREN, si applicable" /></li>
+    <li>Contact : <ACompleter texte="email de contact" /></li>
+  </ul>
+
+  <h2>Directeur ou directrice de la publication</h2>
+  <p><ACompleter texte="prénom et nom" /></p>
+
+  <h2>Hébergement</h2>
+  <p><ACompleter texte="nom, adresse et téléphone de l’hébergeur (Vercel ou Netlify, selon le choix de déploiement)" /></p>
+
+  <h2>Propriété intellectuelle</h2>
+  <p>
+    Les textes, éléments graphiques et le code de ce site sont la propriété de leurs auteurs. Les exemples de vins, de
+    domaines et de chiffres présentés sur le site sont fictifs et donnés à titre d’illustration.
+  </p>
+
+  <h2>Marques citées</h2>
+  <p>
+    Les logiciels de caisse mentionnés sur ce site (Lightspeed, Zelty, L’Addition, Tiller) le sont à titre d’information.
+    Cuvée n’est affilié à aucun de ces éditeurs.
+  </p>
+
+  <h2>Santé</h2>
+  <p>L’abus d’alcool est dangereux pour la santé, à consommer avec modération.</p>
+</PageTexte>

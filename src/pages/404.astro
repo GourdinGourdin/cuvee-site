@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+<Base titre="Page introuvable · Cuvée" description="Cette page n’existe pas.">
+  <Header simple />
+  <main id="contenu" class="conteneur py-20 lg:py-28">
+    <p class="surtitre text-bordeaux">Erreur 404</p>
+    <h1 class="mt-4 max-w-2xl text-4xl leading-tight font-medium sm:text-5xl">
+      Cette référence n’est pas <em class="text-bordeaux">en cave</em>.
+    </h1>
+    <p class="mt-6 max-w-xl text-lg text-encre-douce">La page que vous cherchez n’existe pas ou a été déplacée.</p>
+    <a href="/" class="btn btn-primaire mt-8">Retour à l’accueil</a>
+  </main>
+  <Footer />
+</Base>
