@@ -1,0 +1,21 @@
+---
+import ACompleter from '../ACompleter.astro';
+import { lienInscription } from '../../data/site';
+---
+<section id="manifeste" class="px-4 py-28 text-center lg:py-40" aria-labelledby="manifeste-titre">
+  <div class="mx-auto flex max-w-3xl flex-col items-center">
+    <h2 id="manifeste-titre" class="text-[clamp(1.7rem,3.2vw,2.6rem)] text-bordeaux" data-reveal>Là où la cave se tient toute seule…</h2>
+    <span class="signature mt-2" data-reveal data-reveal-delai="1">et vous, au comptoir</span>
+    <p class="mt-10 text-encre-douce" data-reveal data-reveal-delai="2">
+      Cuvée est un <strong class="font-semibold text-encre">assistant de cave</strong> conçu pour suivre votre stock à partir de
+      votre caisse et de vos factures, repérer <strong class="font-semibold text-encre">les bouteilles qui ne tournent plus</strong>
+      et préparer vos <strong class="font-semibold text-encre">commandes aux domaines</strong>. Vous relisez, vous validez :
+      <strong class="font-semibold text-encre">rien ne part sans vous.</strong>
+    </p>
+    <p class="mt-5 text-encre-douce" data-reveal data-reveal-delai="3">
+      Cuvée est en construction. Nous cherchons <ACompleter texte="nombre" /> bars à vin et caves à manger pour le mettre au
+      point avec nous, pendant le service.
+    </p>
+    <a href={lienInscription} class="btn btn-primaire mt-10" data-reveal data-reveal-delai="4">Rejoindre le programme pilote</a>
+  </div>
+</section>

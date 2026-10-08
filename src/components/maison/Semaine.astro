@@ -1,0 +1,82 @@
+---
+/** « Une semaine avec Cuvée » : un rail horizontal de cartes, une par jour. Exemples inventés. */
+import Video from './Video.astro';
+
+const jours = [
+  { jour: 'Lundi', heure: '7 h 02', titre: 'Commande préparée', texte: 'Domaine A : 48 bouteilles, franco atteint. Vous relisez, vous validez.', video: 'casier-main' },
+  { jour: 'Mardi', heure: '10 h 14', titre: 'Facture lue', texte: '4 lignes lues sur une photo. Une seule vous est soumise : « CHAB 1ER 22 ».', image: 'casiers' },
+  { jour: 'Mercredi', heure: '8 h 30', titre: 'Bouteilles qui dorment', texte: '24 Muscadet immobiles depuis 14 semaines. Et au comptoir, avec les huîtres ?', image: 'cave-futs' },
+  { jour: 'Jeudi', heure: '9 h 00', titre: 'Livraison en retard', texte: 'Domaine C a deux jours de retard. Une relance est prête, à relire.', video: 'livraison' },
+  { jour: 'Vendredi', heure: '18 h 30', titre: 'Le service commence', texte: 'Le stock est à jour, la carte aussi. Vous êtes en salle, pas dans un tableur.', video: 'mise-en-place' },
+];
+---
+<section class="bg-chai py-24 text-creme lg:py-32" aria-labelledby="semaine-titre">
+  <div class="mx-auto flex max-w-[76rem] flex-wrap items-end justify-between gap-6 px-4">
+    <div>
+      <p class="surtitre text-dore-clair" data-reveal>Exemples illustratifs</p>
+      <h2 id="semaine-titre" class="mt-4 text-[clamp(1.7rem,3vw,2.6rem)]" data-reveal data-reveal-delai="1">Une semaine avec Cuvée</h2>
+      <span class="signature mt-1" data-reveal data-reveal-delai="2">de lundi à vendredi</span>
+    </div>
+    <div class="flex gap-2" data-reveal>
+      <button type="button" class="rail-bouton" data-rail-prec aria-label="Jour précédent">
+        <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z" /></svg>
+      </button>
+      <button type="button" class="rail-bouton" data-rail-suiv aria-label="Jour suivant">
+        <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z" /></svg>
+      </button>
+    </div>
+  </div>
+
+  <ol class="rail mt-12" role="list" data-rail tabindex="0" aria-label="Les jours de la semaine">
+    {
+      jours.map((j) => (
+        <li class="flex flex-col gap-5">
+          <div class="media-cadre aspect-[3/4]">
+            {j.video ? (
+              <Video src={`/media/${j.video}.mp4`} affiche={`/media/${j.video}-poster.jpg`} />
+            ) : (
+              <img src={`/media/${j.image}.jpg`} alt="" loading="lazy" decoding="async" />
+            )}
+            <div class="absolute inset-x-0 top-0 z-10 flex items-baseline justify-between bg-gradient-to-b from-chai/70 to-transparent px-5 pt-4 pb-10">
+              <span class="font-[family-name:var(--font-titre)] text-lg font-extrabold tracking-[0.12em] uppercase">{j.jour}</span>
+              <span class="text-sm font-semibold tracking-[0.12em]">{j.heure}</span>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-lg">{j.titre}</h3>
+            <p class="mt-2 text-[1rem] leading-relaxed text-creme/75">{j.texte}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .rail-bouton {
+    display: inline-flex;
+    width: 3.25rem;
+    height: 3.25rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(245 233 228 / 0.5);
+    color: var(--color-creme);
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+  .rail-bouton:hover {
+    background: var(--color-creme);
+    color: var(--color-chai);
+  }
+</style>
+
+<script>
+  const rail = document.querySelector<HTMLElement>('[data-rail]');
+  if (rail) {
+    const pas = () => (rail.querySelector('li')?.getBoundingClientRect().width ?? 320) + 20;
+    const comportement: ScrollBehavior = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+    document.querySelector('[data-rail-prec]')?.addEventListener('click', () => rail.scrollBy({ left: -pas(), behavior: comportement }));
+    document.querySelector('[data-rail-suiv]')?.addEventListener('click', () => rail.scrollBy({ left: pas(), behavior: comportement }));
+  }
+</script>

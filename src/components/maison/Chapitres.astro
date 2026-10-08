@@ -1,0 +1,63 @@
+---
+/** Les trois situations que Cuvée veut régler, en chapitres : une vidéo, un texte, en alternance. */
+import Video from './Video.astro';
+
+const chapitres = [
+  {
+    num: 'I',
+    quand: 'Lundi, 9 h',
+    titre: 'La matinée des commandes',
+    texte:
+      'Le tableur d’un côté, les factures de la semaine de l’autre. On recompte, on devine ce qui va partir, on écrit à six domaines. À midi, ce n’est pas fini.',
+    cuvee: 'Notre objectif : que les bons soient prêts avant votre arrivée. Vous n’avez plus qu’à relire.',
+    video: 'carnet',
+  },
+  {
+    num: 'II',
+    quand: 'Vendredi, 21 h',
+    titre: 'La rupture qu’on n’a pas vue venir',
+    texte:
+      'Le blanc qui part le mieux au verre est terminé. Personne n’avait vu le stock baisser, et la prochaine livraison n’arrive que mardi.',
+    cuvee: 'Notre objectif : voir venir la rupture et vous prévenir à temps pour commander.',
+    video: 'comptoir-verres',
+  },
+  {
+    num: 'III',
+    quand: 'Au fond de la réserve',
+    titre: 'Les cartons qui prennent la poussière',
+    texte:
+      'Des bouteilles achetées sur un coup de cœur il y a un an. Personne ne pense à les proposer. C’est de l’argent qui dort.',
+    cuvee: 'Notre objectif : repérer ce qui ne tourne plus et vous suggérer comment l’écouler.',
+    video: 'reserve-cartons',
+  },
+];
+---
+<section aria-labelledby="chapitres-titre" class="bg-papier">
+  <h2 id="chapitres-titre" class="sr-only">Trois situations que nous voulons régler</h2>
+  {
+    chapitres.map((c, i) => (
+      <article class="grid lg:min-h-[88vh] lg:grid-cols-2">
+        <div class:list={['media-cadre min-h-[62vh] lg:min-h-0', i % 2 === 1 && 'lg:order-2']}>
+          <Video src={`/media/${c.video}.mp4`} affiche={`/media/${c.video}-poster.jpg`} />
+        </div>
+        <div class="flex flex-col justify-center px-6 py-20 sm:px-12 lg:px-20 xl:px-28">
+          <p class="chapitre-num text-bordeaux" data-reveal>
+            CHAPITRE {c.num}
+          </p>
+          <p class="surtitre mt-3 text-encre-douce" data-reveal>
+            {c.quand}
+          </p>
+          <h3 class="mt-5 text-[clamp(1.6rem,2.8vw,2.4rem)] text-encre" data-reveal data-reveal-delai="1">
+            {c.titre}
+          </h3>
+          <p class="mt-6 max-w-lg text-encre-douce" data-reveal data-reveal-delai="2">
+            {c.texte}
+          </p>
+          <p class="mt-8 max-w-lg border-t border-dore pt-5 font-semibold text-encre" data-reveal data-reveal-delai="3">
+            {c.cuvee}
+          </p>
+        </div>
+      </article>
+    ))
+  }
+</section>

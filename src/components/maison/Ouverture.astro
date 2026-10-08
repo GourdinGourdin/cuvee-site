@@ -1,0 +1,49 @@
+---
+import Video from './Video.astro';
+import { lienInscription } from '../../data/site';
+---
+<section class="media-cadre voile sur-image relative flex min-h-[100svh] flex-col text-creme" aria-labelledby="ouverture-titre">
+  <Video src="/media/cave-lumiere.mp4" affiche="/media/cave-lumiere-poster.jpg" prioritaire />
+
+  <div class="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pt-28 pb-16 text-center">
+    <p class="surtitre text-creme/85" data-reveal>Assistant de cave · bars à vin &amp; caves à manger</p>
+    <h1 id="ouverture-titre" class="mt-6 max-w-5xl text-[clamp(2.1rem,5.6vw,4.6rem)]" data-reveal-lignes>
+      <span class="titre-a">Moins de bouteilles qui dorment, moins d’heures sur les commandes.</span>
+      <span class="titre-b">Et si vos commandes aux domaines étaient prêtes dès le lundi matin&nbsp;?</span>
+    </h1>
+    <span class="signature mt-4" data-reveal data-reveal-delai="3">Cuvée propose, vous décidez</span>
+    <div class="mt-10 flex flex-wrap justify-center gap-4" data-reveal data-reveal-delai="4">
+      <a href={lienInscription} class="btn btn-primaire" data-hero-cta>Rejoindre le programme pilote</a>
+      <a href="#proposition" class="btn btn-voile">Voir un exemple</a>
+    </div>
+  </div>
+
+  <div class="relative z-10 flex items-end justify-between px-4 pb-6 sm:px-8 lg:px-12">
+    <a href="#manifeste" class="lien-cap text-creme/85">Découvrir</a>
+    <button type="button" class="lien-cap text-creme/85" data-video-bascule aria-pressed="false">
+      <span data-video-libelle>Pause</span>
+    </button>
+  </div>
+</section>
+
+<script>
+  const bouton = document.querySelector<HTMLButtonElement>('[data-video-bascule]');
+  const video = bouton?.closest('section')?.querySelector<HTMLVideoElement>('video');
+  const libelle = bouton?.querySelector<HTMLElement>('[data-video-libelle]');
+  if (bouton && video && libelle) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) bouton.hidden = true;
+    bouton.addEventListener('click', () => {
+      if (video.paused) {
+        delete video.dataset.pause;
+        video.play().catch(() => {});
+        libelle.textContent = 'Pause';
+        bouton.setAttribute('aria-pressed', 'false');
+      } else {
+        video.dataset.pause = 'manuelle';
+        video.pause();
+        libelle.textContent = 'Lecture';
+        bouton.setAttribute('aria-pressed', 'true');
+      }
+    });
+  }
+</script>

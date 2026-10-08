@@ -1,0 +1,42 @@
+---
+const pistes = [
+  { titre: 'Comment ça marche', texte: 'De la facture au bon de commande', href: '/comment-ca-marche', image: 'vitrine-cave' },
+  { titre: 'Le programme pilote', texte: 'Ce que nous proposons, ce que nous demandons', href: '/pilote', image: 'assiette-ardoise' },
+  { titre: 'Équipe & questions', texte: 'Qui construit Cuvée, et pourquoi', href: '/equipe', image: 'comptoir-soir' },
+];
+---
+<section class="px-4 py-24 lg:py-32" aria-labelledby="pistes-titre">
+  <div class="mx-auto max-w-[76rem]">
+    <div class="text-center">
+      <h2 id="pistes-titre" class="text-[clamp(1.7rem,3vw,2.6rem)] text-bordeaux" data-reveal>Pour aller plus loin</h2>
+      <span class="signature mt-1" data-reveal data-reveal-delai="1">prenez le temps</span>
+    </div>
+    <ul class="mt-14 grid gap-5 md:grid-cols-3" role="list">
+      {
+        pistes.map((p, i) => (
+          <li data-reveal data-reveal-delai={String(i + 1)}>
+            <a href={p.href} class="piste media-cadre voile sur-image group flex aspect-[3/4] items-end p-7 text-creme no-underline">
+              <img src={`/media/${p.image}.jpg`} alt="" loading="lazy" decoding="async" />
+              <span class="relative z-10 flex w-full flex-col items-center gap-3 text-center">
+                <span class="font-[family-name:var(--font-titre)] text-2xl font-extrabold tracking-[0.06em] uppercase">{p.titre}</span>
+                <span class="text-[1rem] text-creme/85">{p.texte}</span>
+                <span class="lien-cap">Découvrir</span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .piste img {
+    transition: scale 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .piste:hover img {
+      scale: 1.06;
+    }
+  }
+</style>
