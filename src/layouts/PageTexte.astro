@@ -8,15 +8,17 @@ interface Props {
   titre: string;
   description: string;
   surtitre: string;
+  /** titre de l’onglet et des moteurs de recherche (par défaut : « titre · Cuvée ») */
+  titreSeo?: string;
 }
-const { titre, description, surtitre } = Astro.props;
+const { titre, description, surtitre, titreSeo } = Astro.props;
 ---
-<Base titre={`${titre} · Cuvée`} description={description}>
+<Base titre={titreSeo ?? `${titre} · Cuvée`} description={description}>
   <EnTete />
   <main id="contenu">
     <PageEntete surtitre={surtitre} titre={titre} image="/media/cave-voutee.jpg" compact />
-    <div class="bg-papier px-5 py-20 sm:px-8 lg:py-28">
-      <div class="lecture mx-auto max-w-[44rem]">
+    <div class="section bg-creme">
+      <div class="conteneur-etroit lecture">
         <slot />
       </div>
     </div>
@@ -25,17 +27,18 @@ const { titre, description, surtitre } = Astro.props;
 </Base>
 
 <style>
+  /* Mise en page de texte long : mesure ≤ 65ch, titres de la charte (h2 un cran plus petit que sur les pages
+     de présentation, pour que les intitulés longs des mentions légales tiennent sur une à deux lignes). */
   .lecture {
-    font-size: 1.0625rem;
-    line-height: 1.85;
     color: var(--color-encre-douce);
   }
   .lecture :global(h2) {
     position: relative;
-    margin-top: 3.5rem;
-    padding-top: 1.75rem;
-    font-size: clamp(1.05rem, 2vw, 1.25rem);
-    color: var(--color-encre);
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.75rem);
+    max-width: 30ch;
+    text-wrap: balance;
   }
   .lecture :global(h2)::before {
     content: '';
@@ -43,19 +46,34 @@ const { titre, description, surtitre } = Astro.props;
     top: 0;
     left: 0;
     width: 3.5rem;
-    height: 1px;
+    height: 2px;
     background: var(--color-dore);
   }
   .lecture :global(h2:first-child) {
     margin-top: 0;
+    padding-top: 0;
+  }
+  .lecture :global(h2:first-child)::before {
+    display: none;
+  }
+  .lecture :global(h3) {
+    margin-top: var(--space-6);
+  }
+  .lecture :global(h2 + p),
+  .lecture :global(h2 + ul),
+  .lecture :global(h3 + p),
+  .lecture :global(h3 + ul) {
+    margin-top: var(--space-4);
   }
   .lecture :global(p),
-  .lecture :global(ul) {
-    margin-top: 1rem;
+  .lecture :global(ul),
+  .lecture :global(ol) {
+    max-width: 65ch;
+    margin-top: var(--space-4);
   }
   .lecture :global(ul) {
-    padding-left: 1.25rem;
     list-style: none;
+    padding-left: var(--space-5);
   }
   .lecture :global(li) {
     position: relative;
@@ -63,22 +81,26 @@ const { titre, description, surtitre } = Astro.props;
   .lecture :global(li)::before {
     content: '';
     position: absolute;
-    left: -1.1rem;
+    left: calc(-1 * var(--space-4));
     top: 0.85em;
-    width: 0.4rem;
+    width: 0.5rem;
     height: 1px;
-    background: var(--color-dore);
+    background: var(--color-dore-texte);
   }
   .lecture :global(li + li) {
-    margin-top: 0.5rem;
+    margin-top: var(--space-2);
   }
   .lecture :global(a) {
     color: var(--color-bordeaux);
+    font-weight: 600;
     text-decoration: underline;
+    text-decoration-color: var(--color-dore-texte);
     text-underline-offset: 0.22em;
+    transition: text-decoration-color var(--duree-2) ease;
   }
-  .lecture :global(a:hover) {
-    text-decoration-thickness: 2px;
+  .lecture :global(a:hover),
+  .lecture :global(a:focus-visible) {
+    text-decoration-color: currentColor;
   }
   .lecture :global(strong) {
     color: var(--color-encre);

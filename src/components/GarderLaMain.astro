@@ -1,5 +1,5 @@
 ---
-import FonctionnementTitre from './FonctionnementTitre.astro';
+import TitreSection from './TitreSection.astro';
 import Video from './maison/Video.astro';
 import { avecPlaceholders } from '../lib/texte';
 
@@ -52,25 +52,19 @@ const couleursStatut: Record<Statut, string> = {
   refuse: 'text-bordeaux',
 };
 ---
-<section id="controle" aria-labelledby="controle-titre" class="bg-creme">
-  <div class="grid lg:grid-cols-2">
-    <div class="flex flex-col justify-center px-6 py-24 sm:px-12 lg:px-16 lg:py-32 xl:px-24">
-      <FonctionnementTitre
-        libelle="Vous gardez la main"
-        id="controle-titre"
-        titre="C’est votre cave. Cuvée propose, vous décidez."
-        signature="le dernier mot vous revient"
-        centre={false}
-      />
+<section id="controle" aria-labelledby="controle-titre" class="section bg-creme">
+  <div class="conteneur garde-grille">
+    <div class="garde-texte">
+      <TitreSection libelle="Vous gardez la main" id="controle-titre" titre="C’est votre cave. Cuvée propose, vous décidez." />
 
-      <dl class="mt-12 grid gap-9">
+      <dl class="mt-12 grid gap-8">
         {
           principes.map((p, i) => (
-            <div class="principe grid grid-cols-[2.6rem_minmax(0,1fr)] gap-x-4 border-t border-dore pt-5" data-reveal data-reveal-delai={String((i % 4) + 1)}>
-              <span class="chapitre-num pt-0.5 text-[1.25rem] text-bordeaux" aria-hidden="true">{['I', 'II', 'III', 'IV'][i]}</span>
+            <div class="principe grid grid-cols-[2.5rem_minmax(0,1fr)] gap-x-4 border-t border-dore pt-6" data-reveal data-reveal-delai={String((i % 4) + 1)}>
+              <span class="chapitre-num pt-1 text-[1.125rem] font-semibold text-bordeaux" aria-hidden="true">{['I', 'II', 'III', 'IV'][i]}</span>
               <div>
-                <dt class="font-[family-name:var(--font-titre)] text-[1rem] leading-snug font-extrabold tracking-[0.05em] text-encre uppercase">{p.titre}</dt>
-                <dd class="mt-2 text-[1.02rem] text-encre-douce" set:html={avecPlaceholders(p.texte)} />
+                <dt class="text-[1.125rem] leading-snug font-semibold text-encre">{p.titre}</dt>
+                <dd class="texte-courant mt-2" set:html={avecPlaceholders(p.texte)} />
               </div>
             </div>
           ))
@@ -78,16 +72,16 @@ const couleursStatut: Record<Statut, string> = {
       </dl>
     </div>
 
-    <div class="media-cadre zoom-lent relative flex min-h-[40rem] items-center justify-center px-4 py-16 sm:px-10 lg:min-h-0 lg:py-24">
-      <Video src="/media/mise-en-place.mp4" affiche="/media/mise-en-place-poster.jpg" />
+    <div class="garde-media media-cadre">
+      <Video src="/media/mise-en-place.mp4" affiche="/media/mise-en-place-poster.jpg" sizes="(min-width: 1024px) 50vw, 100vw" />
       <div class="absolute inset-0 bg-chai/60" aria-hidden="true"></div>
-      <figure class="papier journal relative z-10 w-full max-w-md self-center shadow-2xl" aria-labelledby="journal-legende" data-journal data-reveal="echelle">
-        <div class="flex items-center justify-between gap-3 border-b-2 border-encre px-5 py-4 sm:px-6">
+      <figure class="papier journal" aria-labelledby="journal-legende" data-journal data-reveal="echelle">
+        <div class="flex items-center justify-between gap-4 border-b border-encre px-5 py-4 sm:px-6">
           <figcaption id="journal-legende">
-            <span class="block font-[family-name:var(--font-titre)] text-[1.05rem] font-extrabold tracking-[0.06em] text-bordeaux uppercase">Journal de cave</span>
-            <span class="text-[0.82rem] text-encre-douce">Une semaine type · exemple illustratif</span>
+            <span class="surtitre block">Journal de cave</span>
+            <span class="petit mt-1 block text-encre-douce">Une semaine type · exemple illustratif</span>
           </figcaption>
-          <svg width="34" height="34" viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="1.3" class="shrink-0 text-dore" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="1.25" class="shrink-0 text-dore" aria-hidden="true">
             <rect x="6" y="3" width="22" height="28" rx="1.5" />
             <path d="M10 3v28M14 10h10M14 15h10M14 20h10M14 25h6" />
           </svg>
@@ -95,14 +89,14 @@ const couleursStatut: Record<Statut, string> = {
         <ol role="list" class="journal-lignes divide-y divide-filet">
           {
             journal.map((e, i) => (
-              <li style={`--i:${i}`} class="journal-ligne grid grid-cols-[4rem_minmax(0,1fr)] gap-x-3 gap-y-1.5 px-5 py-3.5 sm:grid-cols-[4.5rem_minmax(0,1fr)_auto] sm:items-center sm:px-6">
-                <span class="text-[0.8rem] leading-tight font-semibold text-encre-douce">
+              <li style={`--i:${i}`} class="journal-ligne grid grid-cols-[4rem_minmax(0,1fr)] gap-x-4 gap-y-2 px-5 py-4 sm:px-6">
+                <span class="text-[0.875rem] leading-tight font-semibold text-encre-douce">
                   {e.jour}
                   <br />
                   {e.heure}
                 </span>
-                <span class="text-[0.95rem] leading-snug" data-frappe>{e.action}</span>
-                <span class:list={['cachet col-start-2 sm:col-start-3', couleursStatut[e.statut]]}>
+                <span class="text-[1rem] leading-snug" data-frappe>{e.action}</span>
+                <span class:list={['cachet col-start-2', couleursStatut[e.statut]]}>
                   {e.statut === 'valide' && (
                     <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
                       <path d="M1.5 5.2l2.2 2.2L8.5 2.5" fill="none" stroke="currentColor" stroke-width="1.6" />
@@ -125,6 +119,37 @@ const couleursStatut: Record<Statut, string> = {
 </section>
 
 <style is:global>
+  .garde-grille {
+    display: grid;
+    gap: var(--space-8);
+  }
+  .garde-media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6) var(--space-4);
+    border-radius: var(--rayon);
+  }
+  .journal {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 28rem;
+    box-shadow: var(--ombre-2);
+  }
+  .journal .cachet { font-size: 0.75rem; }
+  @media (min-width: 40rem) {
+    .garde-media { padding: var(--space-7) var(--space-6); }
+  }
+  @media (min-width: 64rem) {
+    .garde-grille {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--space-6);
+      align-items: stretch;
+    }
+    .garde-texte { grid-column: 1 / span 6; }
+    .garde-media { grid-column: 8 / span 5; padding: var(--space-7) var(--space-5); }
+  }
   /* Journal : chaque ligne apparaît, l’action est tapée à la machine, puis le cachet tombe. Sans JavaScript, tout est visible. */
   .journal.journal-pret .journal-ligne { opacity: 0; }
   .journal.journal-pret .journal-ligne.en-cours,
@@ -140,8 +165,8 @@ const couleursStatut: Record<Statut, string> = {
   }
   @keyframes caret { 50% { opacity: 0; } }
   .journal-ligne { position: relative; }
-  .journal-ligne:hover { background: rgb(233 221 191 / 0.28); }
-  .principe { transition: border-color 0.3s ease; }
+  .journal-ligne:hover { background: color-mix(in srgb, var(--color-dore-clair) 28%, transparent); }
+  .principe { transition: border-color var(--duree-2) ease; }
   .principe:hover { border-color: var(--color-bordeaux); }
 </style>
 

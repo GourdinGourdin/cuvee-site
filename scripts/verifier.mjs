@@ -2,14 +2,13 @@
  * Vérifie les interactions du site sur le serveur de dev (npm run dev, puis npm run verifier).
  * (Le succès simulé du formulaire n'existe qu'en dev : import.meta.env.DEV.)
  *
- * Couvre : intro bouteille (première visite, clic, « Passer », Échap, 2e visite, ?intro=1, mouvement réduit,
- * sans JavaScript, anneau de focus), navigation par les onglets de l'en-tête (aria-current, un seul h1,
+ * Couvre : accueil sans intro (l'intro bouteille a été supprimée), navigation par les onglets de l'en-tête (aria-current, un seul h1,
  * ordre des titres), menu plein écran (dialog : ouverture, fermeture, Échap, focus), calculateur (/),
  * démos (/comment-ca-marche), formulaire (/pilote : erreurs et succès simulé), variante B, bouton fixe mobile,
- * absence d'erreur console sur les 8 pages, absence de défilement horizontal à 390 px,
- * contenu visible en mouvement réduit et sans JavaScript.
- *
- * Hors tests d'intro, l'intro est écartée en posant sessionStorage['cuvee-intro-vue'] avant le chargement.
+ * contenu visible en mouvement réduit et sans JavaScript, et les contrôles de la refonte (section « Refonte ») :
+ * débordement horizontal à 360/768/1024/1440/1920 px, zéro erreur/warning console, un h1 par page,
+ * au plus 2 .signature visibles (pied de page exclu), images /media/ en <picture> AVIF/WebP, paragraphes en Outfit,
+ * view-transition-name des transitions de page.
  */
 import { chromium } from 'playwright';
 import { mkdir } from 'node:fs/promises';
@@ -25,11 +24,8 @@ const PAGES = ['/', '/comment-ca-marche', '/pilote', '/equipe', '/questions', '/
 const BUREAU = { viewport: { width: 1440, height: 900 } };
 const MOBILE = { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
 
-/** Contexte sans intro (session déjà « vue »), sauf demande contraire. */
-async function contexte(options = {}, { intro = false } = {}) {
-  const c = await b.newContext({ locale: 'fr-FR', ...options });
-  if (!intro) await c.addInitScript(() => { try { sessionStorage.setItem('cuvee-intro-vue', '1'); } catch {} });
-  return c;
+async function contexte(options = {}) {
+  return b.newContext({ locale: 'fr-FR', ...options });
 }
 function surveiller(p, erreurs) {
   p.on('pageerror', (e) => erreurs.push(e.message));
@@ -51,96 +47,27 @@ async function defiler(p) {
   }
   await attendre(1500);
 }
-const intro = {
-  visible: (p) => p.evaluate(() => { const e = document.querySelector('[data-intro]'); return !!e && getComputedStyle(e).display !== 'none'; }),
-  present: (p) => p.locator('[data-intro]').count(),
-};
-
-// ============================================================== Intro bouteille
+// ============================================================== Accueil sans intro
 {
-  const c = await contexte({ ...BUREAU }, { intro: true });
+  const c = await contexte({ ...BUREAU });
   const p = await c.newPage();
   const errs = []; surveiller(p, errs);
-  await p.goto(B + '/', { waitUntil: 'domcontentloaded' });
-  await p.waitForSelector('[data-intro][data-actif]', { timeout: 5000 }).catch(() => {});
-  check('Intro : visible dès la première visite', (await intro.visible(p)) && (await p.evaluate(() => document.documentElement.classList.contains('intro-active'))));
-  check('Intro : le focus est sur la bouteille', await p.evaluate(() => document.activeElement?.hasAttribute('data-bouteille')));
-  check('Intro : reste de la page inerte', await p.evaluate(() => document.querySelector('main')?.hasAttribute('inert') && document.querySelector('header')?.hasAttribute('inert')));
-  const anneau = () => p.evaluate(() => {
-    const s = getComputedStyle(document.querySelector('.i-consigne'));
-    return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0;
-  });
-  await p.mouse.move(700, 450); await attendre(300);
-  check('Intro : pas d’anneau de focus à l’arrivée à la souris', !(await anneau()));
-  await p.keyboard.press('Tab');
-  check('Intro : Tab atteint « Passer l’intro »', await p.evaluate(() => document.activeElement?.hasAttribute('data-passer')));
-  await p.keyboard.press('Shift+Tab');
-  await attendre(200);
-  check('Intro : anneau de focus visible au clavier', await anneau());
-  await p.screenshot({ path: `${out}/intro-1-attente.png` });
   const t0 = Date.now();
-  await p.click('[data-bouteille]');
-  await attendre(1700);
-  await p.screenshot({ path: `${out}/intro-2-vin.png` });
-  await p.waitForFunction(() => document.documentElement.classList.contains('intro-vue'), null, { timeout: 5000 }).catch(() => {});
-  const tFin = Date.now() - t0;
-  await p.waitForSelector('[data-intro]', { state: 'detached', timeout: 5000 }).catch(() => {});
-  const tRetire = Date.now() - t0;
-  check('Intro : clic → html.intro-vue puis overlay retiré en moins de 5 s', (await p.evaluate(() => document.documentElement.classList.contains('intro-vue'))) && (await intro.present(p)) === 0 && tRetire < 5000, `${tFin} ms / ${tRetire} ms`);
-  check('Intro : classe intro-active retirée et page rendue interactive', await p.evaluate(() => !document.documentElement.classList.contains('intro-active') && !document.querySelector('main[inert], header[inert], footer[inert]') && window.scrollY === 0));
-  await attendre(1500);
-  check('Intro : le titre de l’accueil est révélé après l’intro', await p.evaluate(() => { const o = document.querySelector('[data-ouverture]'); return !!o?.hasAttribute('data-pret') && getComputedStyle(document.querySelector('#hero-titre')).display !== 'none'; }));
-  await p.screenshot({ path: `${out}/intro-3-accueil.png` });
-  // 2e visite dans la même session : pas d'intro
   await p.goto(B + '/', { waitUntil: 'domcontentloaded' });
-  check('Intro : 2e visite sans intro', !(await intro.visible(p)) && (await p.evaluate(() => document.documentElement.classList.contains('intro-vue') && !document.documentElement.classList.contains('intro-active'))));
-  // ?intro=1 force l'intro
-  await p.goto(B + '/?intro=1', { waitUntil: 'domcontentloaded' });
-  await p.waitForSelector('[data-intro][data-actif]', { timeout: 5000 }).catch(() => {});
-  check('Intro : /?intro=1 la rejoue', await intro.visible(p));
-  check('Intro : aucune erreur console', errs.length === 0, errs.join(' | '));
+  const h1ok = await p.locator('h1').first().waitFor({ state: 'visible', timeout: 2000 }).then(() => true).catch(() => false);
+  check('Accueil : h1 visible en moins de 2 s', h1ok, `${Date.now() - t0} ms`);
+  await p.waitForLoadState('networkidle');
+  check('Accueil : aucun élément [data-intro], aucun html.intro-*', await p.evaluate(() => document.querySelectorAll('[data-intro]').length === 0 && ![...document.documentElement.classList].some((k) => k.startsWith('intro-'))));
+  check('Accueil : ni overlay plein écran ni contenu inerte', await p.evaluate(() => !document.querySelector('main[inert], header[inert], footer[inert]') && ![...document.body.children].some((e) => { const s = getComputedStyle(e); return s.position === 'fixed' && e.getBoundingClientRect().width >= innerWidth - 2 && e.getBoundingClientRect().height >= innerHeight - 2 && s.display !== 'none' && s.visibility !== 'hidden' && parseFloat(s.opacity) > 0 && e.tagName !== 'DIALOG' && !e.hasAttribute('data-menu'); })));
+  check('Accueil : aucune erreur console', errs.length === 0, errs.join(' | '));
   await c.close();
 }
 {
-  const c = await contexte({ ...BUREAU }, { intro: true });
-  const p = await c.newPage();
-  await p.goto(B + '/', { waitUntil: 'domcontentloaded' });
-  await p.waitForSelector('[data-intro][data-actif]', { timeout: 5000 }).catch(() => {});
-  const t0 = Date.now();
-  await p.click('[data-passer]');
-  await p.waitForFunction(() => document.documentElement.classList.contains('intro-vue'), null, { timeout: 3000 }).catch(() => {});
-  await p.waitForSelector('[data-intro]', { state: 'detached', timeout: 3000 }).catch(() => {});
-  check('Intro : « Passer l’intro » rend la page en moins de 2 s', (await intro.present(p)) === 0 && (await p.evaluate(() => document.documentElement.classList.contains('intro-vue'))) && Date.now() - t0 < 2000, `${Date.now() - t0} ms`);
-  await c.close();
-}
-{
-  const c = await contexte({ ...BUREAU }, { intro: true });
-  const p = await c.newPage();
-  await p.goto(B + '/', { waitUntil: 'domcontentloaded' });
-  await p.waitForSelector('[data-intro][data-actif]', { timeout: 5000 }).catch(() => {});
-  await p.keyboard.press('Escape');
-  await p.waitForSelector('[data-intro]', { state: 'detached', timeout: 3000 }).catch(() => {});
-  check('Intro : Échap la passe', (await intro.present(p)) === 0 && (await p.evaluate(() => document.documentElement.classList.contains('intro-vue'))));
-  await c.close();
-}
-{
-  // Entrée au clavier sur la bouteille
-  const c = await contexte({ ...BUREAU }, { intro: true });
-  const p = await c.newPage();
-  await p.goto(B + '/', { waitUntil: 'domcontentloaded' });
-  await p.waitForSelector('[data-intro][data-actif]', { timeout: 5000 }).catch(() => {});
-  await p.keyboard.press('Enter');
-  await p.waitForFunction(() => document.documentElement.classList.contains('intro-vue'), null, { timeout: 6000 }).catch(() => {});
-  check('Intro : Entrée sur la bouteille la débouche', await p.evaluate(() => document.documentElement.classList.contains('intro-vue')));
-  await c.close();
-}
-{
-  // Mouvement réduit : pas d'intro, tout visible
-  const c = await contexte({ ...BUREAU, reducedMotion: 'reduce' }, { intro: true });
+  // Mouvement réduit : tout visible
+  const c = await contexte({ ...BUREAU, reducedMotion: 'reduce' });
   const p = await c.newPage();
   const errs = []; surveiller(p, errs);
   await p.goto(B + '/', { waitUntil: 'networkidle' });
-  check('Mouvement réduit : pas d’intro', !(await intro.visible(p)) && (await p.evaluate(() => document.documentElement.classList.contains('intro-vue'))));
   check('Mouvement réduit : pas de classe d’animation', await p.evaluate(() => !document.documentElement.classList.contains('anim')));
   check('Mouvement réduit : titre et boutons visibles', await p.evaluate(() => ['#hero-titre', '[data-hero-cta]'].every((s) => { const e = document.querySelector(s); const st = getComputedStyle(e); return st.opacity === '1' && st.visibility === 'visible'; })));
   check('Mouvement réduit : aucun contenu masqué sur l’accueil', await p.evaluate(() => [...document.querySelectorAll('[data-reveal],[data-compteur]')].every((e) => getComputedStyle(e).opacity !== '0' && getComputedStyle(e).clipPath === 'none')));
@@ -149,14 +76,13 @@ const intro = {
 }
 {
   // Sans JavaScript
-  const c = await contexte({ ...BUREAU, javaScriptEnabled: false }, { intro: true });
+  const c = await contexte({ ...BUREAU, javaScriptEnabled: false });
   const p = await c.newPage();
   let masque = [];
   for (const chemin of PAGES) {
     await p.goto(B + chemin, { waitUntil: 'load' });
     const m = await p.evaluate(() => {
       const mauvais = [];
-      if (document.querySelector('[data-intro]') && getComputedStyle(document.querySelector('[data-intro]')).display !== 'none') mauvais.push('intro');
       document.querySelectorAll('main [data-reveal],main [data-compteur],main h1,main h2').forEach((e) => {
         const s = getComputedStyle(e);
         if (s.opacity === '0' || s.visibility === 'hidden' || (s.clipPath !== 'none' && s.clipPath.includes('100%'))) mauvais.push(`${e.tagName.toLowerCase()}.${String(e.className).split(' ')[0]}`);
@@ -165,11 +91,11 @@ const intro = {
     });
     if (m.length) masque.push(`${chemin}: ${[...new Set(m)].slice(0, 4).join(',')}`);
   }
-  check('Sans JavaScript : aucun contenu masqué ni intro sur les 8 pages', masque.length === 0, masque.join(' | '));
+  check('Sans JavaScript : aucun contenu masqué sur les 8 pages', masque.length === 0, masque.join(' | '));
   await c.close();
 }
 
-// ============================================================== Bureau (1440 px, sans intro)
+// ============================================================== Bureau (1440 px)
 {
   const c = await contexte({ ...BUREAU });
   const p = await c.newPage();
@@ -405,6 +331,85 @@ const intro = {
   check('Pas de débordement horizontal à 390 px sur les 8 pages', deb.length === 0, deb.join(' | '));
   check('Mobile : toutes les révélations se déclenchent au défilement', cache.length === 0, cache.join(' | '));
   check('Pas d’erreur console (mobile)', errs.length === 0, errs.join(' | '));
+  await c.close();
+}
+
+// ============================================================== Refonte : mise en page, médias, polices, transitions
+{
+  const LARGEURS = [360, 768, 1024, 1440, 1920];
+  const debordements = [];
+  for (const w of LARGEURS) {
+    const c = await contexte({ viewport: { width: w, height: w < 700 ? 760 : 900 } });
+    const p = await c.newPage();
+    for (const chemin of PAGES) {
+      await p.goto(B + chemin, { waitUntil: 'networkidle' });
+      await defiler(p);
+      const d = await p.evaluate(() => {
+        const e = document.documentElement.scrollWidth - innerWidth;
+        if (e <= 0) return { e, qui: '' };
+        const qui = [...document.querySelectorAll('body *')].filter((n) => n.getBoundingClientRect().right > innerWidth + 0.5 && getComputedStyle(n).position !== 'fixed').slice(0, 3).map((n) => `${n.tagName.toLowerCase()}.${String(n.className).split(' ')[0]}`).join(',');
+        return { e, qui };
+      });
+      if (d.e > 0) debordements.push(`${w}px ${chemin}: +${d.e}px (${d.qui})`);
+    }
+    await c.close();
+  }
+  check('Aucun débordement horizontal à 360/768/1024/1440/1920 px sur les 8 pages', debordements.length === 0, debordements.join(' | '));
+}
+{
+  // Console (erreurs ET warnings) + h1 + signatures + images + polices, 1440 px
+  const c = await contexte({ ...BUREAU });
+  const p = await c.newPage();
+  const bruit = [];
+  p.on('pageerror', (e) => bruit.push(`pageerror ${e.message}`));
+  p.on('console', (m) => { if (['error', 'warning'].includes(m.type()) && !/\/page-inexistante$/.test(m.location().url)) bruit.push(`${m.type()} ${m.text()} (${p.url()})`); });
+  const h1s = [], sigs = [], images = [], polices = [];
+  for (const chemin of PAGES) {
+    await p.goto(B + chemin, { waitUntil: 'networkidle' });
+    await defiler(p);
+    const r = await p.evaluate(() => {
+      const visible = (e) => { const s = getComputedStyle(e); const r = e.getBoundingClientRect(); return s.display !== 'none' && s.visibility !== 'hidden' && parseFloat(s.opacity) > 0 && r.width > 0 && r.height > 0 && !e.closest('[hidden],[inert],dialog:not([open])'); };
+      const signatures = [...document.querySelectorAll('.signature')].filter(visible);
+      const hors = signatures.filter((e) => !e.closest('footer'));
+      const imgs = [...document.querySelectorAll('img')].filter((i) => /\/media\//.test(i.getAttribute('src') || i.dataset.src || ''));
+      const mauvaisesImages = imgs.filter((i) => {
+        const pic = i.closest('picture');
+        const types = pic ? [...pic.querySelectorAll('source')].map((s) => s.type) : [];
+        return !(types.includes('image/avif') && types.includes('image/webp'));
+      }).map((i) => i.getAttribute('src') || i.dataset.src);
+      const outfit = (e) => /^\s*["']?Outfit/.test(getComputedStyle(e).fontFamily);
+      // Josefin Sans reste légitime pour les petites capitales (surtitres, badges, étiquettes, boutons, liens en capitales)
+      const etiquette = (e) => e.closest('.surtitre,.badge,.btn,.lien-cap,.etiquette-champ,.signature,.tampon,.cachet,[class*="surtitre"]');
+      const mauvaisesPolices = [...document.querySelectorAll('main p, footer p, main li, main dd')].filter(visible).filter((e) => !etiquette(e) && !outfit(e)).map((e) => `${getComputedStyle(e).fontFamily.split(',')[0]}:${String(e.className).slice(0, 30) || e.textContent.slice(0, 20)}`);
+      return { h1: document.querySelectorAll('h1').length, nSig: signatures.length, nSigHors: hors.length, textes: signatures.map((e) => `${e.closest('footer') ? 'footer:' : ''}${e.textContent.trim()}`), mauvaisesImages, nImg: imgs.length, mauvaisesPolices, fontsOk: document.fonts.check('16px Outfit') };
+    });
+    if (r.h1 !== 1) h1s.push(`${chemin}: ${r.h1}`);
+    // Le pied de page est exclu du plafond : sa signature « assistant de cave » est une signature de marque présente partout (max 1),
+    // la charte vise les signatures décoratives de contenu (en-tête de page + appel final). Total pied compris signalé dans le détail.
+    if (r.nSigHors > 2 || r.nSig - r.nSigHors > 1) sigs.push(`${chemin}: ${r.nSigHors} hors pied + ${r.nSig - r.nSigHors} pied (${r.textes.join(' / ')})`);
+    if (r.mauvaisesImages.length) images.push(`${chemin}: ${r.mauvaisesImages.slice(0, 3).join(',')}`);
+    if (r.mauvaisesPolices.length) polices.push(`${chemin}: ${[...new Set(r.mauvaisesPolices)].slice(0, 3).join(',')}`);
+  }
+  check('Console : zéro erreur et zéro warning sur les 8 pages (1440 px)', bruit.length === 0, bruit.slice(0, 4).join(' | '));
+  check('Un seul h1 par page (8 pages)', h1s.length === 0, h1s.join(' | '));
+  check('Au plus 2 .signature visibles par page hors pied de page (et 1 dans le pied)', sigs.length === 0, sigs.join(' | '));
+  check('Images /media/ servies par <picture> AVIF + WebP', images.length === 0, images.join(' | '));
+  check('Polices : les paragraphes sont en Outfit', polices.length === 0, polices.join(' | '));
+  await c.close();
+}
+{
+  // Transitions de page : view-transition-name présents sur l'accueil et sur la page cible
+  const c = await contexte({ ...BUREAU });
+  const p = await c.newPage();
+  const noms = () => p.evaluate(() => [...document.querySelectorAll('img,video,picture,figure,div,a')].map((e) => getComputedStyle(e).viewTransitionName).filter((n) => n && n !== 'none'));
+  await p.goto(B + '/', { waitUntil: 'networkidle' });
+  const accueil = await noms();
+  const manque = ['media-comment-ca-marche', 'media-pilote', 'media-equipe'].filter((n) => !accueil.includes(n));
+  check('Transitions : les 3 view-transition-name sont sur l’accueil', manque.length === 0, `manque ${manque.join(',')} (présents : ${accueil.join(',')})`);
+  for (const [nom, chemin] of [['media-comment-ca-marche', '/comment-ca-marche'], ['media-pilote', '/pilote'], ['media-equipe', '/equipe']]) {
+    await p.goto(B + chemin, { waitUntil: 'networkidle' });
+    check(`Transitions : ${nom} sur ${chemin}`, (await noms()).includes(nom), (await noms()).join(','));
+  }
   await c.close();
 }
 

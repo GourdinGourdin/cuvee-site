@@ -1,130 +1,144 @@
 ---
-/** Scène « en un coup d’œil » : une facture entre, la cave se met à jour, un bon de commande est préparé. Se dessine à l’entrée dans l’écran. */
-import FonctionnementTitre from './FonctionnementTitre.astro';
+/**
+ * « En un coup d’œil » : une facture entre, la cave se met à jour, un bon de commande est préparé.
+ * Trois objets de papier au trait fin (filet doré, encre, un seul accent bordeaux), reliés par un fil doré.
+ * Données inventées, illustrations décoratives (le sens est porté par les légendes en texte).
+ */
+import TitreSection from './TitreSection.astro';
+
+const etapes = [
+  { objet: 'facture', libelle: 'Facture', titre: 'Lue en photo ou en PDF', texte: 'Les lignes douteuses vous sont soumises.' },
+  { objet: 'cave', libelle: 'Cave', titre: 'Suivie au jour le jour', texte: 'Les bouteilles qui dorment sont repérées.' },
+  { objet: 'bon', libelle: 'Bon de commande', titre: 'Préparé pour vous', texte: 'Vous relisez, vous validez, il part.' },
+];
+const bouteilles = [0, 1, 2].flatMap((r) => [0, 1, 2, 3].map((c) => ({ x: 14 + c * 44, y: 12 + r * 38, dort: r === 1 && c === 2 })));
 ---
-<section aria-labelledby="coup-doeil-titre" class="fct-coup bg-papier py-24 lg:py-32">
-  <div class="mx-auto max-w-[76rem] px-4 sm:px-8">
-    <FonctionnementTitre
-      libelle="En un coup d’œil"
-      id="coup-doeil-titre"
-      titre="Une facture entre, un bon de commande sort."
-      signature="et vous au milieu"
-    />
+<section aria-labelledby="coup-doeil-titre" class="section-serree bg-creme border-t border-filet">
+  <div class="conteneur">
+    <TitreSection libelle="En un coup d’œil" id="coup-doeil-titre" titre="Une facture entre, un bon de commande sort." />
 
-    <div class="fct-scene mx-auto mt-14 max-w-4xl lg:mt-20" data-scene data-reveal data-reveal-delai="2">
-      <svg
-        class="fct-frise"
-        viewBox="0 0 600 190"
-        role="img"
-        aria-label="Schéma : une facture entre, la cave se met à jour, un bon de commande est préparé ; un fil doré relie les trois."
-      >
-        <path class="fct-fil-or" d="M96 96 C 170 30, 230 30, 300 92 S 430 150, 504 88" pathLength="1" />
-        <g class="fct-obj" style="--k:0">
-          <g transform="translate(40 24) rotate(-4 50 55)">
-            <rect width="100" height="120" rx="1.5" class="fct-papier" />
-            <path d="M14 22h46M14 40h72M14 54h72M14 68h72M14 82h40" class="fct-trait" />
-            <path d="M72 100l6 6 12-14" class="fct-ok" />
-          </g>
-        </g>
-        <g class="fct-obj" style="--k:1">
-          <g transform="translate(250 22)">
-            <rect width="100" height="124" rx="1.5" class="fct-papier" />
-            <path d="M8 44h84M8 84h84M8 122h84" class="fct-trait" />
-            {
-              [0, 1, 2].flatMap((r) =>
-                [0, 1, 2, 3].map((c) => (
-                  <g transform={`translate(${16 + c * 20} ${r * 40 + 8})`} class:list={['fct-btl', r === 1 && c === 2 && 'fct-dort']}>
-                    <rect x="3" y="12" width="9" height="20" rx="2.5" />
-                    <rect x="6" y="3" width="3" height="10" />
-                  </g>
-                ))
-              )
-            }
-          </g>
-        </g>
-        <g class="fct-obj" style="--k:2">
-          <g transform="translate(460 20) rotate(3 50 55)">
-            <rect width="100" height="124" rx="1.5" class="fct-papier" />
-            <path d="M14 22h50M14 42h72M14 56h72M14 70h72" class="fct-trait" />
-            <g transform="translate(58 82) rotate(-10)">
-              <rect x="0" y="0" width="34" height="20" rx="1.5" class="fct-tampon" />
-              <path d="M9 10.5l5 5 11-11" class="fct-tampon-ok" />
-            </g>
-          </g>
-        </g>
-        <g class="fct-lib">
-          <text x="90" y="178" text-anchor="middle">Facture</text>
-          <text x="300" y="178" text-anchor="middle">Cave</text>
-          <text x="510" y="178" text-anchor="middle">Bon de commande</text>
-        </g>
-      </svg>
-
-      <ul role="list" class="fct-legendes mt-10 grid gap-8 text-center sm:grid-cols-3">
-        <li>
-          <p class="surtitre text-bordeaux">Lue en photo ou en PDF</p>
-          <p class="mt-2 text-[0.98rem] text-encre-douce">Les lignes douteuses vous sont soumises.</p>
-        </li>
-        <li>
-          <p class="surtitre text-bordeaux">Suivie au jour le jour</p>
-          <p class="mt-2 text-[0.98rem] text-encre-douce">Les bouteilles qui dorment sont repérées.</p>
-        </li>
-        <li>
-          <p class="surtitre text-bordeaux">Préparée pour vous</p>
-          <p class="mt-2 text-[0.98rem] text-encre-douce">Vous relisez, vous validez, elle part.</p>
-        </li>
-      </ul>
-    </div>
+    <ol role="list" class="scene mt-12 lg:mt-16">
+      {
+        etapes.map((e, i) => (
+          <>
+            {i > 0 && (
+              <li class="scene-lien" aria-hidden="true" data-reveal data-reveal-delai={String(i * 2)}>
+                <svg viewBox="0 0 48 12" preserveAspectRatio="none">
+                  <path d="M0 6h46M41 1.5L46 6l-5 4.5" />
+                </svg>
+              </li>
+            )}
+            <li class="scene-etape" data-reveal data-reveal-delai={String(i * 2 + 1)}>
+              <figure class="objet papier" aria-hidden="true">
+                <figcaption class="surtitre">{e.libelle}</figcaption>
+                <svg viewBox="0 0 188 124" class="objet-dessin">
+                  {e.objet === 'facture' && (
+                    <>
+                      {[0, 1, 2, 3].map((r) => (
+                        <g transform={`translate(0 ${6 + r * 28})`}>
+                          {r < 3 ? <path d="M4 8l4 4 8-9" class="trait-encre" /> : <circle cx="10" cy="8" r="7" class="trait-accent" />}
+                          <path d={`M28 8h${r === 1 ? 84 : 96}M156 8h24`} class="trait-fin" />
+                        </g>
+                      ))}
+                    </>
+                  )}
+                  {e.objet === 'cave' &&
+                    bouteilles.map((b) => (
+                      <path
+                        transform={`translate(${b.x} ${b.y})`}
+                        d="M10 2h4v9c0 4 4 5 4 11v13h-12v-13c0-6 4-7 4-11z"
+                        class={b.dort ? 'trait-accent bouteille-dort' : 'trait-encre'}
+                      />
+                    ))}
+                  {e.objet === 'bon' && (
+                    <>
+                      {[0, 1, 2].map((r) => (
+                        <path d={`M4 ${14 + r * 24}h${r === 0 ? 100 : 180}`} class="trait-fin" />
+                      ))}
+                      <path d="M4 92h110M150 92h34" class="trait-fin" />
+                    </>
+                  )}
+                </svg>
+                {e.objet === 'bon' && <span class="cachet objet-cachet">À valider</span>}
+              </figure>
+              <h3 class="mt-6">{e.titre}</h3>
+              <p class="texte-courant mt-2">{e.texte}</p>
+            </li>
+          </>
+        ))
+      }
+    </ol>
   </div>
 </section>
 
 <style is:global>
-  .fct-frise {
+  .scene {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .scene-etape {
+    max-width: 22rem;
+  }
+  .objet {
+    position: relative;
+    margin: 0;
+    padding: var(--space-4);
+    box-shadow: var(--ombre-1);
+    border-color: color-mix(in srgb, var(--color-dore) 55%, var(--color-filet));
+  }
+  .objet-dessin {
     display: block;
     width: 100%;
     height: auto;
+    margin-top: var(--space-3);
+    fill: none;
     overflow: visible;
   }
-  .fct-papier { fill: var(--color-creme); stroke: var(--color-dore); stroke-width: 1; }
-  .fct-trait { fill: none; stroke: var(--color-bordure); stroke-width: 2; stroke-linecap: round; opacity: 0.55; }
-  .fct-ok { fill: none; stroke: var(--color-vert); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-  .fct-btl rect { fill: var(--color-bordeaux); opacity: 0.8; }
-  .fct-btl.fct-dort rect { fill: var(--color-dore); opacity: 1; }
-  .fct-tampon { fill: var(--color-vert-clair); stroke: var(--color-vert); stroke-width: 1.5; }
-  .fct-tampon-ok { fill: none; stroke: var(--color-vert); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-  .fct-lib text {
-    font-family: var(--font-texte);
-    font-weight: 600;
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    fill: var(--color-encre-douce);
-  }
-  .fct-fil-or {
-    fill: none;
-    stroke: var(--color-dore);
-    stroke-width: 2.5;
+  /* mêmes épaisseurs partout : 1.25 px à l’écran, quelle que soit la taille du dessin */
+  .objet-dessin path,
+  .objet-dessin circle,
+  .scene-lien path {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 1.25px;
     stroke-linecap: round;
-    stroke-dasharray: 1;
+    stroke-linejoin: round;
   }
-
-  /* animation : seulement si html.anim ; le conteneur reçoit .est-visible à l'entrée dans l'écran */
-  @media (prefers-reduced-motion: no-preference) {
-    html.anim .fct-scene .fct-obj { opacity: 0; transform: translateY(14px); }
-    html.anim .fct-scene .fct-fil-or { stroke-dashoffset: 1; }
-    html.anim .fct-scene.est-visible .fct-obj {
-      opacity: 1;
-      transform: none;
-      transition: opacity 0.9s ease calc(0.3s + var(--k) * 0.45s), transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) calc(0.3s + var(--k) * 0.45s);
-    }
-    html.anim .fct-scene.est-visible .fct-fil-or {
-      stroke-dashoffset: 0;
-      transition: stroke-dashoffset 2.2s cubic-bezier(0.5, 0, 0.2, 1) 0.7s;
-    }
-    html.anim .fct-scene.est-visible .fct-btl.fct-dort {
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: fct-dort 3.2s ease-in-out 2.6s infinite;
-    }
+  .trait-fin { stroke: var(--color-bordure); opacity: 0.5; }
+  .trait-encre { stroke: var(--color-encre-douce); }
+  .trait-accent { stroke: var(--color-bordeaux); }
+  .bouteille-dort { fill: var(--color-bordeaux); }
+  .objet-cachet {
+    position: absolute;
+    right: var(--space-4);
+    bottom: var(--space-4);
+    color: var(--color-bordeaux);
+    background: var(--color-papier);
   }
-  @keyframes fct-dort { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+  /* le fil doré entre deux objets : vertical sur mobile, horizontal dès 1024 px */
+  .scene-lien {
+    height: var(--space-6);
+    width: 1px;
+    margin-left: var(--space-5);
+    background: var(--color-dore);
+  }
+  .scene-lien svg { display: none; }
+  @media (min-width: 64rem) {
+    .scene {
+      grid-template-columns: minmax(0, 1fr) var(--space-7) minmax(0, 1fr) var(--space-7) minmax(0, 1fr);
+      gap: 0;
+      align-items: start;
+    }
+    .scene-etape { max-width: none; }
+    .scene-lien {
+      width: auto;
+      height: 12.5rem; /* hauteur approximative de l’objet : le trait tombe à son milieu */
+      margin: 0;
+      background: none;
+      display: grid;
+      place-items: center;
+      padding-inline: var(--space-2);
+    }
+    .scene-lien svg { display: block; width: 100%; height: 0.75rem; overflow: visible; }
+    .scene-lien path { fill: none; stroke: var(--color-dore); }
+  }
 </style>

@@ -3,54 +3,40 @@ import ACompleter from './ACompleter.astro';
 
 // TODO : remplacer par les vrais membres de l’équipe (prénom, rôle, parcours en une ligne).
 // Pas de photo tant qu’il n’y a pas de vrai portrait : le monogramme (chiffre romain) pourra être
-// remplacé par les initiales de chaque membre.
-const membres = [
-  { rang: 'I', fond: 'bordeaux' },
-  { rang: 'II', fond: 'chai' },
-  { rang: 'III', fond: 'nuit' },
-];
+// remplacé par les initiales de chaque membre, ou par un <Photo> dans `.membre-portrait`.
+const membres = ['I', 'II', 'III'];
 ---
-<section id="equipe" aria-labelledby="equipe-titre" class="equipe bg-creme py-24 lg:py-32">
-  <div class="mx-auto max-w-[76rem] px-4 sm:px-8">
-    <div class="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-end lg:gap-24">
+<section id="equipe" aria-labelledby="equipe-titre" class="equipe section bg-creme">
+  <div class="conteneur">
+    <div class="grid gap-8 lg:grid-cols-2 lg:items-end lg:gap-24">
       <div>
-        <p class="surtitre flex items-center gap-4 text-bordeaux" data-reveal>
-          <span>Qui on est</span><span class="h-px w-14 bg-dore" aria-hidden="true"></span>
-        </p>
-        <h2 id="equipe-titre" class="mt-6 text-[clamp(1.8rem,3.4vw,2.9rem)] text-bordeaux" data-reveal data-reveal-delai="1">
+        <p class="surtitre" data-reveal>Qui on est</p>
+        <h2 id="equipe-titre" class="mt-4" data-reveal data-reveal-delai="1">
           Une petite équipe, qui veut construire avec le métier.
         </h2>
-        <span class="signature mt-3" data-reveal data-reveal-delai="2">pas dans un bureau</span>
       </div>
-      <div class="text-encre-douce">
-        <p data-reveal data-reveal-delai="2">
+      <div>
+        <p class="texte-courant" data-reveal data-reveal-delai="2">
           Nous ne voulons pas inventer un outil dans un bureau puis venir vous le vendre. Nous voulons le mettre au point
           dans de vrais lieux, avec les gens qui les font tourner.
         </p>
-        <p class="mt-5" data-reveal data-reveal-delai="3">
+        <p class="texte-courant mt-4" data-reveal data-reveal-delai="3">
           <ACompleter texte="qui vous êtes en deux phrases : parcours, lien avec le vin, pourquoi ce projet" />
         </p>
       </div>
     </div>
 
-    <ul role="list" class="mt-20 grid gap-x-8 gap-y-14 sm:grid-cols-3 lg:mt-28 lg:gap-x-12">
+    <ul role="list" class="mt-12 grid gap-12 sm:grid-cols-3 sm:gap-8 lg:mt-16 lg:gap-12">
       {
-        membres.map((m, i) => (
+        membres.map((rang, i) => (
           <li class="membre" data-reveal data-reveal-delai={String(i + 1)}>
-            <div class:list={['membre-portrait', `fond-${m.fond}`]} aria-hidden="true">
-              <svg class="membre-anneau" viewBox="0 0 200 200" fill="none">
-                <circle cx="100" cy="100" r="78" stroke="var(--color-dore)" stroke-width="1" />
-                <circle class="membre-tirets" cx="100" cy="100" r="90" stroke="var(--color-dore)" stroke-width="1" stroke-dasharray="1 7" stroke-linecap="round" />
-              </svg>
-              <span class="membre-rang">{m.rang}</span>
-              <span class="membre-legende surtitre">Portrait à venir</span>
+            <div class="membre-portrait" aria-hidden="true">
+              <span class="membre-rang">{rang}</span>
+              <span class="membre-legende">Portrait à venir</span>
             </div>
-            <div class="mt-7 border-t border-dore pt-6">
-              <p class="surtitre text-bordeaux">Membre {m.rang}</p>
-              <p class="mt-3 font-[family-name:var(--font-titre)] text-xl leading-snug font-bold tracking-[0.04em] uppercase">
-                <ACompleter texte="prénom nom" />
-              </p>
-              <p class="mt-3 text-[1rem] leading-snug text-encre-douce"><ACompleter texte="rôle, parcours en une ligne" /></p>
+            <div class="mt-6">
+              <h3 class="membre-nom"><ACompleter texte="prénom nom" /></h3>
+              <p class="texte-courant mt-2"><ACompleter texte="rôle, parcours en une ligne" /></p>
             </div>
           </li>
         ))
@@ -64,54 +50,44 @@ const membres = [
     position: relative;
     display: grid;
     place-items: center;
-    aspect-ratio: 16 / 11;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
-    color: var(--color-creme);
-    background: var(--color-bordeaux);
-    isolation: isolate;
+    background: var(--color-bordeaux-clair);
+    border-radius: var(--rayon);
+    color: var(--color-bordeaux);
   }
-  .equipe .membre-portrait.fond-chai { background: var(--color-chai); }
-  .equipe .membre-portrait.fond-nuit { background: var(--color-bordeaux-nuit); }
-  .equipe .membre-portrait::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: radial-gradient(circle at 50% 38%, rgb(255 255 255 / 0.1), transparent 62%);
-  }
-  /* filet doré intérieur */
+  /* cadre intérieur doré, comme une photo encadrée en attente */
   .equipe .membre-portrait::after {
     content: "";
     position: absolute;
-    inset: 0.9rem;
+    inset: var(--space-3);
     border: 1px solid var(--color-dore);
-    opacity: 0.7;
-    transition: inset 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease;
+    border-radius: 1px;
+    pointer-events: none;
   }
-  .equipe .membre-anneau { position: absolute; width: 74%; top: 50%; left: 50%; translate: -50% -56%; }
-  .equipe .membre-tirets { transform-origin: 100px 100px; }
   .equipe .membre-rang {
-    margin-top: -2.2rem;
     font-family: var(--font-titre);
     font-weight: 300;
-    font-size: clamp(2.6rem, 5vw, 3.6rem);
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
     letter-spacing: 0.12em;
     padding-left: 0.12em;
     line-height: 1;
   }
   .equipe .membre-legende {
     position: absolute;
-    bottom: 2rem;
+    bottom: var(--space-5);
     left: 0;
     right: 0;
     text-align: center;
-    font-size: 0.7rem;
-    color: var(--color-dore-clair);
+    font-family: var(--font-label);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-encre-douce);
   }
-  @media (min-width: 40rem) { .equipe .membre-portrait { aspect-ratio: 4 / 5; } }
-  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    .equipe .membre:hover .membre-portrait::after { inset: 0.5rem; opacity: 1; }
-    .equipe .membre:hover .membre-tirets { animation: membre-tour 24s linear infinite; }
+  @media (min-width: 40rem) {
+    .equipe .membre-portrait { aspect-ratio: 4 / 5; }
   }
-  @keyframes membre-tour { to { transform: rotate(360deg); } }
+  .equipe .membre-nom { line-height: 1.35; }
 </style>

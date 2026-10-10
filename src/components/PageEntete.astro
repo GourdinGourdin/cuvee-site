@@ -1,17 +1,18 @@
 ---
 /**
  * En-tête plein cadre d'une page intérieure : image (ou vidéo) sombre sous voile, texte crème centré.
- * Chiffre romain du chapitre, surtitre, h1 en capitales, signature manuscrite, chapô, lien « Découvrir »
- * qui descend vers la suite de la page.
+ * Un seul surtitre (« II · Comment ça marche » : numéro du chapitre discret, puis libellé), h1 en capitales,
+ * signature manuscrite, chapô, lien « Découvrir » qui descend vers la suite de la page.
  *
  * Props :
  *  - surtitre, titre (HTML autorisé, pas d'<em> décoratif : il est neutralisé), chapo, signature
  *  - image : chemin /media/xxx.jpg · video : { src, affiche } (prioritaire sur l'image)
- *  - numero : chiffre romain du chapitre (I à V) · vt : view-transition-name posé sur l'<img> (comme dans Pistes : pas de bande sombre pendant le morphing)
+ *  - numero : chiffre romain du chapitre (I à V), joint au surtitre · vt : view-transition-name posé sur l'<img> (comme dans Pistes : pas de bande sombre pendant le morphing)
  *  - compact : version courte (~45svh) sans lien « Découvrir » (pages légales, 404)
  *  - id : id du h1 (défaut « page-titre »)
  */
 import Video from './maison/Video.astro';
+import Photo from './Photo.astro';
 
 interface Props {
   surtitre: string;
@@ -40,7 +41,7 @@ const {
 const idSuite = `${id}-suite`;
 ---
 <section
-  class:list={['page-entete sur-image relative isolate flex flex-col text-creme', compact ? 'page-entete--compact' : '']}
+  class:list={['page-entete sur-image relative isolate flex flex-col', compact ? 'page-entete--compact' : '']}
   aria-labelledby={id}
 >
   <div class="page-entete-media media-cadre voile zoom-lent absolute inset-0 -z-10" data-page-media>
@@ -48,33 +49,35 @@ const idSuite = `${id}-suite`;
       video ? (
         <Video src={video.src} affiche={video.affiche} prioritaire />
       ) : (
-        <img src={image} alt="" fetchpriority="high" decoding="async" style={vt ? `view-transition-name:${vt}` : undefined} />
+        <Photo src={image} alt="" prioritaire sizes="100vw" style={vt ? `view-transition-name:${vt}` : undefined} />
       )
     }
   </div>
 
-  <div class="relative z-10 flex flex-1 flex-col items-center justify-center px-5 pt-32 pb-16 text-center sm:px-8 lg:pt-36">
-    {
-      numero && (
-        <p class="chapitre-num flex items-center gap-4 text-creme/85" data-reveal>
-          <span class="h-px w-8 bg-dore-clair/80" aria-hidden="true"></span>
-          <span>CHAPITRE {numero}</span>
-          <span class="h-px w-8 bg-dore-clair/80" aria-hidden="true"></span>
-        </p>
-      )
-    }
-    <p class:list={['surtitre text-creme/90', numero ? 'mt-6' : '']} data-reveal data-reveal-delai="1">{surtitre}</p>
-    <h1 id={id} class="page-entete-titre mt-6 max-w-4xl" data-reveal-lignes>
+  <div class="page-entete-corps">
+    <p class="surtitre page-entete-surtitre" data-reveal>
+      {
+        numero && (
+          <>
+            <span class="sr-only">Chapitre </span>
+            <span class="page-entete-num">{numero}</span>
+            <span class="page-entete-sep" aria-hidden="true">·</span>
+          </>
+        )
+      }
+      {surtitre}
+    </p>
+    <h1 id={id} class="page-entete-titre" data-reveal-lignes>
       <Fragment set:html={titre} />
     </h1>
-    {signature && <span class="signature mt-4" data-reveal data-reveal-delai="3">{signature}</span>}
-    {chapo && <p class="mt-8 max-w-2xl text-lg leading-relaxed text-creme/90 sm:text-xl" data-reveal data-reveal-delai="4">{chapo}</p>}
+    {signature && <span class="signature page-entete-signature" data-reveal data-reveal-delai="3">{signature}</span>}
+    {chapo && <p class="chapo page-entete-chapo" data-reveal data-reveal-delai="4">{chapo}</p>}
   </div>
 
   {
     !compact && (
-      <div class="relative z-10 flex justify-center pb-6" data-reveal data-reveal-delai="5">
-        <a href={`#${idSuite}`} class="lien-cap text-creme/90" data-page-entete-suite>Découvrir</a>
+      <div class="page-entete-suite" data-reveal data-reveal-delai="5">
+        <a href={`#${idSuite}`} class="lien-cap" data-page-entete-suite>Découvrir</a>
       </div>
     )
   }
@@ -91,44 +94,97 @@ const idSuite = `${id}-suite`;
 
 <style>
   .page-entete {
-    min-height: 70svh;
+    min-height: min(78svh, 54rem);
     background: var(--color-chai);
+    /* voile : crème sur toute la zone de texte à 4,5:1 au moins, même sur une photo claire */
+    --voile-haut: 0.72;
+    --voile-milieu: 0.56;
+    --voile-bas: 0.82;
   }
-  @media (min-width: 48rem) {
+  @media (max-width: 47.99rem) {
     .page-entete {
-      min-height: 78svh;
+      min-height: min(70svh, 40rem);
     }
   }
   .page-entete--compact {
-    min-height: 42svh;
+    min-height: min(45svh, 30rem);
   }
-  @media (min-width: 48rem) {
-    .page-entete--compact {
-      min-height: 45svh;
-    }
-  }
-  /* assombrissement supplémentaire sous le texte : le contraste reste ≥ 4.5:1 même sur une photo claire */
+  /* assombrissement uniforme supplémentaire sous le texte */
   .page-entete-media::before {
     content: '';
     position: absolute;
     inset: 0;
     z-index: 1;
-    background: rgb(42 34 32 / 0.4);
+    background: rgb(42 34 32 / 0.32);
     pointer-events: none;
   }
+  /* corps : centré, dégagé de l'en-tête fixe, sur la grille (conteneur) */
+  .page-entete-corps {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: calc(60rem + 2 * var(--marge));
+    margin-inline: auto;
+    padding: var(--space-10) var(--marge) var(--space-8);
+    text-align: center;
+  }
+  @media (min-width: 64rem) {
+    .page-entete-corps {
+      padding-top: calc(var(--space-9) + var(--space-5));
+    }
+  }
+  .page-entete--compact .page-entete-corps {
+    padding-bottom: var(--space-7);
+  }
+  .page-entete-surtitre {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.7em;
+  }
+  .page-entete-num {
+    letter-spacing: 0.12em;
+  }
+  .page-entete-sep {
+    opacity: 0.7;
+  }
   .page-entete-titre {
-    font-size: clamp(1.9rem, 4.8vw, 3.9rem);
-    line-height: 1.1;
+    margin-top: var(--space-4);
+    text-wrap: balance;
   }
   .page-entete--compact .page-entete-titre {
-    font-size: clamp(1.8rem, 4.2vw, 3.2rem);
+    font-size: clamp(2.125rem, 1.4rem + 3vw, 3.5rem);
+  }
+  .page-entete-signature {
+    margin-top: var(--space-4);
+    line-height: 1.1;
+  }
+  .page-entete-chapo {
+    margin-top: var(--space-5);
+    max-width: 38rem;
+  }
+  .page-entete-signature + .page-entete-chapo {
+    margin-top: var(--space-4);
+  }
+  .page-entete-suite {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    padding-bottom: var(--space-5);
+  }
+  /* le dernier interlettrage décale le texte : on le compense pour centrer le lien et son filet */
+  .page-entete-suite :global(.lien-cap) {
+    padding-left: 0.22em;
   }
   /* pas d'italique décoratif dans le titre */
   .page-entete-titre :global(em) {
     font-style: normal;
     color: inherit;
-  }
-  .page-entete :global(.chapitre-num) {
-    font-weight: 400;
   }
 </style>

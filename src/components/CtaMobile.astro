@@ -2,8 +2,7 @@
 /**
  * Bouton fixe en bas d’écran, sur mobile et tablette. Il apparaît une fois le premier écran passé
  * (et le bouton du hero hors champ s’il existe), s’efface quand le pied de page ou un bloc
- * d’appel `[data-page-cta]` est à l’écran, reste caché pendant l’intro de l’accueil
- * (`html.intro-active`). Absent de /pilote, qui est déjà l’inscription.
+ * d’appel `[data-page-cta]` est à l’écran. Absent de /pilote, qui est déjà l’inscription.
  */
 import { lienInscription } from '../data/site';
 const chemin = Astro.url.pathname.replace(/\/+$/, '');
@@ -13,7 +12,7 @@ const masque = chemin === '/pilote';
   !masque && (
     <div class="cta-mobile" data-cta-mobile data-visible="false" inert>
       <a href={lienInscription} class="btn btn-primaire w-full" tabindex="-1" data-cta-lien>
-        Rejoindre le programme pilote
+        Rejoindre le pilote
       </a>
     </div>
   )
@@ -24,13 +23,12 @@ const masque = chemin === '/pilote';
     position: fixed;
     inset: auto 0 0 0;
     z-index: 45;
-    padding: 0.75rem 1rem max(0.75rem, env(safe-area-inset-bottom));
-    background: color-mix(in srgb, var(--color-creme) 94%, transparent);
+    padding: var(--space-3) var(--marge) max(var(--space-3), env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--color-creme) 96%, transparent);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    box-shadow: 0 -1px 0 var(--color-filet);
     transform: translateY(105%);
-    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--duree-3) var(--ease-sortie);
   }
   .cta-mobile[data-visible='true'] {
     transform: none;
@@ -44,20 +42,12 @@ const masque = chemin === '/pilote';
     background: linear-gradient(90deg, transparent, var(--color-dore), transparent);
   }
   .cta-mobile :global(.btn) {
-    min-height: 3rem;
-    padding-block: 0.95rem 0.8rem;
-    font-size: 0.8rem;
-    letter-spacing: 0.12em;
-    padding-inline: 0.75rem;
-    white-space: nowrap;
+    padding-inline: var(--space-3);
   }
   @media (min-width: 64rem) {
     .cta-mobile {
       display: none;
     }
-  }
-  :global(html.intro-active) .cta-mobile {
-    display: none;
   }
   @media (prefers-reduced-motion: reduce) {
     .cta-mobile {
@@ -71,7 +61,6 @@ const masque = chemin === '/pilote';
   const lien = barre?.querySelector<HTMLAnchorElement>('[data-cta-lien]');
 
   if (barre && lien) {
-    const html = document.documentElement;
     const hero = document.querySelector('[data-hero-cta]');
     const cibles = [document.querySelector('[data-page-cta]'), document.querySelector('footer')].filter(Boolean) as Element[];
     const ciblesVisibles = new Set<Element>();
@@ -79,7 +68,7 @@ const masque = chemin === '/pilote';
     let passeEcran = false;
 
     const mettreAJour = () => {
-      const visible = passeEcran && !heroVisible && ciblesVisibles.size === 0 && !html.classList.contains('intro-active');
+      const visible = passeEcran && !heroVisible && ciblesVisibles.size === 0;
       barre.dataset.visible = String(visible);
       // Hors écran, le bouton ne doit pas recevoir le focus clavier ni être lu.
       lien.tabIndex = visible ? 0 : -1;
@@ -107,7 +96,6 @@ const masque = chemin === '/pilote';
       });
       cibles.forEach((c) => observateur.observe(c));
     }
-    document.addEventListener('cuvee:intro-fin', mettreAJour);
     surDefilement();
   }
 </script>

@@ -1,27 +1,34 @@
 ---
+import Photo from '../Photo.astro';
+import TitreSection from '../TitreSection.astro';
+
 const pistes = [
   { titre: 'Comment ça marche', texte: 'De la facture au bon de commande', href: '/comment-ca-marche', image: 'vitrine-cave', slug: 'comment-ca-marche' },
   { titre: 'Le programme pilote', texte: 'Ce que nous proposons, ce que nous demandons', href: '/pilote', image: 'assiette-ardoise', slug: 'pilote' },
   { titre: 'Équipe & questions', texte: 'Qui construit Cuvée, et pourquoi', href: '/equipe', image: 'comptoir-soir', slug: 'equipe' },
 ];
 ---
-<section class="px-4 py-24 lg:py-32" aria-labelledby="pistes-titre">
-  <div class="mx-auto max-w-[76rem]">
-    <div class="text-center">
-      <p class="surtitre text-encre-douce" data-reveal>La suite</p>
-      <h2 id="pistes-titre" class="mt-4 text-[clamp(1.7rem,3vw,2.6rem)] text-bordeaux" data-reveal-lignes>Pour aller plus loin</h2>
-      <span class="signature mx-auto mt-1" data-reveal="ecriture" style="--d: 7">prenez le temps</span>
-    </div>
-    <ul class="mt-14 grid gap-5 md:grid-cols-3" role="list">
+<section class="section bg-creme" aria-labelledby="pistes-titre">
+  <div class="conteneur">
+    <TitreSection libelle="La suite" id="pistes-titre" titre="Pour aller plus loin" centre filet={false} />
+    <ul class="mt-12 grid gap-6 md:grid-cols-3 lg:mt-16" role="list">
       {
         pistes.map((p, i) => (
           <li>
-            <a href={p.href} class="piste media-cadre voile sur-image group flex aspect-[3/4] items-end p-7 text-creme no-underline" data-reveal="rideau" data-reveal-delai={String(i + 1)}>
-              <img src={`/media/${p.image}.jpg`} alt="" loading="lazy" decoding="async" style={`view-transition-name: media-${p.slug}`} />
-              <span class="relative z-10 flex w-full flex-col items-center gap-3 text-center">
-                <span class="font-[family-name:var(--font-titre)] text-2xl font-extrabold tracking-[0.06em] uppercase">{p.titre}</span>
-                <span class="text-[1rem] text-creme/85">{p.texte}</span>
-                <span class="lien-cap">Découvrir</span>
+            <a href={p.href} class="piste media-cadre sur-image group flex aspect-[4/3] items-end p-6 no-underline md:aspect-[2/3] lg:aspect-[3/4]" data-reveal="rideau" data-reveal-delai={String(i + 1)}>
+              <Photo
+                src={`/media/${p.image}.jpg`}
+                alt=""
+                sizes="(min-width: 768px) 33vw, 100vw"
+                style={`view-transition-name: media-${p.slug}`}
+              />
+              <span class="piste-texte relative z-10 flex w-full flex-col gap-2">
+                <span class="piste-titre">{p.titre}</span>
+                <span class="piste-chapo">{p.texte}</span>
+                <span class="piste-lien surtitre">
+                  Découvrir
+                  <svg width="18" height="18" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32,11.32l72,72A8,8,0,0,1,221.66,133.66Z" /></svg>
+                </span>
               </span>
             </a>
           </li>
@@ -32,16 +39,77 @@ const pistes = [
 </section>
 
 <style>
-  /* voile renforcé en bas de carte : le texte reste lisible sur les photos claires */
+  /* voile dense sous le texte (photos claires comprises : ≥ 4.5:1 pour du texte crème), léger plus haut */
   .piste::after {
-    background: linear-gradient(180deg, rgb(42 34 32 / 0.18) 0%, rgb(42 34 32 / 0.05) 25%, rgb(42 34 32 / 0.6) 55%, rgb(42 34 32 / 0.88) 100%);
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(42 34 32 / 0.12) 0%, rgb(42 34 32 / 0.2) 30%, rgb(42 34 32 / 0.82) 62%, rgb(42 34 32 / 0.92) 100%);
+    pointer-events: none;
   }
-  .piste img {
-    transition: scale 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  /* mobile : cartes courtes (4:3), le texte monte haut dans la carte : le voile dense démarre plus tôt */
+  @media (max-width: 47.99rem) {
+    .piste::after {
+      background: linear-gradient(180deg, rgb(42 34 32 / 0.2) 0%, rgb(42 34 32 / 0.55) 22%, rgb(42 34 32 / 0.86) 42%, rgb(42 34 32 / 0.92) 100%);
+    }
+  }
+  .piste :global(img) {
+    transition: scale 1.2s var(--ease-sortie);
+  }
+  .piste-titre {
+    font-family: var(--font-titre);
+    font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--color-creme);
+  }
+  .piste-chapo {
+    color: var(--creme-85);
+    line-height: 1.5;
+  }
+  .piste-lien {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2.75rem;
+    margin-top: 0.25rem;
+    color: var(--color-creme);
+  }
+  .piste-lien svg {
+    transition: translate var(--duree-2) var(--ease-sortie);
+  }
+  /* à 768 px les cartes sont étroites : titres et chapôs réservent la place de 2 et 3 lignes pour rester alignés */
+  @media (min-width: 48rem) and (max-width: 63.99rem) {
+    .piste::after {
+      background: linear-gradient(180deg, rgb(42 34 32 / 0.12) 0%, rgb(42 34 32 / 0.3) 20%, rgb(42 34 32 / 0.84) 42%, rgb(42 34 32 / 0.92) 100%);
+    }
+    .piste-titre {
+      min-height: 2.5em;
+    }
+    .piste-chapo {
+      min-height: 4.5em;
+    }
+  }
+  @media (min-width: 64rem) {
+    .piste-chapo {
+      min-height: 3em;
+    }
+  }
+  .piste:focus-visible {
+    outline: 2px solid var(--color-bordeaux);
+    outline-offset: 3px;
+  }
+  .piste:active {
+    opacity: 0.92;
+  }
+  @media (hover: hover) {
+    .piste:hover .piste-lien svg {
+      translate: 6px 0;
+    }
   }
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    .piste:hover img {
-      scale: 1.06;
+    :global(html) .piste:hover :global(img) {
+      scale: 1.05;
     }
   }
 </style>

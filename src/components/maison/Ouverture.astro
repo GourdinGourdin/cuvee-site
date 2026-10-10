@@ -1,8 +1,7 @@
 ---
 /**
  * Ouverture de l'accueil : vidéo plein cadre + titre.
- * Révélation orchestrée juste après l'intro bouteille (événement `cuvee:intro-fin` / classe `html.intro-vue`),
- * ou tout de suite au chargement quand l'intro n'est pas jouée : la vidéo passe d'un léger zoom à l'échelle
+ * Révélation orchestrée au chargement : la vidéo passe d'un léger zoom à l'échelle
  * normale, le titre monte mot à mot, la signature s'écrit de gauche à droite, puis les boutons apparaissent.
  * Sans JavaScript ou en mouvement réduit, tout est visible d'emblée.
  */
@@ -12,22 +11,22 @@ import { lienInscription } from '../../data/site';
 <section class="ouverture media-cadre voile sur-image relative flex min-h-[100svh] flex-col text-creme" aria-labelledby="hero-titre" data-ouverture>
   <Video src="/media/cave-lumiere.mp4" affiche="/media/cave-lumiere-poster.jpg" prioritaire />
 
-  <div class="ouv-contenu relative z-10 flex flex-1 flex-col items-center justify-center px-5 pt-28 pb-24 text-center">
-    <p class="ouv-h ouv-surtitre surtitre text-creme/85">Assistant de cave · bars à vin &amp; caves à manger</p>
-    <h1 id="hero-titre" class="ouv-h ouv-titre mt-6 max-w-[72rem] text-[clamp(1.7rem,3.5vw,3.2rem)]">
+  <div class="ouv-contenu conteneur relative z-10 flex flex-1 flex-col items-center justify-center pt-36 pb-24 text-center sm:pt-32">
+    <p class="ouv-h ouv-surtitre surtitre">Assistant de cave · bars à vin &amp; caves à manger</p>
+    <h1 id="hero-titre" class="ouv-h ouv-titre titre-display mt-4 max-w-[60rem]">
       <span class="titre-a">Moins de bouteilles qui dorment, moins d’heures sur les commandes.</span>
       <span class="titre-b">Et si vos commandes aux domaines étaient prêtes dès le lundi matin&nbsp;?</span>
     </h1>
-    <span class="signature ouv-h ouv-signature mt-5">Cuvée propose, vous décidez</span>
-    <div class="ouv-h ouv-boutons mt-10 flex flex-wrap justify-center gap-4">
+    <span class="signature ouv-h ouv-signature mt-6" style="text-wrap: balance">Cuvée propose, vous décidez</span>
+    <div class="ouv-h ouv-boutons mt-12 flex flex-wrap justify-center gap-4">
       <a href={lienInscription} class="btn btn-primaire" data-hero-cta>Rejoindre le programme pilote</a>
       <a href="#proposition" class="btn btn-voile">Voir un exemple</a>
     </div>
   </div>
 
-  <div class="ouv-h ouv-bas relative z-10 flex items-end justify-between px-4 pb-6 sm:px-8 lg:px-12">
-    <a href="#manifeste" class="lien-cap text-creme/85">Découvrir</a>
-    <button type="button" class="lien-cap text-creme/85" data-video-bascule aria-pressed="false">
+  <div class="ouv-h ouv-bas conteneur relative z-10 flex items-end justify-between pb-4">
+    <a href="#manifeste" class="lien-cap">Découvrir</a>
+    <button type="button" class="lien-cap" data-video-bascule aria-pressed="false">
       <span data-video-libelle>Pause</span>
     </button>
   </div>
@@ -48,7 +47,7 @@ import { lienInscription } from '../../data/site';
     }
     html.anim [data-reveal][data-reveal='ecriture'].est-visible {
       opacity: 1;
-      animation: ecriture-trace 2s cubic-bezier(0.5, 0.1, 0.3, 1) calc(var(--d, 0) * 90ms + 0.25s) backwards;
+      animation: ecriture-trace 0.9s cubic-bezier(0.5, 0.1, 0.3, 1) calc(var(--d, 0) * 70ms + 0.1s) backwards;
     }
     @keyframes ecriture-trace {
       from {
@@ -72,7 +71,7 @@ import { lienInscription } from '../../data/site';
     html.anim [data-reveal][data-reveal='filet'].est-visible,
     html.anim [data-reveal][data-reveal='filet-v'].est-visible {
       opacity: 1;
-      animation: filet-trace 1.3s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--d, 0) * 90ms + 0.1s) backwards;
+      animation: filet-trace 0.8s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--d, 0) * 70ms + 0.1s) backwards;
     }
     html.anim [data-reveal][data-reveal='filet-v'].est-visible {
       animation-name: filet-trace-v;
@@ -93,14 +92,25 @@ import { lienInscription } from '../../data/site';
      Ouverture : séquence d'entrée
      ------------------------------------------------------------------ */
   .ouverture {
+    /* voile renforcé au centre (texte sur vidéo, passages clairs de la cave) : ≥ 4.5:1 sur toute la zone du texte */
+    --voile-haut: 0.66;
+    --voile-milieu: 0.52;
+    --voile-bas: 0.84;
+    /* le h1 est une phrase entière : on garde le style .titre-display mais un cran plus bas (64 px au plus) */
+    --taille-h1: clamp(2.125rem, 1.05rem + 4vw, 4.5rem);
     /* début de la signature : après le dernier mot du titre */
-    --sig: calc(0.6s + var(--n, 11) * 65ms + 0.5s);
+    --sig: calc(0.3s + var(--n, 11) * 45ms + 0.3s);
   }
 
   /* la vidéo glisse un peu plus lentement que la page (navigateurs compatibles) */
   .ouverture > video {
     inset: -10svh 0 0 0;
     height: calc(100% + 10svh);
+  }
+
+  .ouverture .titre-display {
+    font-size: var(--taille-h1);
+    text-wrap: balance;
   }
 
   .ouv-m {
@@ -115,7 +125,7 @@ import { lienInscription } from '../../data/site';
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    /* état de départ : tout est masqué jusqu'à la fin de l'intro */
+    /* état de départ : tout est masqué jusqu'au lancement de la séquence */
     html.anim .ouverture:not([data-pret]) .ouv-h {
       opacity: 0;
     }
@@ -125,27 +135,27 @@ import { lienInscription } from '../../data/site';
     }
     html.anim .ouverture > video {
       transition:
-        scale 3.6s cubic-bezier(0.16, 1, 0.3, 1),
-        opacity 1.8s ease;
+        scale 2.4s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 1s ease;
     }
 
     html.anim .ouverture[data-pret] .ouv-surtitre {
-      animation: ouv-fondu 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s backwards;
+      animation: ouv-fondu 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s backwards;
     }
     html.anim .ouverture[data-pret] .ouv-m > span {
-      animation: ouv-monte 1.15s cubic-bezier(0.16, 1, 0.3, 1) calc(0.6s + var(--i, 0) * 65ms) backwards;
+      animation: ouv-monte 0.8s cubic-bezier(0.22, 1, 0.36, 1) calc(0.3s + var(--i, 0) * 45ms) backwards;
     }
     html.anim .ouverture[data-pret] .ouv-signature {
-      animation: ouv-ecrit 2.1s cubic-bezier(0.5, 0.1, 0.3, 1) var(--sig) backwards;
+      animation: ouv-ecrit 1.1s cubic-bezier(0.5, 0.1, 0.3, 1) var(--sig) backwards;
     }
     html.anim .ouverture[data-pret] .ouv-boutons > * {
-      animation: ouv-fondu 1s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--sig) + 1.1s) backwards;
+      animation: ouv-fondu 0.5s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--sig) + 0.35s) backwards;
     }
     html.anim .ouverture[data-pret] .ouv-boutons > :nth-child(2) {
-      animation-delay: calc(var(--sig) + 1.3s);
+      animation-delay: calc(var(--sig) + 0.45s);
     }
     html.anim .ouverture[data-pret] .ouv-bas {
-      animation: ouv-fondu 1.4s ease calc(var(--sig) + 1.9s) backwards;
+      animation: ouv-fondu 0.6s ease calc(var(--sig) + 0.7s) backwards;
     }
 
     @keyframes ouv-fondu {
@@ -217,7 +227,7 @@ import { lienInscription } from '../../data/site';
     });
   }
 
-  /* séquence d'entrée : attend la fin de l'intro bouteille */
+  /* séquence d'entrée */
   const ouverture = document.querySelector<HTMLElement>('[data-ouverture]');
   if (ouverture) {
     const html = document.documentElement;
@@ -246,22 +256,7 @@ import { lienInscription } from '../../data/site';
       if (max) ouverture.style.setProperty('--n', String(max));
     }
 
-    let lance = false;
-    const go = () => {
-      if (lance) return;
-      lance = true;
-      requestAnimationFrame(() => requestAnimationFrame(() => ouverture.setAttribute('data-pret', '')));
-    };
-
-    if (!anime || html.classList.contains('intro-vue')) go();
-    else {
-      document.addEventListener('cuvee:intro-fin', go, { once: true });
-      // intro absente (ou pas encore branchée) : on révèle sans attendre
-      window.setTimeout(() => {
-        if (!html.classList.contains('intro-active') && !html.classList.contains('intro-vue')) go();
-        else if (html.classList.contains('intro-vue')) go();
-      }, 1200);
-      window.setTimeout(go, 40000);
-    }
+    // deux frames : l'état de départ est peint avant que la séquence ne démarre
+    requestAnimationFrame(() => requestAnimationFrame(() => ouverture.setAttribute('data-pret', '')));
   }
 </script>

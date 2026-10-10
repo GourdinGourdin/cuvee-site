@@ -1,33 +1,57 @@
 ---
 /**
  * Logotype Cuvée : emblème + mot CUVÉE en Outfit, capitales espacées.
- * `ligne` : emblème à gauche du mot (en-tête). `pile` : emblème au-dessus du mot (pied de page, couverture).
- * `clair` : à utiliser sur fond sombre (chai, bordeaux, image voilée) : tout passe en crème.
- * Sur fond clair : bordeaux. Charte : docs/logo.md
+ * `pile` (défaut) : emblème au-dessus du mot (en-tête, pied de page). `ligne` : emblème à gauche du mot.
+ * `taille` : largeur de l'emblème en px ; le mot suit (0,56 × la taille).
+ * Couleur : bordeaux sur fond clair ; `clair` pour un fond sombre (crème) ; `heritee` suit `currentColor`
+ * (en-tête qui passe de crème à encre au défilement). Charte : docs/logo.md
  */
 import Embleme from './maison/Embleme.astro';
 interface Props {
   variante?: 'ligne' | 'pile';
+  taille?: number;
   clair?: boolean;
+  heritee?: boolean;
   class?: string;
 }
-const { variante = 'ligne', clair = false, class: classe = '' } = Astro.props;
-const pile = variante === 'pile';
+const { variante = 'pile', taille = 26, clair = false, heritee = false, class: classe = '' } = Astro.props;
 ---
 <span
-  class:list={[
-    'logo-cuvee inline-flex items-center',
-    pile ? 'flex-col gap-3' : 'gap-3.5',
-    clair ? 'text-creme' : 'text-bordeaux',
-    classe,
-  ]}
+  class:list={['logo-cuvee', `logo-${variante}`, heritee ? 'logo-heritee' : clair ? 'logo-clair' : '', classe]}
+  style={`--t:${taille}px`}
 >
-  <Embleme taille={pile ? 38 : 26} />
-  <span
-    class:list={[
-      'logo-mot font-[family-name:var(--font-titre)] leading-none font-extrabold tracking-[0.32em]',
-      pile ? 'text-[1.5rem]' : 'text-[1.25rem]',
-      '[margin-right:-0.32em]',
-    ]}>CUVÉE</span
-  >
+  <Embleme taille={taille} />
+  <span class="logo-mot">CUVÉE</span>
 </span>
+
+<style>
+  .logo-cuvee {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-bordeaux);
+  }
+  .logo-pile {
+    flex-direction: column;
+    gap: calc(var(--t) * 0.16);
+  }
+  .logo-ligne {
+    gap: calc(var(--t) * 0.5);
+  }
+  .logo-clair {
+    color: var(--color-creme);
+  }
+  .logo-heritee {
+    color: inherit;
+  }
+  .logo-mot {
+    font-family: var(--font-titre);
+    font-size: calc(var(--t) * 0.56);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0.32em;
+    margin-right: -0.32em; /* le dernier interlettrage ne décentre pas le mot */
+  }
+  .logo-ligne .logo-mot {
+    margin-right: 0;
+  }
+</style>

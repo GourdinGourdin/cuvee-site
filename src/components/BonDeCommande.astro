@@ -14,39 +14,37 @@ const lignes = [
 const total = lignes.reduce((somme, l) => somme + l.commande, 0);
 const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
 ---
-<div class="bon relative mx-auto w-full max-w-md lg:max-w-none">
+<div class="bon relative mx-auto w-full max-w-md">
   <!-- feuille du dessous, pour l’effet de carnet -->
   <div
-    class="papier absolute inset-0 translate-x-2 translate-y-3 rotate-[2.2deg] opacity-80 lg:translate-x-3"
+    class="papier absolute inset-0 translate-x-1 translate-y-2 rotate-[1.6deg] opacity-80 sm:translate-x-2 sm:translate-y-3"
     aria-hidden="true"
   >
   </div>
 
   <article
-    class="papier papier-ombre relative lg:rotate-[-0.8deg]"
+    class="papier papier-ombre relative sm:rotate-[-0.6deg]"
     data-demo
     aria-label="Exemple illustratif : proposition de commande préparée par Cuvée"
   >
     <div class="perforation" aria-hidden="true"></div>
 
-    <div class="marge-carnet px-4 pt-5 pb-5 pl-9 sm:px-7 sm:pb-6 sm:pl-12">
-      <div class="flex items-start justify-between gap-3">
+    <div class="marge-carnet pt-5 pr-3 pb-5 pl-8 sm:pr-7 sm:pb-6 sm:pl-12">
+      <div class="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
         <p class="surtitre text-encre-douce">Proposition de commande</p>
         <p class="cachet shrink-0 text-bordeaux">Exemple illustratif</p>
       </div>
-      <p class="bon-titre mt-3 text-[1.45rem] leading-tight text-encre">Domaine A · Anjou</p>
-      <p class="chiffres mt-1 text-[0.9rem] tracking-[0.04em] text-encre-douce">Préparée lundi à 7 h 02</p>
+      <p class="bon-titre mt-3 text-[1.3rem] leading-tight text-encre sm:text-[1.45rem]">Domaine A · Anjou</p>
+      <p class="chiffres petit mt-1 tracking-[0.04em] text-encre-douce">Préparée lundi à 7 h 02</p>
 
-      <table class="mt-5 w-full text-left">
+      <table class="mt-5 w-full text-left leading-snug">
         <caption class="sr-only">Quantités proposées par référence</caption>
         <thead>
           <tr class="surtitre border-b-2 border-dore text-encre-douce">
             <th scope="col" class="pb-2 font-medium">Référence</th>
-            <th scope="col" class="pb-2 text-right font-medium whitespace-nowrap">
-              <span class="sm:hidden">Cave</span><span class="hidden sm:inline">En cave</span>
-            </th>
+            <th scope="col" class="hidden pb-2 text-right font-medium whitespace-nowrap sm:table-cell">En cave</th>
             <th scope="col" class="pb-2 pl-3 text-right font-medium whitespace-nowrap">
-              <span class="sm:hidden">Commande</span><span class="hidden sm:inline">À commander</span>
+              <span class="sm:hidden" aria-hidden="true">Qté</span><span class="sr-only sm:not-sr-only sm:whitespace-nowrap">À commander</span>
             </th>
           </tr>
         </thead>
@@ -54,14 +52,16 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
           {
             lignes.map((l, i) => (
               <tr class="ligne-pointillee ligne-ecrite align-top" style={`--i:${i}`}>
-                <th scope="row" class="py-2.5 pr-2 font-semibold">
+                <th scope="row" class="py-2 pr-2 text-[0.9375rem] leading-snug font-semibold sm:text-base">
                   {l.vin}
-                  <span class="block text-[0.85rem] font-normal text-encre-douce">{l.ventes} vendues en 4 semaines</span>
+                  <span class="petit block font-normal text-encre-douce">
+                    {l.ventes} vendues en 4 semaines<span class="sm:hidden"> · {l.stock} en cave</span>
+                  </span>
                 </th>
-                <td class="chiffres py-2.5 text-right">{l.stock}</td>
-                <td class="py-2.5 pl-3 text-right">
+                <td class="chiffres hidden py-2 text-right sm:table-cell">{l.stock}</td>
+                <td class="py-2 pl-3 text-right">
                   <span class="chiffres font-medium text-bordeaux">{l.commande}</span>
-                  <span class="block text-[0.85rem] whitespace-nowrap text-encre-douce">
+                  <span class="petit block whitespace-nowrap text-encre-douce">
                     {cartons(l.commande)} carton{cartons(l.commande) > 1 && 's'}
                   </span>
                 </td>
@@ -74,13 +74,13 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
             <th scope="row" class="pt-3 align-top font-semibold">Total</th>
             <td colspan="2" class="pt-3 pl-3 text-right">
               <span class="chiffres font-medium whitespace-nowrap"><span data-total-nb>{total}</span> bouteilles</span>
-              <span class="block text-[0.85rem] text-encre-douce">{cartons(total)} cartons de {BOUTEILLES_PAR_CARTON}</span>
+              <span class="petit block text-encre-douce">{cartons(total)} cartons de {BOUTEILLES_PAR_CARTON}</span>
             </td>
           </tr>
         </tfoot>
       </table>
 
-      <p class="mt-3 flex items-center gap-2 text-[0.92rem] text-bordeaux">
+      <p class="mt-3 flex items-center gap-2 petit text-bordeaux">
         <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" class="shrink-0">
           <path d="M2.5 7.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.8" />
         </svg>
@@ -110,7 +110,7 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
           Modifier
         </button>
       </div>
-      <p class="mt-3 min-h-[1.25rem] text-[0.875rem] text-bordeaux" role="status" data-demo-statut></p>
+      <p class="petit mt-3 min-h-[1.25rem] text-bordeaux" role="status" data-demo-statut></p>
     </div>
 
     <span class="tampon tampon-auto bottom-8 right-8 max-sm:hidden" aria-hidden="true">Validé</span>
@@ -126,7 +126,6 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
     text-transform: uppercase;
   }
   .bon :global(.chiffres) {
-    font-family: var(--font-texte);
     font-variant-numeric: tabular-nums;
   }
   .bon :global(.chiffres.font-medium) {
@@ -135,14 +134,13 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
     font-size: 1.1rem;
   }
   .bon :global(.cachet) {
-    font-family: var(--font-texte);
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    font-size: 0.75rem;
     padding: 0.2rem 0.5rem 0.1rem;
   }
   .bon :global(thead th) {
-    letter-spacing: 0.14em;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
     font-weight: 600;
   }
   .bon :global(tbody th) {
@@ -153,9 +151,7 @@ const cartons = (bouteilles: number) => bouteilles / BOUTEILLES_PAR_CARTON;
   }
   .bon :global(.btn) {
     padding: 0.9rem 1.25rem 0.75rem;
-    min-height: 2.9rem;
-    font-size: 0.76rem;
-    letter-spacing: 0.14em;
+    min-height: 2.75rem;
   }
   .bon :global(.tampon) {
     border-color: var(--color-bordeaux);

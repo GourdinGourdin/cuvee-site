@@ -10,7 +10,8 @@
  *   défilement bloqué), avec sur grand écran un panneau d’image qui change selon l’onglet visé.
  * Le script de cet en-tête est à la fin du fichier ; les animations de lecture sont dans animations.ts.
  */
-import Embleme from './Embleme.astro';
+import Logo from '../Logo.astro';
+import Photo from '../Photo.astro';
 import { navigation, lienInscription } from '../../data/site';
 
 const chemin = Astro.url.pathname.replace(/\/+$/, '') || '/';
@@ -36,12 +37,23 @@ const droite = onglets.slice(2);
       <span class="block h-px w-8 bg-current" aria-hidden="true"></span>
       <span class="block h-px w-8 bg-current" aria-hidden="true"></span>
       <span class="block h-px w-8 bg-current" aria-hidden="true"></span>
-      <span class="text-[0.7rem] font-semibold tracking-[0.2em]">MENU</span>
+      <span class="entete-menu-mot">MENU</span>
     </button>
+    {/* sans JavaScript le menu plein écran ne s'ouvre pas : le bouton est masqué et remplacé par un lien vers la navigation du pied de page */}
+    <noscript>
+      <style>
+        [data-menu-ouvrir] { display: none !important; }
+      </style>
+      <a href="#pied-nav" class="entete-menu flex min-h-12 min-w-12 flex-col items-center justify-center gap-1.5 justify-self-start">
+        <span class="block h-px w-8 bg-current" aria-hidden="true"></span>
+        <span class="block h-px w-8 bg-current" aria-hidden="true"></span>
+        <span class="block h-px w-8 bg-current" aria-hidden="true"></span>
+        <span class="entete-menu-mot">MENU</span>
+      </a>
+    </noscript>
 
     <a href="/" class="entete-logo entete-logo-mobile" aria-label="Cuvée, accueil">
-      <Embleme taille={26} />
-      <span class="entete-logo-nom">CUVÉE</span>
+      <Logo variante="pile" taille={26} heritee />
     </a>
 
     <nav aria-label="Navigation principale" class="entete-nav" data-nav-desktop>
@@ -55,8 +67,7 @@ const droite = onglets.slice(2);
         }
       </ul>
       <a href="/" class="entete-logo" aria-label="Cuvée, accueil">
-        <Embleme taille={26} />
-        <span class="entete-logo-nom">CUVÉE</span>
+        <Logo variante="pile" taille={26} heritee />
       </a>
       <ul role="list" class="entete-onglets entete-onglets-d">
         {
@@ -70,8 +81,8 @@ const droite = onglets.slice(2);
       <span class="entete-indicateur" aria-hidden="true" data-indicateur></span>
     </nav>
 
-    <a href={lienInscription} class="btn btn-primaire entete-cta entete-cta-xl">Rejoindre le pilote</a>
-    <a href={lienInscription} class="btn btn-primaire entete-cta entete-cta-md">Le pilote</a>
+    <a href={lienInscription} class="btn btn-primaire btn-petit entete-cta entete-cta-xl">Rejoindre le pilote</a>
+    <a href={lienInscription} class="btn btn-primaire btn-petit entete-cta entete-cta-md">Le pilote</a>
     <a href={lienInscription} class="lien-cap entete-cta-sm">Pilote</a>
   </div>
 </header>
@@ -85,8 +96,7 @@ const droite = onglets.slice(2);
           Fermer
         </button>
         <a href="/" class="entete-logo menu-logo" aria-label="Cuvée, accueil">
-          <Embleme taille={26} />
-          <span class="entete-logo-nom">CUVÉE</span>
+          <Logo variante="pile" taille={26} heritee />
         </a>
         <span aria-hidden="true"></span>
       </div>
@@ -108,14 +118,13 @@ const droite = onglets.slice(2);
 
       <div class="menu-bas">
         <a href={lienInscription} class="btn btn-creme">Rejoindre le programme pilote</a>
-        <span class="signature menu-signature">à votre service</span>
       </div>
     </div>
 
     <div class="menu-visuel" aria-hidden="true" data-menu-visuel data-defaut={courant.image}>
       {
         Array.from(new Set(onglets.map((o) => o.image))).map((src) => (
-          <img src={src} alt="" decoding="async" data-src={src} loading="lazy" />
+          <Photo src={src} alt="" sizes="50vw" loading="lazy" data-src={src} />
         ))
       }
       <div class="menu-visuel-voile"></div>
@@ -177,13 +186,12 @@ const droite = onglets.slice(2);
     color: inherit;
     text-decoration: none;
   }
-  .entete-logo-nom {
-    font-family: var(--font-titre);
-    font-size: 0.95rem;
-    font-weight: 800;
-    letter-spacing: 0.32em;
-    margin-right: -0.32em;
-    line-height: 1.2;
+  .entete-menu-mot {
+    font-family: var(--font-label);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    margin-right: -0.2em;
   }
 
   /* ---------- onglets (grand écran) ---------- */
@@ -210,16 +218,16 @@ const droite = onglets.slice(2);
     align-items: center;
     min-height: 2.75rem;
     padding-top: 0.1rem;
-    font-family: var(--font-titre);
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.17em;
+    font-family: var(--font-label);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     white-space: nowrap;
     text-decoration: none;
     color: inherit;
-    opacity: 0.78;
-    transition: opacity 0.3s ease;
+    opacity: 0.85;
+    transition: opacity var(--duree-2) ease;
   }
   .onglet:hover,
   .onglet:focus-visible,
@@ -288,9 +296,7 @@ const droite = onglets.slice(2);
     }
   }
   .entete-cta {
-    min-height: 2.75rem;
-    padding: 0.9rem 1.4rem 0.75rem !important;
-    font-size: 0.78rem !important;
+    padding-inline: 1.25rem;
   }
 
   /* ---------- menu plein écran ---------- */
@@ -373,12 +379,12 @@ const droite = onglets.slice(2);
   .menu-lien {
     display: flex;
     align-items: baseline;
-    gap: 1.25rem;
+    gap: 1rem;
     min-height: 3.25rem;
     padding-block: 0.15rem;
     font-family: var(--font-titre);
     font-weight: 800;
-    font-size: clamp(1.55rem, 6vw, 2.8rem);
+    font-size: clamp(1.5rem, 6vw, 2.75rem);
     white-space: normal;
     letter-spacing: 0.07em;
     line-height: 1.25;
@@ -398,12 +404,12 @@ const droite = onglets.slice(2);
   }
   .menu-num {
     flex: none;
-    width: 2.6rem;
-    font-size: 0.8rem;
-    font-weight: 300;
+    width: 2.5rem;
+    font-family: var(--font-label);
+    font-size: 0.8125rem;
+    font-weight: 600;
     letter-spacing: 0.3em;
     color: var(--color-dore-clair);
-    opacity: 0.8;
   }
   .menu-texte {
     position: relative;
@@ -450,14 +456,6 @@ const droite = onglets.slice(2);
       padding-left: min(4vw, 4rem);
     }
   }
-  .menu-bas .btn {
-    letter-spacing: 0.13em;
-    font-size: 0.78rem;
-  }
-  .menu-signature {
-    color: var(--color-dore-clair) !important;
-    font-size: 2.2rem !important;
-  }
 
   /* panneau d’image : grand écran seulement */
   .menu-visuel {
@@ -471,7 +469,7 @@ const droite = onglets.slice(2);
       display: block;
     }
   }
-  .menu-visuel img {
+  .menu-visuel :global(img) {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -483,7 +481,7 @@ const droite = onglets.slice(2);
       opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
       scale 1.6s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .menu-visuel img.est-actif {
+  .menu-visuel :global(img.est-actif) {
     opacity: 1;
     scale: 1;
   }

@@ -1,5 +1,5 @@
 ---
-import FonctionnementTitre from './FonctionnementTitre.astro';
+import TitreSection from './TitreSection.astro';
 
 // Données inventées pour l’illustration : aucun vrai domaine, aucun vrai client.
 const facture = [
@@ -39,21 +39,15 @@ const jours = [
   { cle: 'jeudi', nom: 'Jeudi', sujet: 'Livraison en retard' },
 ];
 ---
-<section id="exemples" aria-labelledby="exemples-titre" class="exemples sur-fond-sombre relative overflow-hidden bg-chai py-24 text-creme lg:py-32">
-  <div class="exemples-lueur" aria-hidden="true"></div>
-  <div class="relative mx-auto max-w-[76rem] px-4 sm:px-8">
-    <FonctionnementTitre
+<section id="exemples" aria-labelledby="exemples-titre" class="exemples sur-fond-sombre section bg-chai text-creme">
+  <div class="conteneur">
+    <TitreSection
       libelle="Concrètement"
       id="exemples-titre"
       titre="Ce que vous verriez passer dans la semaine."
-      signature="rien que des exemples"
+      chapo="Trois exemples de propositions, en plus de la commande présentée sur l’accueil. Les vins, les domaines et les chiffres sont inventés ; les boutons ne déclenchent rien."
       sombre
-    >
-      <p class="mx-auto mt-8 max-w-xl text-creme/85" data-reveal data-reveal-delai="4">
-        Trois exemples de propositions, en plus de la commande présentée sur l’accueil. Les vins, les domaines et les chiffres
-        sont inventés ; les boutons ne déclenchent rien.
-      </p>
-    </FonctionnementTitre>
+    />
 
     <!-- Sélecteur de jour : affiché par le script sur mobile seulement (sans JavaScript, les trois fiches restent visibles). -->
     <div class="onglets-jours mt-12 lg:hidden" role="tablist" aria-label="Exemples par jour" data-onglets hidden>
@@ -75,21 +69,21 @@ const jours = [
       }
     </div>
 
-    <p class="mt-10 hidden text-center text-[0.9rem] tracking-wide text-creme/75 lg:block" data-reveal data-reveal-delai="5">
-      Cliquez sur une fiche pour la prendre en main ; cliquez ailleurs pour la reposer.
+    <p class="petit mt-12 hidden text-creme/85 lg:block" id="consigne-fiches" data-reveal data-reveal-delai="5">
+      Cliquez sur une fiche (ou sélectionnez-la au clavier, Entrée) pour la mettre en avant. Échap, ou un clic ailleurs, la repose.
     </p>
-    <div class="table-ex mt-8 lg:mt-8">
-    <div class="grille-exemples grid gap-6 lg:grid-cols-3 lg:items-start" data-grille-exemples>
+    <div class="table-ex mt-6 lg:mt-6">
+    <div class="grille-exemples grid gap-6 lg:grid-cols-3 lg:items-stretch" data-grille-exemples>
       <!-- 1. Facture lue (mardi) : ticket au bord cranté -->
-      <article class="papier fiche bord-crante flex flex-col carte-ex carte-ex-1" data-demo data-reveal data-reveal-delai="1" aria-labelledby="ex-facture">
-        <header class="flex items-center justify-between gap-3 border-b border-dashed border-filet px-5 py-3">
+      <article class="papier fiche flex flex-col carte-ex" tabindex="0" aria-describedby="consigne-fiches" data-demo data-reveal data-reveal-delai="1" aria-labelledby="ex-facture">
+        <header class="flex items-center justify-between gap-3 border-b border-filet px-5 py-4">
           <p class="surtitre text-bordeaux">Facture lue</p>
           <p class="cachet text-encre-douce">Exemple</p>
         </header>
-        <div class="flex-1 px-5 pt-5 pb-7">
-          <h3 id="ex-facture" class="text-[1.05rem] leading-snug text-bordeaux">Facture de Négociant B</h3>
-          <p class="mt-2 text-[0.82rem] text-encre-douce">Reçue en photo mardi à 10 h 14 · 4 lignes lues</p>
-          <ul role="list" class="mt-4">
+        <div class="flex flex-1 flex-col px-5 pt-6 pb-6">
+          <h3 id="ex-facture">Facture de Négociant B</h3>
+          <p class="petit mt-2 text-encre-douce">Reçue en photo mardi à 10 h 14 · 4 lignes lues</p>
+          <ul role="list" class="mt-5">
             {
               facture.map((f) => (
                 <li class="ligne-pointillee flex items-start gap-3 py-2.5 first:pt-1">
@@ -114,7 +108,7 @@ const jours = [
                       </span>
                     </div>
                     {f.proposition && (
-                      <p class="mt-1 text-[0.95rem] leading-snug">
+                      <p class="mt-1 text-[1rem] leading-snug">
                         Cuvée propose : <span class="font-semibold">{f.proposition}</span>
                       </p>
                     )}
@@ -124,7 +118,7 @@ const jours = [
             }
           </ul>
           <p class="mt-3 text-[0.9rem] text-encre-douce">3 lignes ajoutées au stock, 1 à confirmer par vous.</p>
-          <div class="mt-5 flex flex-wrap gap-2.5">
+          <div class="mt-auto flex flex-wrap gap-3 pt-6">
             <button
               type="button"
               class="btn btn-primaire btn-mini"
@@ -142,26 +136,25 @@ const jours = [
               Corriger
             </button>
           </div>
-          <p class="mt-3 min-h-[1.25rem] text-[0.875rem] text-vert" role="status" data-demo-statut></p>
+          <p class="mt-3 min-h-[1.5rem] text-[0.875rem] text-vert" role="status" data-demo-statut></p>
         </div>
-        <span class="tampon top-1/2 right-6" aria-hidden="true">Confirmé</span>
+        <span class="tampon top-1/2 right-5" aria-hidden="true">Confirmé</span>
       </article>
 
       <!-- 2. Bouteilles qui dorment (mercredi) : fiche de cave perforée -->
-      <article class="papier fiche flex flex-col carte-ex carte-ex-2" data-demo data-reveal data-reveal-delai="2" aria-labelledby="ex-dormantes">
-        <div class="perforation" aria-hidden="true"></div>
-        <header class="flex items-center justify-between gap-3 border-b border-filet px-5 py-3">
+      <article class="papier fiche flex flex-col carte-ex" tabindex="0" aria-describedby="consigne-fiches" data-demo data-reveal data-reveal-delai="2" aria-labelledby="ex-dormantes">
+        <header class="flex items-center justify-between gap-3 border-b border-filet px-5 py-4">
           <p class="surtitre text-bordeaux">Bouteilles qui dorment</p>
           <p class="cachet text-encre-douce">Exemple</p>
         </header>
-        <div class="flex-1 px-5 pt-5 pb-6">
-          <h3 id="ex-dormantes" class="text-[1.05rem] leading-snug text-bordeaux">
+        <div class="flex flex-1 flex-col px-5 pt-6 pb-6">
+          <h3 id="ex-dormantes">
             3 références sans vente depuis plus de 90 jours
           </h3>
-          <p class="mt-2 text-[0.82rem] text-encre-douce">
+          <p class="petit mt-2 text-encre-douce">
             Mercredi à 8 h 30 · 51 bouteilles, 462 € au prix d’achat
           </p>
-          <ul role="list" class="mt-4">
+          <ul role="list" class="mt-5">
             {
               dormantes.map((d) => (
                 <li class="ligne-pointillee py-3 first:pt-1">
@@ -171,8 +164,8 @@ const jours = [
                       × {d.bouteilles}
                     </span>
                   </div>
-                  <p class="nombre text-[0.8rem] text-encre-douce">Dernière vente il y a {d.jours} jours</p>
-                  <p class="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-[0.95rem] leading-snug">
+                  <p class="nombre text-[0.875rem] text-encre-douce">Dernière vente il y a {d.jours} jours</p>
+                  <p class="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-[1rem] leading-snug">
                     <span class="cachet text-bordeaux">{d.piste}</span>
                     <span>{d.suggestion}</span>
                   </p>
@@ -180,7 +173,7 @@ const jours = [
               ))
             }
           </ul>
-          <div class="mt-5 flex flex-wrap gap-2.5">
+          <div class="mt-auto flex flex-wrap gap-3 pt-6">
             <button
               type="button"
               class="btn btn-primaire btn-mini"
@@ -198,23 +191,23 @@ const jours = [
               Plus tard
             </button>
           </div>
-          <p class="mt-3 min-h-[1.25rem] text-[0.875rem] text-vert" role="status" data-demo-statut></p>
+          <p class="mt-3 min-h-[1.5rem] text-[0.875rem] text-vert" role="status" data-demo-statut></p>
         </div>
-        <span class="tampon top-1/2 right-6" aria-hidden="true">Retenu</span>
+        <span class="tampon top-1/2 right-5" aria-hidden="true">Retenu</span>
       </article>
 
       <!-- 3. Livraison en retard (jeudi) : lettre sur papier ligné -->
-      <article class="papier fiche flex flex-col carte-ex carte-ex-3" data-demo data-reveal data-reveal-delai="3" aria-labelledby="ex-relance">
-        <header class="flex items-center justify-between gap-3 border-b border-filet px-5 py-3">
+      <article class="papier fiche flex flex-col carte-ex" tabindex="0" aria-describedby="consigne-fiches" data-demo data-reveal data-reveal-delai="3" aria-labelledby="ex-relance">
+        <header class="flex items-center justify-between gap-3 border-b border-filet px-5 py-4">
           <p class="surtitre text-bordeaux">Livraison en retard</p>
           <p class="cachet text-encre-douce">Exemple</p>
         </header>
-        <div class="flex-1 px-5 pt-5 pb-6">
-          <h3 id="ex-relance" class="text-[1.05rem] leading-snug text-bordeaux">Domaine C · Languedoc</h3>
-          <p class="mt-2 text-[0.82rem] text-encre-douce">
+        <div class="flex flex-1 flex-col px-5 pt-6 pb-6">
+          <h3 id="ex-relance">Domaine C · Languedoc</h3>
+          <p class="petit mt-2 text-encre-douce">
             Jeudi à 9 h 00 · commande du 22 sept., promise le 29. Toujours rien reçu.
           </p>
-          <p class="mt-4 text-[0.95rem] text-encre-douce">Message préparé, à relire avant envoi :</p>
+          <p class="mt-4 text-[1rem] text-encre-douce">Message préparé, à relire avant envoi :</p>
           <blockquote class="papier-ligne mt-2 border-l-2 border-bordeaux/40 pl-4 text-[1rem]">
             Bonjour, notre commande du 22 septembre (36 bouteilles, 6 cartons) devait arriver le 29 et nous n’avons rien
             reçu. Pouvez-vous nous donner une date de livraison ? Merci.
@@ -222,7 +215,7 @@ const jours = [
           <p class="mt-3 text-[0.875rem] text-encre-douce">
             Envoi par WhatsApp à votre contact au domaine, après votre validation.
           </p>
-          <div class="mt-5 flex flex-wrap gap-2.5">
+          <div class="mt-auto flex flex-wrap gap-3 pt-6">
             <button
               type="button"
               class="btn btn-primaire btn-mini"
@@ -240,9 +233,9 @@ const jours = [
               Modifier le message
             </button>
           </div>
-          <p class="mt-3 min-h-[1.25rem] text-[0.875rem] text-vert" role="status" data-demo-statut></p>
+          <p class="mt-3 min-h-[1.5rem] text-[0.875rem] text-vert" role="status" data-demo-statut></p>
         </div>
-        <span class="tampon top-1/2 right-6" aria-hidden="true">Validé</span>
+        <span class="tampon top-1/2 right-5" aria-hidden="true">Validé</span>
       </article>
     </div>
     </div>
@@ -250,135 +243,94 @@ const jours = [
 </section>
 
 <style is:global>
-  /* lueur chaude en haut de la section sombre */
-  .exemples-lueur {
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 40% at 50% 0%, rgb(168 138 74 / 0.18), transparent 70%),
-      radial-gradient(ellipse 50% 40% at 100% 100%, rgb(110 31 47 / 0.35), transparent 70%);
-    pointer-events: none;
-  }
-
-  /* Fiches : typographie maison */
-  .fiche {
+  /* Fiches : papier posé sur fond sombre. Même gabarit, mêmes hauteurs ; le contenu passe en Outfit, les étiquettes en Josefin. */
+  .carte-ex {
+    padding: 0;
     color: var(--color-encre);
-    border-color: transparent;
+    cursor: pointer;
+    transition:
+      translate var(--duree-2) var(--ease-sortie),
+      box-shadow var(--duree-2) ease,
+      opacity var(--duree-2) ease;
   }
-  .fiche h3 {
-    font-size: 1.02rem;
-    letter-spacing: 0.05em;
-  }
-  .fiche .nombre {
+  .carte-ex .nombre {
     font-variant-numeric: tabular-nums;
   }
-  .fiche .btn {
-    padding: 0.85rem 1.1rem 0.75rem;
-    min-height: 2.9rem;
-    font-size: 0.74rem;
-    letter-spacing: 0.12em;
+  .carte-ex .btn {
+    cursor: pointer;
   }
-  /* (le bouton contour d’une fiche claire sur fond sombre est réinitialisé dans global.css) */
-
-  /* Cartes posées sur la table : légère rotation (propriété rotate, sans conflit avec les animations d’entrée) */
-  @media (min-width: 64rem) {
-    .carte-ex-1 { rotate: -0.7deg; }
-    .carte-ex-2 { rotate: 0.5deg; margin-top: 0.75rem; }
-    .carte-ex-3 { rotate: -0.4deg; }
+  .carte-ex :is(button, a) {
+    position: relative;
+    z-index: 1;
   }
-  .table-ex {
-    padding: 1.25rem 0;
-  }
-  @media (min-width: 64rem) {
-    .table-ex {
-      padding: 2rem 0 1rem;
-    }
-  }
-  /* fiche « prise en main » : elle se soulève et se redresse (clic, ou focus clavier sur l’un de ses boutons) */
-  .carte-ex { position: relative; }
-  .carte-ex.est-pris,
-  .carte-ex:focus-within {
-    rotate: 0deg;
-    translate: 0 -10px;
-    scale: 1.025;
-    z-index: 3;
-    box-shadow: 0 1px 0 var(--color-filet), 0 30px 50px -18px rgb(0 0 0 / 0.7);
-  }
-  @media (min-width: 64rem) {
-    .carte-ex { cursor: pointer; }
-    .table-ex:has(.est-pris) .carte-ex:not(.est-pris) { opacity: 0.8; }
-  }
-  html.anim .carte-ex.est-visible {
-    transition: opacity 0.35s ease, transform 0.35s ease, rotate 0.35s ease, scale 0.35s ease, translate 0.35s ease, box-shadow 0.35s ease;
-    transition-delay: 0s;
-  }
-  .carte-ex {
-    transition: scale 0.35s ease, opacity 0.35s ease, rotate 0.35s ease, box-shadow 0.35s ease, translate 0.35s ease;
-    box-shadow: 0 1px 0 var(--color-filet), 0 24px 40px -22px rgb(0 0 0 / 0.65);
-  }
+  /* survol : la fiche se soulève (ombre niveau 2) */
   @media (hover: hover) {
     .carte-ex:hover {
-      rotate: 0deg;
       translate: 0 -4px;
-      box-shadow: 0 1px 0 var(--color-filet), 0 30px 46px -20px rgb(0 0 0 / 0.7);
+      box-shadow: var(--ombre-2);
+    }
+  }
+  /* focus clavier sur la fiche : anneau doré clair (2 px, décalé de 3 px) */
+  .carte-ex:focus-visible {
+    outline: 2px solid var(--color-dore-clair);
+    outline-offset: 3px;
+  }
+  /* fiche en main (clic, ou Entrée au clavier) ou boutons au focus : elle se soulève et le reste s’efface un peu */
+  .carte-ex.est-pris,
+  .carte-ex:focus-within {
+    translate: 0 -6px;
+    box-shadow: var(--ombre-2);
+    border-color: var(--color-dore);
+    z-index: 3;
+  }
+  .carte-ex:active {
+    translate: 0 -2px;
+  }
+  @media (min-width: 64rem) {
+    .table-ex:has(.est-pris) .carte-ex:not(.est-pris) {
+      opacity: 0.75;
     }
   }
   .carte-ex.est-valide {
-    outline: 2px solid var(--color-vert);
-    outline-offset: -2px;
+    border-color: var(--color-vert);
   }
 
-  /* Tampon : il tombe sur la fiche, avec un léger rebond et un anneau d’encre */
-  .fiche .tampon {
-    font-family: var(--font-titre);
-    font-weight: 700;
-    font-size: 0.95rem;
+  /* Tampon « Confirmé / Retenu / Validé » : il tombe sur la fiche */
+  .carte-ex .tampon {
+    background: var(--color-papier);
   }
   .est-valide .tampon {
-    animation: tampon-tombe 0.55s cubic-bezier(0.22, 0.9, 0.3, 1) forwards;
-    box-shadow: 0 0 0 0 rgb(46 74 59 / 0.5);
-  }
-  .est-valide .tampon::after {
-    content: "";
-    position: absolute;
-    inset: -3px;
-    border-radius: 6px;
-    border: 2px solid var(--color-vert);
-    opacity: 0;
-    animation: tampon-onde 0.7s ease-out 0.25s forwards;
+    animation: tampon-tombe 0.4s var(--ease-sortie) forwards;
   }
   @keyframes tampon-tombe {
-    0% { opacity: 0; transform: rotate(-4deg) scale(2.4); }
-    55% { opacity: 1; transform: rotate(-13deg) scale(0.93); }
-    75% { transform: rotate(-10deg) scale(1.04); }
-    100% { opacity: 0.92; transform: rotate(-11deg) scale(1); }
+    from { opacity: 0; transform: rotate(-4deg) scale(1.8); }
+    to { opacity: 0.95; transform: rotate(-11deg) scale(1); }
   }
-  @keyframes tampon-onde {
-    0% { opacity: 0.6; transform: scale(1); }
-    100% { opacity: 0; transform: scale(1.35); }
+  @media (prefers-reduced-motion: reduce) {
+    .carte-ex { transition: none; }
+    .est-valide .tampon { animation: none; opacity: 0.95; transform: rotate(-11deg); }
   }
 
   /* Sélecteur d’onglets (mobile), sur fond sombre */
   .onglets-jours {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0;
-    border-bottom: 1px solid rgb(245 233 228 / 0.3);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-creme) 30%, transparent);
   }
   .onglets-jours[hidden] { display: none; }
   .onglet-jour {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: var(--space-1);
     min-height: 3.5rem;
-    padding: 0.55rem 0.5rem 0.75rem;
+    padding: var(--space-3) var(--space-2) var(--space-3);
     text-align: left;
-    color: rgb(245 233 228 / 0.75);
+    color: var(--creme-85);
     cursor: pointer;
-    transition: color 0.2s ease, background-color 0.2s ease;
+    transition: color var(--duree-1) ease, background-color var(--duree-1) ease;
   }
-  .onglet-jour .surtitre { letter-spacing: 0.16em; }
+  .onglet-jour .surtitre { letter-spacing: 0.12em; font-size: 0.75rem; color: inherit; }
   .onglet-jour::after {
     content: "";
     position: absolute;
@@ -387,17 +339,19 @@ const jours = [
     background: var(--color-dore-clair);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.3s ease;
+    transition: transform var(--duree-2) var(--ease-sortie);
   }
   .onglet-jour[aria-selected="true"] { color: var(--color-creme); }
   .onglet-jour[aria-selected="true"]::after { transform: scaleX(1); }
-  .onglet-sous { font-size: 0.78rem; line-height: 1.25; }
-  .onglet-jour:hover { background: rgb(245 233 228 / 0.06); }
+  .onglet-jour:focus-visible { outline: 2px solid var(--color-dore-clair); outline-offset: -3px; }
+  .onglet-sous { font-size: 0.875rem; line-height: 1.25; }
+  .onglet-jour:hover { background: color-mix(in srgb, var(--color-creme) 8%, transparent); }
 
   @media (max-width: 63.99rem) {
     .grille-exemples[data-onglets-actifs] > article[data-actif="false"] { display: none; }
-    .grille-exemples[data-onglets-actifs] { margin-top: 1.5rem; }
-    .grille-exemples[data-onglets-actifs] > article[data-actif="true"] { animation: carte-entre 0.4s ease both; }
+    .grille-exemples[data-onglets-actifs] { margin-top: var(--space-5); }
+    .grille-exemples[data-onglets-actifs] > article[data-actif="true"] { animation: carte-entre var(--duree-3) var(--ease-sortie) both; }
+    .carte-ex { cursor: default; }
   }
   @keyframes carte-entre {
     from { opacity: 0; translate: 0 10px; }

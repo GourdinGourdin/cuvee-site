@@ -1,13 +1,11 @@
 @import "tailwindcss";
 
 /* ==================================================================
-   Système de design Cuvée, style « maison »
-   - Tokens (palette, typographies) dans @theme
-   - Règles de base : le style maison est le style PAR DÉFAUT du site
-     (la classe .maison du <body> n'est plus qu'un alias sans effet)
-   - Composants partagés (boutons, liens, papier, fiches, formulaires…)
-   - Utilitaires de page : .section, .titre-section, .fiche, .filet-dore,
-     .chiffre-cle (documentés plus bas)
+   Système de design Cuvée, style « maison »  (charte : docs/charte.md)
+   - Tokens (palette, typographies, espacements, ombres, durées) dans @theme
+   - Base : texte courant Outfit 400, titres Outfit en capitales (h1, h2)
+   - Composants partagés : boutons, liens, papier, fiches, formulaires
+   - Mise en page : .conteneur, .conteneur-etroit, .section, .section-serree
    - Animations d'apparition (API dans src/scripts/animations.ts)
    Le kit « médias » (media-cadre, voile, rail, chapitre-num) est dans maison.css.
    ================================================================== */
@@ -21,7 +19,7 @@
      dore-texte / creme 4.6 · dore-texte / papier 5.2
      erreur / creme 6.8 · vert / creme 8.2 · bordure / champ 4.0 (bordure de champ, seuil 3:1)
    À ÉVITER : dore / creme 2.8 et dore / papier 3.1 (insuffisants, décor uniquement) ;
-   encre-douce sur chai 1.7 (illisible : sur fond sombre, utiliser creme ou creme/80).
+   encre-douce sur chai 1.7 (illisible : sur fond sombre, utiliser creme ou creme/85).
    ------------------------------------------------------------------ */
 @theme {
   --color-creme: #f5e9e4; /* rosé pâle */
@@ -44,13 +42,62 @@
   --color-chai: #2a2220;
   --color-bordeaux-nuit: #4a1420;
 
-  --font-titre: "Outfit Variable", "Outfit", system-ui, sans-serif;
-  --font-texte: "Josefin Sans Variable", "Josefin Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Trois familles, rôles stricts :
+     Outfit = titres ET texte courant · Josefin Sans = petites capitales (surtitres, nav, boutons, étiquettes)
+     · Mr Dafoe = signature (2 par page au plus) */
+  --font-titre: "Outfit Variable", "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-texte: var(--font-titre);
+  --font-label: "Josefin Sans Variable", "Josefin Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-script: "Mr Dafoe", "Brush Script MT", cursive;
-  /* anciens noms : les composants qui disent font-serif / font-sans / font-mono prennent la typo maison */
-  --font-serif: "Outfit Variable", "Outfit", system-ui, sans-serif;
-  --font-sans: "Josefin Sans Variable", "Josefin Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "Josefin Sans Variable", "Josefin Sans", system-ui, sans-serif;
+  /* anciens noms conservés comme alias */
+  --font-serif: var(--font-titre);
+  --font-sans: var(--font-titre);
+  --font-mono: var(--font-label);
+
+  /* Espacements (échelle 4/8 px) : utilisables en var(--space-N) ; Tailwind garde ses multiples de 4 px */
+  --space-1: 0.25rem; /* 4 */
+  --space-2: 0.5rem; /* 8 */
+  --space-3: 0.75rem; /* 12 */
+  --space-4: 1rem; /* 16 */
+  --space-5: 1.5rem; /* 24 */
+  --space-6: 2rem; /* 32 */
+  --space-7: 3rem; /* 48 */
+  --space-8: 4rem; /* 64 */
+  --space-9: 6rem; /* 96 */
+  --space-10: 8rem; /* 128 */
+  --space-11: 10rem; /* 160 */
+  --space-12: 12rem; /* 192 */
+
+  /* Deux niveaux d'ombre seulement (teinte chai, très douce) */
+  --ombre-1: 0 1px 2px rgb(42 34 32 / 0.06), 0 8px 20px -12px rgb(42 34 32 / 0.22);
+  --ombre-2: 0 2px 4px rgb(42 34 32 / 0.07), 0 24px 40px -18px rgb(42 34 32 / 0.34);
+
+  --rayon: 2px;
+
+  /* Mouvement : 160 / 240 / 400 ms et une seule courbe de sortie */
+  --duree-1: 160ms;
+  --duree-2: 240ms;
+  --duree-3: 400ms;
+  --ease-sortie: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  /* marge latérale de la grille : 20 px, 32 px dès 640 px, 48 px dès 1024 px */
+  --marge: 1.25rem;
+  /* texte courant sur fond sombre : crème à 85 % (≥ 11:1 sur chai) */
+  --creme-85: rgb(245 233 228 / 0.85);
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --marge: 2rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --marge: 3rem;
+  }
 }
 
 /* ------------------------------------------------------------------
@@ -60,38 +107,77 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
-    scroll-padding-top: 5rem;
+    scroll-padding-top: 7.5rem; /* > hauteur de l’en-tête fixe : le focus ne passe jamais dessous */
     /* barre de défilement fine */
     scrollbar-width: thin;
     scrollbar-color: var(--color-bordeaux) var(--color-creme-fonce);
   }
 
+  /* texte courant : Outfit 400, 17 px (18 px dès 768 px), interligne 1.65 */
   body {
     font-family: var(--font-texte);
-    font-size: 1.125rem;
-    line-height: 1.7;
+    font-weight: 400;
+    font-size: 1.0625rem;
+    line-height: 1.65;
     font-synthesis: none;
     background: var(--color-creme);
     color: var(--color-encre);
+    overflow-wrap: break-word;
   }
 
-  /* titres : Outfit 800, capitales, interlettrage ouvert */
+  @media (min-width: 48rem) {
+    body {
+      font-size: 1.125rem;
+    }
+  }
+
+  /* h1 et h2 : capitales Outfit ; h3 et h4 : casse normale */
   h1,
   h2,
-  h3 {
+  h3,
+  h4 {
     font-family: var(--font-titre);
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    line-height: 1.12;
     text-wrap: balance;
   }
 
-  h4 {
-    font-family: var(--font-titre);
+  h1 {
+    font-size: clamp(2.25rem, 1.5rem + 3.2vw, 4.25rem); /* 36 → 68 px */
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.02;
+  }
+
+  h2 {
+    font-size: clamp(1.75rem, 1.2rem + 1.7vw, 2.75rem); /* 28 → 44 px */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    line-height: 1.1;
+  }
+
+  h3 {
+    font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem); /* 20 → 24 px */
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: 0;
     line-height: 1.25;
+  }
+
+  h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.3;
+  }
+
+  /* sur fond sombre, les titres sont crème (une classe text-* explicite l'emporte) ;
+     les papiers et fiches posés dessus reviennent à l'encre */
+  :is(.sur-fond-sombre, .sur-image, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) :is(h1, h2, h3, h4) {
+    color: var(--color-creme);
+  }
+
+  :is(.sur-fond-sombre, .sur-image, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) :is(.papier, .fiche) :is(h1, h2, h3, h4) {
+    color: var(--color-encre);
   }
 
   /* l'ancien <em> bordeaux italique des titres : neutralisé (ni italique, ni couleur imposée) */
@@ -107,7 +193,7 @@
     text-wrap: pretty;
   }
 
-  /* focus visible : bordeaux sur clair, doré clair sur fond sombre */
+  /* focus visible : anneau de 2 px décalé de 3 px, bordeaux sur clair, doré clair sur fond sombre */
   :focus-visible {
     outline: 2px solid var(--color-bordeaux);
     outline-offset: 3px;
@@ -175,53 +261,55 @@
 
 @layer components {
   /* ----------------------------------------------------------------
-     Mise en page
+     Mise en page : une seule grille
+     .conteneur : contenu de 1200 px au plus, marges 20 → 48 px
+     .conteneur-etroit : 720 px, pour les textes
      ---------------------------------------------------------------- */
   .conteneur {
     width: 100%;
-    max-width: 76rem;
+    max-width: calc(75rem + 2 * var(--marge));
     margin-inline: auto;
-    padding-inline: 1.25rem;
+    padding-inline: var(--marge);
   }
 
-  @media (min-width: 40rem) {
-    .conteneur {
-      padding-inline: 2rem;
-    }
+  .conteneur-etroit {
+    width: 100%;
+    max-width: calc(45rem + 2 * var(--marge));
+    margin-inline: auto;
+    padding-inline: var(--marge);
   }
 
-  /* .section : rythme vertical des sections de page (py-24, lg:py-32).
-     <section class="section"> ; se combine avec bg-creme / bg-chai / bg-bordeaux. */
+  /* .section : rythme vertical des sections de contenu, 72 → 128 px.
+     <section class="section"> ; se combine avec bg-creme / bg-chai / bg-bordeaux.
+     .section-serree : variante resserrée, 48 → 80 px. */
   .section {
-    padding-block: 6rem;
+    padding-block: clamp(4.5rem, 1.5rem + 7.4vw, 8rem);
   }
 
-  @media (min-width: 64rem) {
-    .section {
-      padding-block: 8rem;
-    }
+  .section-serree {
+    padding-block: clamp(3rem, 1rem + 4.4vw, 5rem);
   }
 
-  /* .titre-section : taille de h2 de section au style maison (capitales Outfit 800).
-     <h2 class="titre-section">…</h2> ; fonctionne aussi sur un autre élément. */
+  /* .titre-section : taille de h2 de section (même échelle que h2, utilisable sur un autre élément).
+     <h2 class="titre-section">…</h2> */
   .titre-section {
     font-family: var(--font-titre);
-    font-weight: 800;
-    font-size: clamp(1.7rem, 3vw, 2.6rem);
+    font-weight: 700;
+    font-size: clamp(1.75rem, 1.2rem + 1.7vw, 2.75rem);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    line-height: 1.12;
+    letter-spacing: 0.03em;
+    line-height: 1.1;
     text-wrap: balance;
   }
 
   /* .filet-dore : petit trait doré de 3,5 rem à placer sous un titre.
      <span class="filet-dore" aria-hidden="true"></span> ; ajouter mx-auto pour le centrer.
-     Après une .signature (inclinée), garder ce margin-top de 2rem pour ne pas la toucher. */
+     Après une .signature (inclinée), garder ce margin-top pour ne pas la toucher. */
   .filet-dore {
     display: block;
     width: 3.5rem;
     height: 2px;
-    margin-top: 2rem;
+    margin-top: var(--space-5);
     background: var(--color-dore);
   }
 
@@ -251,7 +339,8 @@
     padding: 0.85rem 1.25rem;
     background: var(--color-encre);
     color: var(--color-creme);
-    font-size: 0.82rem;
+    font-family: var(--font-label);
+    font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -265,19 +354,66 @@
   /* ----------------------------------------------------------------
      Typographie annexe
      ---------------------------------------------------------------- */
-  /* Surtitre : petites capitales très espacées */
+  /* h1 de l'accueil : 40 → 80 px */
+  .titre-display {
+    font-family: var(--font-titre);
+    font-weight: 800;
+    font-size: clamp(2.5rem, 1.4rem + 4.6vw, 5rem);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  /* Texte courant : à poser sur les paragraphes (encre-douce sur clair, crème 85 % sur sombre).
+     Pas de règle globale sur p, pour ne pas casser les fonds sombres. */
+  .texte-courant,
+  .chapo {
+    color: var(--color-encre-douce);
+    max-width: 65ch;
+  }
+
+  .chapo {
+    font-size: clamp(1.125rem, 1.05rem + 0.3vw, 1.3125rem); /* 18 → 21 px */
+    line-height: 1.55;
+  }
+
+  .petit {
+    font-size: 0.875rem; /* 14 px minimum */
+    line-height: 1.55;
+  }
+
+  :is(.sur-fond-sombre, .sur-image, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) :is(.texte-courant, .chapo) {
+    color: var(--creme-85);
+  }
+
+  :is(.sur-fond-sombre, .sur-image, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) :is(.papier, .fiche) :is(.texte-courant, .chapo) {
+    color: var(--color-encre-douce);
+  }
+
+  /* Surtitre : Josefin 600, petites capitales très espacées ; bordeaux sur clair, doré clair sur sombre.
+     Un seul surtitre par titre. */
   .surtitre {
-    font-family: var(--font-texte);
-    font-size: 0.78rem;
+    font-family: var(--font-label);
+    font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.22em;
     line-height: 1.5;
     text-transform: uppercase;
+    color: var(--color-bordeaux);
   }
 
-  /* dans les fiches, un interlettrage plus serré */
+  :is(.sur-fond-sombre, .sur-image, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) .surtitre {
+    color: var(--color-dore-clair);
+  }
+
+  /* dans les fiches, un interlettrage plus serré et retour au contexte clair */
   :is(.papier, .fiche) .surtitre {
     letter-spacing: 0.1em;
+  }
+
+  :is(.sur-fond-sombre, .sur-image, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) :is(.papier, .fiche) .surtitre {
+    color: var(--color-bordeaux);
   }
 
   .chiffres {
@@ -285,8 +421,8 @@
     font-variant-numeric: lining-nums tabular-nums;
   }
 
-  /* Signature manuscrite sous un titre. Doré assombri sur fond clair (AA),
-     doré clair sur fond sombre ; sur une image sous voile, crème. */
+  /* Signature manuscrite : 2 par page au plus (en-tête de page, appel final). Doré assombri sur fond clair
+     (AA), doré clair sur fond sombre ; sur une image sous voile, crème. */
   .signature {
     display: block;
     font-family: var(--font-script);
@@ -308,19 +444,21 @@
   }
 
   /* ----------------------------------------------------------------
-     Boutons : rectangulaires, capitales
+     Boutons : rectangulaires, ≥ 48 px, Josefin 600 13 px en capitales
+     États : repos, survol (remplissage balayé), focus-visible (anneau global 2 px / 3 px),
+     actif (descend de 1 px), désactivé.
      ---------------------------------------------------------------- */
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.6rem;
-    min-height: 3.25rem;
-    padding: 1.05rem 1.8rem 0.9rem;
+    min-height: 3rem;
+    padding: 0.95rem 1.75rem 0.85rem;
     border: 1px solid transparent;
-    border-radius: 1px;
-    font-family: var(--font-texte);
-    font-size: 0.875rem;
+    border-radius: 0;
+    font-family: var(--font-label);
+    font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.16em;
     line-height: 1.2;
@@ -332,9 +470,9 @@
     isolation: isolate;
     overflow: hidden;
     transition:
-      color 0.25s ease,
-      border-color 0.25s ease,
-      translate 0.2s ease;
+      color var(--duree-2) ease,
+      border-color var(--duree-2) ease,
+      translate var(--duree-1) ease;
   }
 
   /* remplissage qui balaie le bouton de gauche à droite au survol */
@@ -346,7 +484,7 @@
     background: var(--remplissage, transparent);
     transform: scaleX(0);
     transform-origin: left center;
-    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--duree-3) var(--ease-sortie);
   }
 
   .btn:hover::before,
@@ -360,8 +498,14 @@
 
   .btn[disabled],
   .btn[aria-disabled="true"] {
-    opacity: 0.55;
+    opacity: 0.5;
     cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .btn[disabled]::before,
+  .btn[aria-disabled="true"]::before {
+    transform: scaleX(0);
   }
 
   .btn-primaire {
@@ -425,11 +569,12 @@
     color: var(--color-bordeaux);
   }
 
+  /* boutons denses (barres d'outils, tableaux) : 44 px, cible tactile minimale */
   .btn-petit,
   .btn-mini {
     min-height: 2.75rem;
     padding: 0.7rem 1.2rem 0.6rem;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     letter-spacing: 0.14em;
   }
 
@@ -445,7 +590,7 @@
     background:
       linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat,
       linear-gradient(var(--color-dore-texte), var(--color-dore-texte)) 0 100% / 100% 1px no-repeat;
-    transition: background-size 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition: background-size var(--duree-3) var(--ease-sortie);
   }
 
   :is(.sur-fond-sombre, .sur-image, .bg-chai, .bg-bordeaux, .bg-bordeaux-nuit) .lien {
@@ -472,15 +617,15 @@
     align-items: center;
     min-height: 2.75rem;
     gap: 0.6rem;
-    font-family: var(--font-texte);
-    font-size: 0.82rem;
+    font-family: var(--font-label);
+    font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     text-decoration: none;
     color: inherit;
     background: linear-gradient(currentColor, currentColor) 0 calc(100% - 0.55rem) / 100% 1px no-repeat;
-    transition: background-size 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: background-size var(--duree-3) var(--ease-sortie);
   }
 
   .lien-cap:hover,
@@ -488,14 +633,19 @@
     background-size: 35% 1px;
   }
 
+  .lien-cap:active {
+    opacity: 0.8;
+  }
+
   /* ----------------------------------------------------------------
-     Papier et fiches
+     Papier et fiches (objets posés : rayon 2 px, deux niveaux d'ombre)
      ---------------------------------------------------------------- */
-  /* Papier : bon de commande, facture, journal (objets « posés ») */
+  /* Papier : bon de commande, facture, journal */
   .papier {
     position: relative;
     background: var(--color-papier);
     border: 1px solid var(--color-filet);
+    border-radius: var(--rayon);
   }
 
   /* un papier posé sur un fond sombre reste lisible (texte encre) */
@@ -503,33 +653,29 @@
     color: var(--color-encre);
   }
 
-  /* ombre très douce d'un papier posé */
+  /* ombre très douce d'un papier posé (niveau 1) */
   .papier-ombre {
-    box-shadow:
-      0 1px 2px rgb(42 34 32 / 0.06),
-      0 18px 36px -18px rgb(42 34 32 / 0.28);
+    box-shadow: var(--ombre-1);
   }
 
-  /* .fiche : carte au style maison : fond papier, filet doré fin, coins droits, ombre très douce.
+  /* .fiche : carte au style maison : fond papier, filet doré fin, rayon 2 px, ombre niveau 1.
      <div class="fiche">…</div> (le padding par défaut se règle avec p-*). */
   .fiche {
     position: relative;
     padding: clamp(1.5rem, 3vw, 2.5rem);
     background: var(--color-papier);
     border: 1px solid color-mix(in srgb, var(--color-dore) 55%, var(--color-filet));
-    border-radius: 0;
-    box-shadow:
-      0 1px 2px rgb(42 34 32 / 0.05),
-      0 16px 32px -20px rgb(42 34 32 / 0.25);
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre-1);
   }
 
-  /* seules les fiches cliquables se soulèvent au survol (appareils à souris) */
+  /* seules les fiches cliquables se soulèvent au survol (appareils à souris), niveau 2 */
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
     a.papier,
     a.fiche {
       transition:
-        translate 0.3s ease,
-        box-shadow 0.3s ease;
+        translate var(--duree-2) var(--ease-sortie),
+        box-shadow var(--duree-2) ease;
     }
 
     a.papier:hover,
@@ -539,9 +685,7 @@
 
     a.papier-ombre:hover,
     a.fiche:hover {
-      box-shadow:
-        0 2px 4px rgb(42 34 32 / 0.07),
-        0 24px 40px -18px rgb(42 34 32 / 0.34);
+      box-shadow: var(--ombre-2);
     }
   }
 
@@ -574,8 +718,8 @@
     padding: 0.15rem 0.5rem 0.1rem;
     border: 1px solid currentColor;
     border-radius: 1px;
-    font-family: var(--font-texte);
-    font-size: 0.72rem;
+    font-family: var(--font-label);
+    font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.14em;
     line-height: 1.4;
@@ -626,19 +770,20 @@
   }
 
   /* Placeholder visible (composant ACompleter.astro) : à remplacer avant mise en ligne.
-     Surligné jaune volontairement : il ne doit pas passer inaperçu (encre / jaune 14:1). */
+     Surligné jaune volontairement : il ne doit pas passer inaperçu (encre / jaune 14:1),
+     mais il reste lisible et net (trait pointillé + barre bordeaux à gauche). */
   .a-completer {
     display: inline;
-    padding: 0.08em 0.5em;
+    padding: 0.1em 0.55em;
     background: #ffe7a3;
     color: var(--color-encre);
     border: 1px dashed #9a7b1c;
     border-left: 3px solid var(--color-bordeaux);
     border-radius: 0;
     font-family: var(--font-texte);
-    font-size: 0.85em;
+    font-size: max(0.875rem, 0.88em);
     font-weight: 600;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.01em;
     line-height: 1.9;
     text-transform: none;
     font-style: normal;
@@ -676,12 +821,12 @@
   }
 
   /* ----------------------------------------------------------------
-     Formulaires
+     Formulaires : étiquette au-dessus, champ ≥ 48 px, bordure 4:1, erreur lisible
      ---------------------------------------------------------------- */
   .etiquette-champ {
     display: block;
     margin-bottom: 0.5rem;
-    font-family: var(--font-texte);
+    font-family: var(--font-label);
     font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.12em;
@@ -691,10 +836,12 @@
 
   .aide-champ {
     display: block;
-    margin-top: 0.15rem;
+    margin-top: 0.25rem;
+    font-family: var(--font-texte);
     font-weight: 400;
-    font-size: 0.9rem;
-    letter-spacing: 0.01em;
+    font-size: 0.875rem;
+    letter-spacing: 0;
+    line-height: 1.5;
     text-transform: none;
     color: var(--color-encre-douce);
   }
@@ -706,14 +853,15 @@
     padding: 0.65rem 0.85rem;
     background: var(--color-papier);
     border: 1px solid var(--color-bordure);
-    border-radius: 1px;
+    border-radius: var(--rayon);
     color: var(--color-encre);
     font: inherit;
     font-size: 1.0625rem;
     line-height: 1.4;
     transition:
-      border-color 0.15s ease,
-      box-shadow 0.15s ease;
+      border-color var(--duree-1) ease,
+      box-shadow var(--duree-1) ease,
+      background-color var(--duree-1) ease;
   }
 
   .champ::placeholder {
@@ -731,12 +879,19 @@
     outline-offset: 1px;
   }
 
+  .champ[disabled] {
+    background: var(--color-creme-fonce);
+    color: var(--color-encre-douce);
+    cursor: not-allowed;
+  }
+
   .champ[aria-invalid="true"] {
     border-color: var(--color-erreur);
     box-shadow: inset 0 -2px 0 var(--color-erreur);
   }
 
   select.champ {
+    font-family: inherit;
     appearance: none;
     padding-right: 2.5rem;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%231f1a17' stroke-width='1.6'/%3E%3C/svg%3E");
@@ -770,7 +925,7 @@
   .message-erreur {
     margin-top: 0.4rem;
     color: var(--color-erreur);
-    font-size: 0.95rem;
+    font-size: 0.9375rem;
     font-weight: 600;
     line-height: 1.4;
   }
@@ -792,7 +947,7 @@
 }
 
 /* ------------------------------------------------------------------
-   Barre de lecture dorée (haut de page)
+   Barre de lecture dorée (haut de page) : filet de 2 px, invisible tout en haut de page
    ------------------------------------------------------------------ */
 .progression {
   position: fixed;
@@ -802,6 +957,7 @@
   background: var(--color-dore);
   transform-origin: left;
   transform: scaleX(var(--p, 0));
+  opacity: min(1, calc(var(--p, 0) * 60));
   pointer-events: none;
 }
 
@@ -811,14 +967,16 @@
   }
 }
 
-/* le menu plein écran bloque le défilement de la page (classe posée par animations.ts) */
+/* le menu plein écran bloque le défilement de la page (classe posée par EnTete.astro) */
 html.menu-ouvert {
   overflow: hidden;
 }
 
 /* ------------------------------------------------------------------
-   Animations (API documentée dans src/scripts/animations.ts)
+   Animations d'apparition (API documentée dans src/scripts/animations.ts)
+   Un seul langage : fondu + montée de 14 px, 400 ms (--duree-3), --ease-sortie, cascade de 70 ms.
    Masquage uniquement si <html class="anim"> : JS actif et mouvement autorisé.
+   Les valeurs data-reveal="flou" et "echelle" sont des alias presque identiques au défaut.
    ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: no-preference) {
   /* transitions entre pages : les animations sont dans animations.css */
@@ -828,26 +986,24 @@ html.menu-ouvert {
 
   html.anim [data-reveal],
   html.anim [data-compteur] {
-    --dx: 0;
-    --dy: 1.25rem;
+    --dx: 0px;
+    --dy: 14px;
     --ech: 1;
     opacity: 0;
     transform: translate(var(--dx), var(--dy)) scale(var(--ech));
+    /* le délai de cascade ne s'applique qu'à l'apparition, pas aux survols (translate, box-shadow) */
     transition:
-      opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
-      transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
-      translate 0.25s ease,
-      box-shadow 0.25s ease;
-    transition-delay: calc(var(--d, 0) * 90ms);
+      opacity var(--duree-3) var(--ease-sortie),
+      transform var(--duree-3) var(--ease-sortie),
+      translate var(--duree-2) ease,
+      box-shadow var(--duree-2) ease;
+    transition-delay: calc(var(--d, 0) * 70ms), calc(var(--d, 0) * 70ms), 0s, 0s;
   }
 
-  html.anim [data-compteur]:not([data-reveal]) {
-    --dy: 0.5rem;
-  }
-
-  html.anim [data-reveal="gauche"] { --dx: -2rem; --dy: 0; }
-  html.anim [data-reveal="droite"] { --dx: 2rem; --dy: 0; }
-  html.anim [data-reveal="echelle"] { --dy: 0; --ech: 0.94; }
+  html.anim [data-reveal="gauche"] { --dx: -16px; --dy: 0px; }
+  html.anim [data-reveal="droite"] { --dx: 16px; --dy: 0px; }
+  html.anim [data-reveal="echelle"] { --dy: 10px; --ech: 0.985; }
+  html.anim [data-reveal="flou"] { --dy: 10px; }
 
   html.anim [data-reveal-delai="1"] { --d: 1; }
   html.anim [data-reveal-delai="2"] { --d: 2; }
@@ -862,7 +1018,7 @@ html.menu-ouvert {
     transform: none;
   }
 
-  /* titre révélé mot par mot : chaque mot monte depuis un masque */
+  /* titre révélé mot par mot : chaque mot monte depuis un masque (cascade plafonnée à 280 ms) */
   html.anim .mot {
     display: inline-block;
     overflow: hidden;
@@ -874,8 +1030,8 @@ html.menu-ouvert {
   html.anim .mot-i {
     display: inline-block;
     transform: translateY(110%);
-    transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
-    transition-delay: calc(var(--i, 0) * 55ms + var(--d, 0) * 90ms);
+    transition: transform 600ms var(--ease-sortie);
+    transition-delay: calc(min(var(--i, 0) * 40ms, 280ms) + var(--d, 0) * 70ms);
   }
 
   html.anim [data-reveal-lignes].est-visible .mot-i {

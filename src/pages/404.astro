@@ -2,27 +2,24 @@
 import Base from '../layouts/Base.astro';
 import EnTete from '../components/maison/EnTete.astro';
 import PiedDePage from '../components/maison/PiedDePage.astro';
+import Photo from '../components/Photo.astro';
 import { navigation } from '../data/site';
 ---
-<Base titre="Page introuvable · Cuvée" description="Cette page n’existe pas.">
+<Base titre="Page introuvable : retrouvez votre chemin · Cuvée" description="Cette page n’existe pas ou plus. Retrouvez l’assistant de cave Cuvée pour bars à vin et caves à manger depuis l’accueil ou le menu du site.">
   <EnTete />
   <main id="contenu">
-    <section class="media-cadre voile sur-image relative isolate flex min-h-[100svh] flex-col text-creme" aria-labelledby="page-titre">
-      <img src="/media/cave-voutee.jpg" alt="" fetchpriority="high" decoding="async" />
-      <div class="relative z-10 flex flex-1 flex-col items-center justify-center px-5 pt-32 pb-20 text-center sm:px-8">
-        <p class="surtitre text-creme/90" data-reveal>Erreur 404</p>
-        <h1 id="page-titre" class="mt-6 max-w-3xl text-[clamp(2rem,5vw,4rem)]" data-reveal-lignes>
-          Cette référence n’est pas en cave.
-        </h1>
-        <span class="signature mt-4" data-reveal data-reveal-delai="3">introuvable</span>
-        <p class="mt-8 max-w-md text-lg text-creme/90" data-reveal data-reveal-delai="4">
+    <section class="introuvable media-cadre voile sur-image" aria-labelledby="page-titre">
+      <Photo src="/media/cave-voutee.jpg" alt="" prioritaire sizes="100vw" />
+      <div class="introuvable-corps">
+        <p class="surtitre" data-reveal>Erreur 404</p>
+        <h1 id="page-titre" class="introuvable-titre" data-reveal-lignes>Cette référence n’est pas en cave.</h1>
+        <span class="signature" data-reveal data-reveal-delai="3">introuvable</span>
+        <p class="chapo introuvable-chapo" data-reveal data-reveal-delai="4">
           La page que vous cherchez n’existe pas ou a été déplacée.
         </p>
-        <div class="mt-10 flex flex-wrap items-center justify-center gap-4" data-reveal data-reveal-delai="5">
-          <a href="/" class="btn btn-primaire">Retour à l’accueil</a>
-        </div>
-        <nav class="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-1" aria-label="Autres pages" data-reveal data-reveal-delai="6">
-          {navigation.filter((n) => n.href !== '/').map((n) => <a href={n.href} class="lien-cap text-creme/90">{n.libelle}</a>)}
+        <a href="/" class="btn btn-creme introuvable-btn" data-reveal data-reveal-delai="5">Retour à l’accueil</a>
+        <nav class="introuvable-nav" aria-label="Autres pages" data-reveal data-reveal-delai="6">
+          {navigation.filter((n) => n.href !== '/').map((n) => <a href={n.href} class="lien-cap">{n.libelle}</a>)}
         </nav>
       </div>
     </section>
@@ -31,12 +28,54 @@ import { navigation } from '../data/site';
 </Base>
 
 <style>
-  section::before {
+  .introuvable {
+    display: flex;
+    min-height: min(100svh, 60rem);
+    --voile-haut: 0.62;
+    --voile-milieu: 0.52;
+    --voile-bas: 0.82;
+  }
+  /* assombrissement uniforme supplémentaire : crème ≥ 4,5:1 même sur une zone claire de la photo */
+  .introuvable::before {
     content: '';
     position: absolute;
     inset: 0;
     z-index: 1;
     background: rgb(42 34 32 / 0.3);
     pointer-events: none;
+  }
+  .introuvable-corps {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-10) var(--marge) var(--space-9);
+    text-align: center;
+  }
+  .introuvable-titre {
+    margin-top: var(--space-4);
+    max-width: 16ch;
+    text-wrap: balance;
+  }
+  .introuvable .signature {
+    margin-top: var(--space-3);
+  }
+  .introuvable-chapo {
+    margin-top: var(--space-4);
+    max-width: 28rem;
+  }
+  .introuvable-btn {
+    margin-top: var(--space-7);
+  }
+  .introuvable-nav {
+    margin-top: var(--space-5);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    column-gap: var(--space-6);
   }
 </style>

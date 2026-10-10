@@ -1,25 +1,95 @@
 ---
-/** Appel en bas de page vers le pilote : même esprit que maison/Appel.astro (bordeaux + photo en deux colonnes). */
+/**
+ * Appel en bas de page vers le pilote : bandeau bordeaux en deux colonnes (texte aligné sur la grille, photo
+ * encadrée d'un filet doré, comme une étiquette). Même esprit que maison/Appel.astro.
+ * Props : titre, texte, surtitre, image (photo de la colonne de droite : en choisir une qui n'est pas déjà sur la page).
+ */
+import Photo from './Photo.astro';
 import { lienInscription } from '../data/site';
 interface Props {
+  surtitre?: string;
   titre?: string;
   texte?: string;
   image?: string;
 }
 const {
+  surtitre = 'Programme pilote',
   titre = 'Prêt à essayer avec nous ?',
   texte = 'Quelques lieux, quelques mois, et une équipe qui construit l’outil avec vous. L’inscription prend deux minutes.',
-  image = '/media/casiers.jpg',
+  image = '/media/cave-voutee.jpg',
 } = Astro.props;
 ---
-<section class="cta-page grid bg-bordeaux text-creme lg:grid-cols-2" aria-labelledby="page-cta-titre" data-page-cta>
-  <div class="flex flex-col items-center justify-center px-6 py-24 text-center sm:px-12 lg:py-32">
-    <h2 id="page-cta-titre" class="max-w-xl text-[clamp(1.8rem,3.4vw,2.8rem)]" data-reveal>{titre}</h2>
-    <span class="signature mt-2 !text-dore-clair" data-reveal data-reveal-delai="1">deux minutes, pas plus</span>
-    <p class="mt-8 max-w-md text-creme/85" data-reveal data-reveal-delai="2">{texte}</p>
-    <a href={lienInscription} class="btn btn-creme mt-10" data-reveal data-reveal-delai="3">Rejoindre le programme pilote</a>
+<section class="cta-page bg-bordeaux text-creme" aria-labelledby="page-cta-titre" data-page-cta>
+  <div class="cta-page-texte">
+    <p class="surtitre" data-reveal>{surtitre}</p>
+    <h2 id="page-cta-titre" class="cta-page-titre" data-reveal data-reveal-delai="1">{titre}</h2>
+    <p class="texte-courant cta-page-p" data-reveal data-reveal-delai="2">{texte}</p>
+    <a href={lienInscription} class="btn btn-creme cta-page-btn" data-reveal data-reveal-delai="3">Rejoindre le programme pilote</a>
   </div>
-  <div class="media-cadre zoom-lent min-h-[56vh] lg:min-h-[70vh]" data-reveal="rideau">
-    <img src={image} alt="" loading="lazy" decoding="async" />
+  <div class="cta-page-media media-cadre zoom-lent" data-reveal="rideau">
+    <Photo src={image} alt="" sizes="(min-width: 1024px) 50vw, 100vw" />
   </div>
 </section>
+
+<style>
+  .cta-page {
+    display: grid;
+  }
+  @media (min-width: 64rem) {
+    .cta-page {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      min-height: 34rem;
+    }
+  }
+  .cta-page-texte {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: var(--space-9) var(--marge);
+  }
+  /* sur grand écran, le texte s'aligne sur le bord gauche du .conteneur (75rem) */
+  @media (min-width: 64rem) {
+    .cta-page-texte {
+      padding-block: var(--space-10);
+      padding-left: max(var(--marge), calc((100vw - 75rem) / 2));
+      padding-right: var(--space-8);
+    }
+  }
+  .cta-page-titre {
+    margin-top: var(--space-4);
+    max-width: 18ch;
+    text-wrap: balance;
+  }
+  .cta-page-p {
+    margin-top: var(--space-5);
+    max-width: 30rem;
+  }
+  .cta-page-btn {
+    margin-top: var(--space-7);
+  }
+  @media (max-width: 30rem) {
+    .cta-page-btn {
+      width: 100%;
+      padding-inline: var(--space-3);
+      letter-spacing: 0.1em;
+    }
+  }
+  .cta-page-media {
+    min-height: 18rem;
+  }
+  @media (min-width: 40rem) {
+    .cta-page-media {
+      min-height: 24rem;
+    }
+  }
+  /* filet doré intérieur : le cadre d'une étiquette */
+  .cta-page-media::after {
+    content: '';
+    position: absolute;
+    inset: var(--space-4);
+    z-index: 1;
+    border: 1px solid color-mix(in srgb, var(--color-dore-clair) 60%, transparent);
+    pointer-events: none;
+  }
+</style>

@@ -1,0 +1,61 @@
+---
+/**
+ * Photo responsive : <picture> AVIF / WebP + JPEG de repli, largeurs 480 à 2200 px (générées par `npm run medias`).
+ *
+ * Props :
+ *  - src      chemin d'origine, comme avant : « /media/xxx.jpg » (obligatoire)
+ *  - alt      obligatoire ; "" pour une image décorative
+ *  - sizes    largeur d'affichage attendue (défaut « 100vw ») : c'est elle qui choisit la variante, la soigner
+ *  - loading  « lazy » (défaut) ou « eager »
+ *  - prioritaire  image d'en-tête : loading=eager + fetchpriority=high (à n'utiliser que pour l'image du haut de page)
+ *  - class, style  posés sur l'<img> (compatible avec `.media-cadre > picture > img`)
+ *  - tout autre attribut (data-*, aria-*, fetchpriority…) est transmis à l'<img>
+ *
+ * Image absente du manifeste (src/data/medias.ts) ou hors /media/*.jpg : repli sur une <img> simple.
+ */
+import type { HTMLAttributes } from 'astro/types';
+import { medias } from '../data/medias';
+
+interface Props extends Omit<HTMLAttributes<'img'>, 'src' | 'alt' | 'sizes' | 'loading' | 'srcset'> {
+  src: string;
+  alt: string;
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  prioritaire?: boolean;
+}
+
+const { src, alt, sizes = '100vw', loading, prioritaire = false, class: classe, style, ...reste } = Astro.props;
+
+const nom = /^\/media\/([^/]+)\.jpg$/i.exec(src)?.[1];
+const media = nom ? medias[nom] : undefined;
+const chargement = loading ?? (prioritaire ? 'eager' : 'lazy');
+const attributs = {
+  alt,
+  class: classe,
+  style,
+  loading: chargement,
+  decoding: 'async' as const,
+  fetchpriority: prioritaire ? ('high' as const) : undefined,
+  ...reste,
+};
+const srcset = (format: string) =>
+  media ? media.variantes.map((w) => `/media/opt/${nom}-${w}.${format} ${w}w`).join(', ') : '';
+---
+{
+  media ? (
+    <picture>
+      <source type="image/avif" srcset={srcset('avif')} sizes={sizes} />
+      <source type="image/webp" srcset={srcset('webp')} sizes={sizes} />
+      <img src={`/media/opt/${nom}-repli.jpg`} width={media.largeur} height={media.hauteur} {...attributs} />
+    </picture>
+  ) : (
+    <img src={src} {...attributs} />
+  )
+}
+
+<style>
+  /* <picture> n'est qu'un conteneur : l'<img> se place comme si elle était l'enfant direct (flex, grille, position absolue). */
+  picture {
+    display: contents;
+  }
+</style>

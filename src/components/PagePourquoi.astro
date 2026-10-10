@@ -1,5 +1,6 @@
 ---
 import ACompleter from './ACompleter.astro';
+import Photo from './Photo.astro';
 
 const citations = [
   { libelle: 'Le déclic', contenu: 'l’histoire personnelle : le déclic, le lieu ou la personne qui a montré le problème de la cave' },
@@ -7,34 +8,24 @@ const citations = [
   { libelle: 'Ce que Cuvée doit changer', contenu: 'ce que vous voulez que Cuvée change concrètement pour un lieu indépendant' },
 ];
 ---
-<section aria-labelledby="pourquoi-titre" class="pourquoi media-cadre sur-image sur-fond-sombre zoom-lent relative text-creme">
-  <img src="/media/mur-bouteilles.jpg" alt="" loading="lazy" decoding="async" />
-  <div class="pourquoi-voile" aria-hidden="true"></div>
+<section aria-labelledby="pourquoi-titre" class="pourquoi section media-cadre voile voile-plein sur-image sur-fond-sombre zoom-lent">
+  <Photo src="/media/mur-bouteilles.jpg" alt="" sizes="100vw" />
 
-  <div class="relative z-10 mx-auto max-w-[76rem] px-4 py-28 sm:px-8 lg:py-40">
-    <div class="mx-auto flex max-w-4xl flex-col items-center text-center">
-      <p class="surtitre flex items-center gap-4 text-dore-clair" data-reveal>
-        <span class="h-px w-10 bg-dore-clair/70" aria-hidden="true"></span><span>Pourquoi nous</span><span class="h-px w-10 bg-dore-clair/70" aria-hidden="true"></span>
-      </p>
-      <h2 id="pourquoi-titre" class="mt-6 text-[clamp(1.9rem,4vw,3.4rem)]" data-reveal data-reveal-delai="1">Pourquoi nous faisons ça</h2>
-      <span class="signature mt-2" data-reveal data-reveal-delai="2">notre conviction</span>
+  <div class="conteneur relative z-10">
+    <p class="surtitre" data-reveal>Pourquoi nous</p>
+    <h2 id="pourquoi-titre" class="mt-4" data-reveal data-reveal-delai="1">Pourquoi nous faisons ça</h2>
 
-      <figure class="mt-14">
-        <blockquote data-reveal data-reveal-delai="3">
-          <p class="font-[family-name:var(--font-titre)] text-[clamp(1.35rem,2.8vw,2.2rem)] leading-[1.3] font-extrabold tracking-[0.05em] uppercase">
-            Un outil qui se met au point dans de vrais lieux, avec les gens qui les font tourner.
-          </p>
-        </blockquote>
-      </figure>
-    </div>
+    <blockquote class="pourquoi-phrase mt-8" data-reveal data-reveal-delai="2">
+      <p>Un outil qui se met au point dans de vrais lieux, avec les gens qui les font tourner.</p>
+    </blockquote>
 
-    <ol role="list" class="mt-20 grid gap-px bg-creme/25 lg:mt-28 lg:grid-cols-3">
+    <ol role="list" class="mt-12 grid gap-8 lg:mt-16 lg:grid-cols-3 lg:gap-12">
       {
         citations.map((c, i) => (
-          <li class="pourquoi-carte relative bg-chai/80 p-8 backdrop-blur-sm sm:p-10" data-reveal data-reveal-delai={String(i + 1)}>
+          <li class="pourquoi-carte" data-reveal data-reveal-delai={String(i + 1)}>
             <p class="chapitre-num text-dore-clair">{['I', 'II', 'III'][i]}</p>
-            <h3 class="mt-4 text-lg text-creme">{c.libelle}</h3>
-            <p class="mt-5 text-creme/90"><ACompleter texte={c.contenu} /></p>
+            <h3 class="mt-2">{c.libelle}</h3>
+            <p class="texte-courant mt-4"><ACompleter texte={c.contenu} /></p>
           </li>
         ))
       }
@@ -43,25 +34,18 @@ const citations = [
 </section>
 
 <style is:global>
-  .pourquoi .pourquoi-voile {
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(180deg, rgb(42 34 32 / 0.74) 0%, rgb(42 34 32 / 0.6) 45%, rgb(42 34 32 / 0.85) 100%);
+  .pourquoi { --voile-plein: 0.8; }
+  .pourquoi .pourquoi-phrase p {
+    max-width: 28ch;
+    font-family: var(--font-titre);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    line-height: 1.25;
+    text-wrap: balance;
+    color: var(--color-creme);
   }
-  .pourquoi .pourquoi-carte { transition: background-color 0.5s ease; }
-  .pourquoi .pourquoi-carte::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 2px;
-    width: 3rem;
-    background: var(--color-dore);
-    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  @media (hover: hover) {
-    .pourquoi .pourquoi-carte:hover { background-color: rgb(74 20 32 / 0.85); }
-    .pourquoi .pourquoi-carte:hover::before { width: 100%; }
+  .pourquoi .pourquoi-carte {
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-dore);
   }
 </style>

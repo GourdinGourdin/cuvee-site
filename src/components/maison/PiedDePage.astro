@@ -3,7 +3,7 @@
  * Pied de page de toutes les pages : emblème et signature, navigation, contact, mentions.
  * La mention santé est obligatoire et doit rester lisible.
  */
-import Embleme from './Embleme.astro';
+import Logo from '../Logo.astro';
 import ACompleter from '../ACompleter.astro';
 import { site, navigation, lienInscription } from '../../data/site';
 
@@ -11,23 +11,20 @@ const annee = new Date().getFullYear();
 const chemin = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const actif = (href: string) => (href === '/' ? chemin === '/' : chemin === href || chemin.startsWith(href + '/'));
 ---
-<footer class="pied sur-fond-sombre bg-chai px-4 pt-20 pb-10 text-creme lg:pt-24" aria-label="Pied de page">
-  <div class="mx-auto max-w-[76rem]">
-    <div class="grid gap-14 lg:grid-cols-[1.1fr_1fr_1fr] lg:gap-16">
-      <div class="flex flex-col items-center text-center lg:items-start lg:text-left" data-reveal>
-        <a href="/" class="flex flex-col items-center gap-2 text-creme no-underline" aria-label="Cuvée, retour à l’accueil">
-          <Embleme taille={44} />
-          <span class="font-[family-name:var(--font-titre)] text-2xl font-extrabold tracking-[0.32em] [margin-right:-0.32em]">CUVÉE</span>
+<footer class="pied sur-fond-sombre bg-chai text-creme" aria-label="Pied de page">
+  <div class="conteneur pied-interieur">
+    <div class="pied-grille">
+      <div class="pied-marque">
+        <a href="/" class="pied-logo" aria-label="Cuvée, retour à l’accueil">
+          <Logo variante="pile" taille={44} clair />
         </a>
-        <span class="signature mt-4 text-[2.2rem]!">assistant de cave</span>
-        <p class="mt-5 max-w-[22rem] text-[1rem] leading-relaxed text-creme/75">
-          Cuvée est en construction, avec des lieux indépendants.
-        </p>
+        <span class="signature pied-signature">assistant de cave</span>
+        <p class="texte-courant">Cuvée est en construction, avec des lieux indépendants.</p>
       </div>
 
-      <nav aria-label="Pied de page" class="text-center lg:text-left" data-reveal data-reveal-delai="1">
-        <p class="surtitre text-dore-clair">Explorer</p>
-        <ul role="list" class="mt-5 flex flex-col items-center gap-1 lg:items-start">
+      <nav aria-label="Pied de page" class="pied-colonne" id="pied-nav">
+        <p class="surtitre">Explorer</p>
+        <ul role="list">
           {
             navigation.map((n) => (
               <li>
@@ -38,45 +35,159 @@ const actif = (href: string) => (href === '/' ? chemin === '/' : chemin === href
         </ul>
       </nav>
 
-      <div class="text-center lg:text-left" data-reveal data-reveal-delai="2">
-        <p class="surtitre text-dore-clair">Nous écrire</p>
-        <p class="mt-5 text-creme/85">
+      <div class="pied-colonne">
+        <p class="surtitre">Nous écrire</p>
+        <p class="texte-courant pied-contact">
           {site.emailContact ? <a href={`mailto:${site.emailContact}`} class="lien">{site.emailContact}</a> : <ACompleter texte="email de contact" />}
         </p>
-        <a href={lienInscription} class="btn btn-creme pied-btn mt-6">Rejoindre le programme pilote</a>
+        <a href={lienInscription} class="btn btn-creme pied-btn">Rejoindre le programme pilote</a>
       </div>
     </div>
 
-    <div class="filet-double mt-16 w-full opacity-50" aria-hidden="true"></div>
+    <div class="filet-double pied-filet" aria-hidden="true"></div>
 
-    <div class="mt-6 flex flex-col gap-3 text-[0.9rem] text-creme/70 lg:flex-row lg:items-center lg:justify-between">
-      <p class="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 lg:justify-start">
+    <div class="pied-bas petit">
+      <p class="pied-legal">
         <span>© {annee} Cuvée</span>
         <a href="/mentions-legales/" class="lien">Mentions légales</a>
         <a href="/confidentialite/" class="lien">Confidentialité</a>
-        <a href="/?intro=1" class="lien pied-intro">Revoir l’intro</a>
       </p>
-      <p class="text-center lg:text-right">Photos et vidéos : Pexels (licence libre), à remplacer par nos propres prises de vue.</p>
+      <p class="pied-credits">Photos et vidéos : Pexels (licence libre), à remplacer par nos propres prises de vue.</p>
+      <p class="pied-sante">L’abus d’alcool est dangereux pour la santé, à consommer avec modération.</p>
     </div>
-    <p class="mt-5 text-center text-[0.95rem] text-creme/80 lg:text-left">L’abus d’alcool est dangereux pour la santé, à consommer avec modération.</p>
   </div>
 </footer>
 
 <style>
+  .pied-interieur {
+    padding-top: clamp(4rem, 3rem + 4vw, 6rem);
+    padding-bottom: max(var(--space-6), env(safe-area-inset-bottom));
+  }
+  .pied-grille {
+    display: grid;
+    gap: var(--space-7);
+    text-align: center;
+  }
+  @media (min-width: 64rem) {
+    .pied-grille {
+      grid-template-columns: 1fr 0.8fr 1.25fr;
+      gap: var(--space-8);
+      text-align: left;
+    }
+  }
+  .pied-marque,
+  .pied-colonne {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  @media (min-width: 64rem) {
+    .pied-marque,
+    .pied-colonne {
+      align-items: flex-start;
+    }
+  }
+  .pied-logo {
+    display: inline-flex;
+    color: inherit;
+    text-decoration: none;
+  }
+  .pied-signature {
+    margin-top: var(--space-4);
+    font-size: 2.25rem;
+  }
+  .pied-marque .texte-courant {
+    margin-top: var(--space-4);
+    max-width: 22rem;
+  }
+  .pied-colonne ul {
+    margin-top: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    align-items: inherit;
+  }
+  .pied-contact {
+    margin-top: var(--space-3);
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+  }
+  .pied-btn {
+    margin-top: var(--space-4);
+    max-width: 100%;
+  }
+  @media (max-width: 30rem) {
+    .pied-btn {
+      width: 100%;
+      padding-inline: var(--space-3);
+      letter-spacing: 0.1em;
+    }
+  }
+  .pied-filet {
+    margin-top: var(--space-8);
+    opacity: 0.5;
+  }
+  .pied-bas {
+    margin-top: var(--space-5);
+    display: grid;
+    gap: var(--space-2);
+    justify-items: center;
+    text-align: center;
+    color: var(--creme-85);
+  }
+  /* zone tactile de 44 px sans éloigner le souligné du texte */
+  .pied-legal .lien {
+    position: relative;
+  }
+  .pied-legal .lien::after {
+    content: '';
+    position: absolute;
+    inset: -0.75rem -0.25rem;
+  }
+  .pied-legal {
+    display: flex;
+    row-gap: var(--space-3);
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    column-gap: var(--space-5);
+  }
+  .pied-sante {
+    font-size: 0.9375rem;
+  }
+  @media (min-width: 64rem) {
+    .pied-bas {
+      grid-template-columns: 1fr auto;
+      justify-items: start;
+      text-align: left;
+      align-items: center;
+    }
+    .pied-legal {
+      justify-content: flex-start;
+    }
+    .pied-credits {
+      text-align: right;
+      justify-self: end;
+    }
+    .pied-sante {
+      grid-column: 1 / -1;
+    }
+  }
+
   .pied-nav {
     display: inline-flex;
     align-items: center;
     min-height: 2.75rem;
-    font-family: var(--font-titre);
-    font-size: 0.82rem;
-    font-weight: 500;
+    font-family: var(--font-label);
+    font-size: 0.8125rem;
+    font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     text-decoration: none;
-    color: rgb(245 233 228 / 0.85);
+    color: var(--creme-85);
     transition:
-      color 0.3s ease,
-      translate 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      color var(--duree-2) ease,
+      translate var(--duree-3) var(--ease-sortie);
   }
   .pied-nav::before {
     content: '';
@@ -85,8 +196,8 @@ const actif = (href: string) => (href === '/' ? chemin === '/' : chemin === href
     margin-right: 0;
     background: var(--color-dore);
     transition:
-      width 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-      margin-right 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      width var(--duree-3) var(--ease-sortie),
+      margin-right var(--duree-3) var(--ease-sortie);
   }
   .pied-nav:hover,
   .pied-nav:focus-visible,
@@ -98,14 +209,6 @@ const actif = (href: string) => (href === '/' ? chemin === '/' : chemin === href
   .pied-nav[aria-current='page']::before {
     width: 1.25rem;
     margin-right: 0.7rem;
-  }
-  .pied-btn {
-    letter-spacing: 0.13em;
-    padding-inline: 1.2rem;
-    white-space: nowrap;
-  }
-  .pied-intro {
-    opacity: 0.85;
   }
   @media (prefers-reduced-motion: reduce) {
     .pied-nav,

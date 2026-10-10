@@ -1,45 +1,65 @@
 ---
 /**
- * Titre de section au style maison : surtitre en capitales espacées, h2 en capitales, signature
- * manuscrite optionnelle, petit filet doré qui se trace.
- * `numero` est conservé pour compatibilité (non affiché). `sombre` / `clair` : texte crème sur fond sombre.
- * `centre` : titre centré.
+ * Bloc de titre de section (charte : docs/charte.md).
+ * Surtitre (Josefin, bordeaux sur clair / doré clair sur sombre) → h2 (16 px plus bas) → chapô optionnel
+ * (24 px plus bas) → signature optionnelle → filet doré. Le contenu passé en slot suit le bloc.
+ *
+ * Props :
+ * - `libelle` (surtitre) et `titre` (HTML autorisé), `id` (id du h2, pour aria-labelledby)
+ * - `chapo` : phrase d'introduction sous le titre (facultatif)
+ * - `signature` : à n'utiliser que pour l'en-tête de page ou l'appel final (2 par page au plus)
+ * - `sombre` / `clair` : fond sombre (titre crème, surtitre doré clair) ; `centre` : bloc centré
+ * - `filet` : afficher le filet doré (par défaut oui) ; `numero` : conservé pour compatibilité, non affiché
  */
 interface Props {
   numero?: string;
   libelle: string;
   id: string;
   titre: string;
+  chapo?: string;
   signature?: string;
   sombre?: boolean;
   clair?: boolean;
   centre?: boolean;
+  filet?: boolean;
   class?: string;
 }
-const { libelle, id, titre, signature, sombre = false, clair = false, centre = false, class: classe = '' } = Astro.props;
+const {
+  libelle,
+  id,
+  titre,
+  chapo,
+  signature,
+  sombre = false,
+  clair = false,
+  centre = false,
+  filet = true,
+  class: classe = '',
+} = Astro.props;
 const surSombre = sombre || clair;
 ---
-<div class:list={['titre-section max-w-3xl', centre ? 'mx-auto text-center' : '', classe]}>
-  <p data-reveal class:list={['surtitre', surSombre ? 'text-dore-clair' : 'text-bordeaux']}>{libelle}</p>
+<div class:list={['bloc-titre max-w-3xl', surSombre ? 'sur-fond-sombre' : '', centre ? 'mx-auto text-center' : '', classe]}>
+  <p data-reveal class="surtitre">{libelle}</p>
   <h2
     id={id}
     data-reveal
     data-reveal-delai="1"
-    class:list={['mt-4 text-[clamp(1.6rem,3.2vw,2.6rem)]', surSombre ? 'text-creme' : 'text-encre']}
+    class:list={['titre-section mt-4', surSombre ? 'text-creme' : 'text-encre']}
   >
     <Fragment set:html={titre} />
   </h2>
-  {signature && <span class:list={['signature mt-2', surSombre ? '!text-dore-clair' : '', centre ? 'mx-auto' : '']} data-reveal data-reveal-delai="2">{signature}</span>}
-  <span class:list={['titre-filet mt-6 block h-px w-14', surSombre ? 'bg-dore-clair' : 'bg-dore', centre ? 'mx-auto [transform-origin:center]' : '']} aria-hidden="true"></span>
+  {chapo && <p data-reveal data-reveal-delai="2" class:list={['chapo mt-6', centre ? 'mx-auto' : '']}>{chapo}</p>}
+  {signature && <span class:list={['signature mt-2', centre ? 'mx-auto' : '']} data-reveal data-reveal-delai="2">{signature}</span>}
+  {filet && <span class:list={['titre-filet mt-6 block h-px w-14', surSombre ? 'bg-dore-clair' : 'bg-dore', centre ? 'mx-auto [transform-origin:center]' : '']} aria-hidden="true"></span>}
   <slot />
 </div>
 
 <style is:global>
   .titre-filet {
     transform-origin: left;
-    animation: filet-trace 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
+    animation: filet-trace var(--duree-3, 400ms) var(--ease-sortie, ease-out) 0.15s both;
   }
-  .titre-section h2 em {
+  .bloc-titre h2 em {
     font-style: normal;
     color: inherit;
   }

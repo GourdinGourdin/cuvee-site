@@ -20,17 +20,25 @@ document.querySelectorAll<HTMLElement>('[data-demo]').forEach((carte) => {
   });
 });
 
-// Papiers sur la table : un clic sur une fiche la prend en main, un clic ailleurs la repose.
+// Papiers sur la table : un clic (ou Entrée / Espace sur la fiche elle-même) la prend en main, Échap ou un clic ailleurs la repose.
 const fiches = Array.from(document.querySelectorAll<HTMLElement>('.carte-ex'));
 if (fiches.length) {
+  const prendre = (fiche: HTMLElement | null) =>
+    fiches.forEach((f) => f.classList.toggle('est-pris', f === fiche && !f.classList.contains('est-pris')));
   document.addEventListener('click', (e) => {
     const cible = e.target as HTMLElement;
     const fiche = cible.closest<HTMLElement>('.carte-ex');
     if (fiche && cible.closest('button, a')) return;
-    fiches.forEach((f) => f.classList.toggle('est-pris', f === fiche && !f.classList.contains('est-pris')));
+    prendre(fiche);
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') fiches.forEach((f) => f.classList.remove('est-pris'));
+    const cible = e.target as HTMLElement;
+    // seulement quand la fiche elle-même a le focus (pas ses boutons : Entrée et Espace y gardent leur rôle)
+    if ((e.key === 'Enter' || e.key === ' ') && cible.classList.contains('carte-ex')) {
+      e.preventDefault();
+      prendre(cible);
+    }
   });
 }
 

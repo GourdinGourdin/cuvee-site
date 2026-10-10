@@ -7,15 +7,13 @@ import Video from './maison/Video.astro';
 ---
 <PiloteInvitation />
 
-<section class="media-cadre voile sur-image sur-fond-sombre flex min-h-[78svh] items-center justify-center text-center text-creme" aria-labelledby="mise-en-place-titre">
-  <Video src="/media/mise-en-place.mp4" affiche="/media/mise-en-place-poster.jpg" />
-  <div class="absolute inset-0 bg-chai/45" aria-hidden="true"></div>
-  <div class="relative z-10 mx-auto max-w-3xl px-6 py-24 sm:px-10">
+<section class="media-cadre voile voile-plein sur-image sur-fond-sombre flex min-h-[60svh] items-center" style="--voile-plein: 0.72" aria-labelledby="mise-en-place-titre">
+  <Video src="/media/mise-en-place.mp4" affiche="/media/mise-en-place-poster.jpg" sizes="100vw" />
+  <div class="conteneur-etroit section relative z-10 w-full text-center">
     <p class="surtitre" data-reveal>La mise en place</p>
-    <h2 id="mise-en-place-titre" class="mt-5 text-[clamp(1.8rem,4vw,3.2rem)]" data-reveal data-reveal-delai="1">
+    <h2 id="mise-en-place-titre" class="mt-4" data-reveal data-reveal-delai="1">
       Rien d’engageant ne part sans votre validation
     </h2>
-    <span class="signature mt-3" data-reveal data-reveal-delai="2">votre feu vert, toujours</span>
   </div>
 </section>
 

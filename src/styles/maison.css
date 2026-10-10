@@ -23,20 +23,45 @@
   object-fit: cover;
 }
 
-/* voile sombre pour lire le texte posé sur une image */
+/* Voile pour lire le texte posé sur une image (contraste ≥ 4.5:1 pour du texte crème).
+   Dégradé dense en haut (navigation) et surtout en bas (là où le texte se pose), plus léger au milieu
+   pour garder l'image vivante. Réglable : --voile-haut, --voile-milieu, --voile-bas (alphas).
+   Variantes : .voile-plein (texte centré ou partout : voile uniforme), .voile-gauche (texte à gauche). */
 .voile::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgb(42 34 32 / 0.45) 0%, rgb(42 34 32 / 0.12) 45%, rgb(42 34 32 / 0.55) 100%);
+  background: linear-gradient(
+    180deg,
+    rgb(42 34 32 / var(--voile-haut, 0.6)) 0%,
+    rgb(42 34 32 / var(--voile-milieu, 0.38)) 40%,
+    rgb(42 34 32 / var(--voile-bas, 0.82)) 100%
+  );
   pointer-events: none;
+}
+
+.voile-plein::after {
+  background: rgb(42 34 32 / var(--voile-plein, 0.7));
+}
+
+.voile-gauche::after {
+  background:
+    linear-gradient(90deg, rgb(42 34 32 / 0.8) 0%, rgb(42 34 32 / 0.55) 50%, rgb(42 34 32 / 0.15) 100%),
+    linear-gradient(180deg, rgb(42 34 32 / 0.45) 0%, rgb(42 34 32 / 0) 30%, rgb(42 34 32 / 0.5) 100%);
+}
+
+/* sur mobile le texte occupe toute la largeur : voile plus uniforme */
+@media (max-width: 47.99rem) {
+  .voile-gauche::after {
+    background: linear-gradient(180deg, rgb(42 34 32 / 0.6) 0%, rgb(42 34 32 / 0.5) 40%, rgb(42 34 32 / 0.82) 100%);
+  }
 }
 
 /* léger zoom lent sur les photos, une fois visibles */
 @media (prefers-reduced-motion: no-preference) {
   .anim .zoom-lent :is(img, video) {
     scale: 1.08;
-    transition: scale 2.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: scale 2.4s var(--ease-sortie);
   }
 
   .anim .zoom-lent.est-visible :is(img, video) {
@@ -52,17 +77,23 @@
   letter-spacing: 0.3em;
 }
 
+/* texte posé sur une image : crème, jamais de gris */
+.sur-image {
+  color: var(--color-creme);
+}
+
 /* défilement horizontal de « la semaine » */
 .rail {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: min(78vw, 22rem);
-  gap: 1.25rem;
+  gap: var(--space-5);
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  scroll-padding-inline: max(1rem, calc((100vw - 76rem) / 2));
-  padding-inline: max(1rem, calc((100vw - 76rem) / 2));
-  padding-bottom: 1.5rem;
+  /* aligné sur le bord du .conteneur (75rem de contenu, marge --marge) */
+  scroll-padding-inline: max(var(--marge), calc((100% - 75rem) / 2));
+  padding-inline: max(var(--marge), calc((100% - 75rem) / 2));
+  padding-bottom: var(--space-5);
   scrollbar-width: thin;
   scrollbar-color: var(--color-bordeaux) transparent;
 }

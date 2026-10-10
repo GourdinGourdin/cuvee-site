@@ -1,37 +1,32 @@
 ---
+import TitreSection from './TitreSection.astro';
 import { avecPlaceholders } from '../lib/texte';
 
 // TODO : étapes et durées à valider par l’équipe ; seules les étapes déjà décrites sur le site sont rédigées.
 const etapes = [
-  { num: 'I', titre: 'Votre inscription', texte: 'Vous remplissez le bon ci-dessous, en deux minutes.', quand: '' },
-  { num: 'II', titre: 'Un premier échange', texte: 'Nous faisons connaissance et vérifions que Cuvée peut vous être utile. Sinon, nous vous le disons avant de commencer.', quand: '[À COMPLÉTER : délai après l’inscription]' },
-  { num: 'III', titre: 'La mise en place', texte: 'Nous connectons votre caisse, lisons quelques factures fournisseurs récentes et montons l’inventaire de départ, que vous relisez.', quand: '[À COMPLÉTER : durée de mise en place]' },
-  { num: 'IV', titre: 'Le pilote en service', texte: 'Vous utilisez Cuvée pendant le service. Rien d’engageant ne part sans votre validation.', quand: '[À COMPLÉTER : durée du pilote]' },
-  { num: 'V', titre: 'Le bilan', texte: '[À COMPLÉTER : format du bilan et suite proposée aux lieux pilotes]', quand: '' },
+  { titre: 'Votre inscription', texte: 'Vous remplissez le bon ci-dessous, en deux minutes.', quand: '' },
+  { titre: 'Un premier échange', texte: 'Nous faisons connaissance et vérifions que Cuvée peut vous être utile. Sinon, nous vous le disons avant de commencer.', quand: '[À COMPLÉTER : délai après l’inscription]' },
+  { titre: 'La mise en place', texte: 'Nous connectons votre caisse, lisons quelques factures fournisseurs récentes et montons l’inventaire de départ, que vous relisez.', quand: '[À COMPLÉTER : durée de mise en place]' },
+  { titre: 'Le pilote en service', texte: 'Vous utilisez Cuvée pendant le service. Rien d’engageant ne part sans votre validation.', quand: '[À COMPLÉTER : durée du pilote]' },
+  { titre: 'Le bilan', texte: '[À COMPLÉTER : format du bilan et suite proposée aux lieux pilotes]', quand: '' },
 ];
 ---
-<section aria-labelledby="frise-titre" class="bg-papier py-24 lg:py-32">
-  <div class="mx-auto max-w-[76rem] px-6 sm:px-10">
-    <div class="text-center">
-      <p class="surtitre text-bordeaux" data-reveal>Le déroulé</p>
-      <h2 id="frise-titre" class="mx-auto mt-5 max-w-3xl text-[clamp(1.8rem,3.6vw,3rem)]" data-reveal data-reveal-delai="1">
-        Du premier mot au bilan
-      </h2>
-      <span class="signature mt-3" data-reveal data-reveal-delai="2">pas à pas</span>
+<section aria-labelledby="frise-titre" class="section bg-creme">
+  <div class="conteneur frise-grille">
+    <div class="frise-tete">
+      <TitreSection libelle="Le déroulé" id="frise-titre" titre="Du premier mot au bilan" />
     </div>
 
-    <ol role="list" class="frise relative mt-16 lg:mt-24 lg:grid lg:grid-cols-5 lg:gap-4" data-frise>
+    <ol role="list" class="frise" data-frise>
       <li class="frise-rail" aria-hidden="true" role="presentation"><span class="frise-trace"></span></li>
       {
         etapes.map((e, i) => (
-          <li class="frise-etape" data-etape={i} data-reveal data-reveal-delai={String(Math.min(i + 1, 6))}>
-            <span class="frise-num" aria-hidden="true">{e.num}</span>
+          <li class="frise-etape" data-etape={i} data-reveal data-reveal-delai={String(Math.min(i + 1, 4))}>
             <span class="frise-point" aria-hidden="true"></span>
-            <div class="frise-texte">
-              <h3 class="text-[1.15rem]"><span class="sr-only">Étape {i + 1} : </span>{e.titre}</h3>
-              <p class="mt-3 text-[1rem] leading-relaxed text-encre-douce" set:html={avecPlaceholders(e.texte)} />
-              {e.quand && <p class="mt-3 text-[0.95rem]" set:html={avecPlaceholders(e.quand)} />}
-            </div>
+            <span class="frise-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3><span class="sr-only">Étape {i + 1} : </span>{e.titre}</h3>
+            <p class="texte-courant" set:html={avecPlaceholders(e.texte)} />
+            {e.quand && <p class="frise-quand" set:html={avecPlaceholders(e.quand)} />}
           </li>
         ))
       }
@@ -40,19 +35,26 @@ const etapes = [
 </section>
 
 <style is:global>
-  .frise { --p: 1; --rail-haut: 4.2rem; }
+  .frise-grille { display: grid; gap: var(--space-7); }
+  @media (min-width: 64rem) {
+    .frise-grille { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-8); align-items: start; }
+    .frise-tete { position: sticky; top: var(--space-9); }
+  }
+
+  .frise { --p: 1; --dernier: 4rem; position: relative; list-style: none; margin: 0; padding: 0; }
   html.anim .frise { --p: 0; }
 
-  /* rail : un filet pâle, et le trait doré qui se dessine au défilement */
+  /* rail : un filet pâle, et le trait doré qui se dessine au défilement ; de centre de point en centre de point */
   .frise-rail {
     position: absolute;
     list-style: none;
     pointer-events: none;
     background: var(--color-filet);
-    left: 0.7rem;
-    top: 0.9rem;
-    bottom: calc(var(--dernier, 4rem) - 1.65rem);
+    left: 0.4375rem;
+    top: 0.5625rem;
+    bottom: calc(var(--dernier) - 0.5625rem);
     width: 2px;
+    translate: -1px 0;
   }
   .frise-trace {
     position: absolute;
@@ -61,39 +63,37 @@ const etapes = [
     transform-origin: top;
     transform: scaleY(var(--p));
   }
-  .frise-etape { position: relative; padding: 0 0 2.75rem 3.25rem; }
+
+  .frise-etape { position: relative; padding: 0 0 var(--space-7) 2.5rem; }
   .frise-etape:last-child { padding-bottom: 0; }
   .frise-num {
     display: block;
-    font-family: var(--font-titre);
-    font-weight: 300;
-    font-size: 1.1rem;
-    letter-spacing: 0.18em;
+    font-family: var(--font-label);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    line-height: 1.125rem;
     color: var(--color-bordeaux);
-    margin-bottom: 0.4rem;
   }
   .frise-point {
     position: absolute;
     left: 0;
-    top: 0.2rem;
-    width: 1.45rem;
-    height: 1.45rem;
+    top: 0.125rem;
+    width: 0.875rem;
+    height: 0.875rem;
     border-radius: 999px;
     border: 2px solid var(--color-dore);
-    background: var(--color-papier);
-    transition: background-color 0.5s ease, border-color 0.5s ease, scale 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    background: var(--color-creme);
+    transition: background-color var(--duree-3) ease, border-color var(--duree-3) ease;
   }
-  .frise-etape.atteint .frise-point { background: var(--color-bordeaux); border-color: var(--color-bordeaux); scale: 1.12; }
-  .frise-etape h3 { color: var(--color-encre); }
+  .frise-etape.atteint .frise-point { background: var(--color-bordeaux); border-color: var(--color-bordeaux); }
+  .frise-etape h3 { margin-top: var(--space-2); color: var(--color-encre); }
+  .frise-etape .texte-courant { margin-top: var(--space-2); }
+  .frise-quand { margin-top: var(--space-3); font-size: 0.9375rem; line-height: 1.7; }
+  .frise-etape mark { box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 
-  @media (min-width: 64rem) {
-    .frise-rail { left: 10%; right: 10%; top: calc(var(--rail-haut) + 0.72rem - 1px); bottom: auto; width: auto; height: 2px; }
-    .frise-trace { transform-origin: left; transform: scaleX(var(--p)); }
-    .frise-etape { padding: 0 0.5rem; text-align: center; }
-    .frise-etape:last-child { padding-bottom: 0; }
-    .frise-num { font-size: 2.4rem; line-height: 1; height: 2.7rem; margin-bottom: 0; letter-spacing: 0.12em; padding-left: 0.12em; }
-    .frise-point { position: relative; display: block; left: auto; top: auto; margin: 1.5rem auto 0; width: 1.45rem; height: 1.45rem; }
-    .frise-texte { margin-top: 2rem; }
+  @media (min-width: 40rem) {
+    .frise-etape { padding-left: var(--space-7); }
   }
 </style>
 
@@ -123,10 +123,8 @@ const etapes = [
         attente = false;
         const r = frise.getBoundingClientRect();
         const vh = window.innerHeight;
-        const horizontal = matchMedia('(min-width: 64rem)').matches;
-        const debut = vh * (horizontal ? 0.78 : 0.62);
-        const longueur = horizontal ? r.height + vh * 0.1 : r.height * 0.95;
-        appliquer(Math.min(1, Math.max(0, (debut - r.top) / longueur)));
+        const debut = vh * 0.66;
+        appliquer(Math.min(1, Math.max(0, (debut - r.top) / (r.height * 0.9))));
       };
       const demander = () => {
         if (!attente) { attente = true; requestAnimationFrame(maj); }

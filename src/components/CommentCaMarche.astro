@@ -1,12 +1,12 @@
 ---
-/** Les trois étapes en chapitres : un média, un texte, en alternance, reliés par un fil doré qui se dessine au défilement. */
-import FonctionnementTitre from './FonctionnementTitre.astro';
+/** Les trois étapes : un média et un texte par ligne, en alternance, sur la grille de 12 colonnes. */
+import TitreSection from './TitreSection.astro';
+import Photo from './Photo.astro';
 import Video from './maison/Video.astro';
 
 const etapes = [
   {
-    num: 'I',
-    surtitre: 'Ce qui entre',
+    surtitre: 'Étape I · Ce qui entre',
     titre: 'Vous gardez votre caisse et vos factures',
     texte:
       "Cuvée se connecte à votre caisse pour suivre ce qui se vend. Pour ce qui entre, il lit vos factures, en photo ou en PDF, et vous soumet les lignes douteuses. L’inventaire se tient à jour.",
@@ -14,8 +14,7 @@ const etapes = [
     video: 'carnet',
   },
   {
-    num: 'II',
-    surtitre: 'Ce qui reste',
+    surtitre: 'Étape II · Ce qui reste',
     titre: 'Cuvée suit la cave pour vous',
     texte:
       'Il compare ce qui sort et ce qui reste, voit venir les ruptures, repère les références qui ne bougent plus et garde un œil sur les livraisons attendues.',
@@ -23,8 +22,7 @@ const etapes = [
     image: 'casiers',
   },
   {
-    num: 'III',
-    surtitre: 'Ce qui part',
+    surtitre: 'Étape III · Ce qui part',
     titre: 'Rien ne part avant votre feu vert',
     texte:
       'Vous recevez des propositions : une commande prête, une idée pour écouler un carton, une relance à un domaine. Vous validez, vous modifiez ou vous refusez.',
@@ -33,58 +31,32 @@ const etapes = [
   },
 ];
 ---
-<section id="fonctionnement" aria-labelledby="fonctionnement-titre" class="fct-section bg-creme py-24 lg:py-32">
-  <div class="mx-auto max-w-[76rem] px-4 sm:px-8">
-    <FonctionnementTitre
+<section id="fonctionnement" aria-labelledby="fonctionnement-titre" class="section bg-creme">
+  <div class="conteneur">
+    <TitreSection
       libelle="Le fonctionnement"
       id="fonctionnement-titre"
       titre="Ça part de ce que vous avez déjà."
-      signature="sans rien ressaisir"
-    >
-      <p class="mx-auto mt-8 max-w-xl text-encre-douce" data-reveal data-reveal-delai="4">
-        L’idée : ne pas vous faire changer de caisse, ni tout ressaisir. Cuvée est en construction ; voici comment il
-        est conçu.
-      </p>
-    </FonctionnementTitre>
+      chapo="L’idée : ne pas vous faire changer de caisse, ni tout ressaisir. Cuvée est en construction ; voici comment il est conçu."
+    />
 
-    <ol role="list" class="fct-etapes relative mt-20 lg:mt-28" data-fil>
-      <!-- fil doré : se dessine avec le défilement (desktop) -->
-      <div class="fct-fil" aria-hidden="true"><span class="fct-fil-trait" data-fil-trait></span></div>
-
+    <ol role="list" class="etapes mt-12 lg:mt-16">
       {
         etapes.map((e, i) => (
-          <li class:list={['fct-etape', i % 2 === 1 && 'fct-alt']} data-etape>
-            <div class="fct-media">
-              <div class="media-cadre zoom-lent fct-cadre" data-reveal="rideau">
-                {e.video ? (
-                  <Video src={`/media/${e.video}.mp4`} affiche={`/media/${e.video}-poster.jpg`} />
-                ) : (
-                  <img src={`/media/${e.image}.jpg`} alt="" loading="lazy" decoding="async" />
-                )}
-                <span class="fct-lisere" aria-hidden="true"></span>
-              </div>
+          <li class:list={['etape', i % 2 === 1 && 'etape-alt']}>
+            <div class="etape-media media-cadre zoom-lent" data-reveal="rideau">
+              {e.video ? (
+                <Video src={`/media/${e.video}.mp4`} affiche={`/media/${e.video}-poster.jpg`} sizes="(min-width: 1024px) 50vw, 100vw" />
+              ) : (
+                <Photo src={`/media/${e.image}.jpg`} alt="" sizes="(min-width: 1024px) 50vw, 100vw" />
+              )}
             </div>
 
-            <div class="fct-medaillon" aria-hidden="true" data-medaillon>
-              <span>{e.num}</span>
-            </div>
-
-            <div class="fct-texte">
-              <p class="chapitre-num text-bordeaux" data-reveal>
-                ÉTAPE {e.num}
-              </p>
-              <p class="surtitre mt-3 text-encre-douce" data-reveal>
-                {e.surtitre}
-              </p>
-              <h3 class="mt-5 text-[clamp(1.5rem,2.6vw,2.2rem)] text-encre" data-reveal data-reveal-delai="1">
-                {e.titre}
-              </h3>
-              <p class="mt-6 max-w-lg text-encre-douce" data-reveal data-reveal-delai="2">
-                {e.texte}
-              </p>
-              <p class="mt-8 max-w-lg border-t border-dore pt-5 font-semibold text-encre" data-reveal data-reveal-delai="3">
-                {e.detail}
-              </p>
+            <div class="etape-texte">
+              <p class="surtitre" data-reveal>{e.surtitre}</p>
+              <h3 class="mt-4" data-reveal data-reveal-delai="1">{e.titre}</h3>
+              <p class="texte-courant mt-4" data-reveal data-reveal-delai="2">{e.texte}</p>
+              <p class="etape-detail petit mt-6 border-t border-dore pt-4 font-semibold text-encre" data-reveal data-reveal-delai="3">{e.detail}</p>
             </div>
           </li>
         ))
@@ -94,145 +66,45 @@ const etapes = [
 </section>
 
 <style is:global>
-  .fct-etapes {
+  .etapes {
     display: grid;
-    gap: 5rem;
+    gap: var(--space-8);
   }
-  .fct-etape {
+  .etape {
     display: grid;
-    gap: 2rem;
+    gap: var(--space-5);
   }
-  .fct-fil,
-  .fct-medaillon {
-    display: none;
+  .etape-media {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--rayon);
   }
-  .fct-cadre {
-    aspect-ratio: 4 / 5;
-  }
-  .fct-lisere {
-    position: absolute;
-    inset: 0.9rem;
-    border: 1px solid color-mix(in srgb, var(--color-creme) 55%, transparent);
-    pointer-events: none;
-    z-index: 2;
-  }
-  .fct-texte {
+  .etape-texte {
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
-  @media (max-width: 63.99rem) {
-    .fct-cadre {
-      aspect-ratio: 4 / 3.4;
-    }
-    .fct-texte {
-      padding-inline: 0.5rem;
-    }
-  }
-
   @media (min-width: 64rem) {
-    .fct-etapes {
-      gap: 9rem;
+    .etapes {
+      gap: var(--space-9);
     }
-    .fct-etape {
-      grid-template-columns: minmax(0, 1fr) 6rem minmax(0, 1fr);
-      gap: 0;
+    .etape {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--space-6);
       align-items: center;
     }
-    .fct-texte {
-      padding-inline: 3rem;
-      order: 3;
+    .etape-media {
+      grid-column: 1 / span 6;
+      grid-row: 1;
     }
-    .fct-media { order: 1; }
-    .fct-medaillon { order: 2; }
-    .fct-alt .fct-media { order: 3; }
-    .fct-alt .fct-texte { order: 1; }
-    .fct-medaillon {
-      display: grid;
-      place-items: center;
-      position: relative;
-      z-index: 2;
-      justify-self: center;
-      width: 4.4rem;
-      height: 4.4rem;
-      border-radius: 50%;
-      background: var(--color-creme);
-      border: 1px solid var(--color-filet);
-      font-family: var(--font-titre);
-      font-weight: 300;
-      font-size: 1.15rem;
-      letter-spacing: 0.12em;
-      color: var(--color-bordeaux);
-      transition: background-color 0.6s ease, border-color 0.6s ease, color 0.6s ease, scale 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    .etape-texte {
+      grid-column: 8 / span 5;
+      grid-row: 1;
     }
-    .fct-medaillon span {
-      margin-right: -0.12em;
+    .etape-alt .etape-media {
+      grid-column: 7 / span 6;
     }
-    .fct-medaillon.est-atteint {
-      background: var(--color-bordeaux);
-      border-color: var(--color-dore);
-      color: var(--color-creme);
-      scale: 1.08;
-    }
-    /* le fil : un filet clair en fond, un trait doré par-dessus qui descend */
-    .fct-fil {
-      display: block;
-      position: absolute;
-      left: 50%;
-      top: 2rem;
-      bottom: 2rem;
-      width: 1px;
-      translate: -50% 0;
-      background: var(--color-filet);
-    }
-    .fct-fil-trait {
-      position: absolute;
-      inset: 0;
-      background: var(--color-dore);
-      transform-origin: top;
-      transform: scaleY(var(--fil, 1));
-      width: 2px;
-      left: -0.5px;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .fct-fil-trait {
-      transform: none !important;
+    .etape-alt .etape-texte {
+      grid-column: 1 / span 5;
     }
   }
 </style>
-
-<script>
-  const liste = document.querySelector<HTMLElement>('[data-fil]');
-  const trait = liste?.querySelector<HTMLElement>('[data-fil-trait]');
-  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const large = matchMedia('(min-width: 64rem)');
-  if (liste && trait && !reduit) {
-    const medaillons = Array.from(liste.querySelectorAll<HTMLElement>('[data-medaillon]'));
-    let attente = false;
-    const maj = () => {
-      attente = false;
-      if (!large.matches) return;
-      const r = liste.getBoundingClientRect();
-      const repere = window.innerHeight * 0.55;
-      const debut = r.top + 32;
-      const total = Math.max(r.height - 64, 1);
-      const p = Math.min(Math.max((repere - debut) / total, 0), 1);
-      trait.style.setProperty('--fil', p.toFixed(4));
-      medaillons.forEach((m) => {
-        const c = m.getBoundingClientRect();
-        m.classList.toggle('est-atteint', c.top + c.height / 2 < repere);
-      });
-    };
-    const demander = () => {
-      if (!attente) {
-        attente = true;
-        requestAnimationFrame(maj);
-      }
-    };
-    trait.style.setProperty('--fil', '0');
-    window.addEventListener('scroll', demander, { passive: true });
-    window.addEventListener('resize', demander);
-    maj();
-  }
-</script>

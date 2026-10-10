@@ -1,27 +1,43 @@
 ---
+import Photo from '../Photo.astro';
+
 interface Props {
   image: string;
   alt?: string;
 }
 const { image, alt = '' } = Astro.props;
 ---
-<section class="citation media-cadre voile sur-image zoom-lent relative flex min-h-[90vh] items-center justify-center px-5 py-32 text-center text-creme" data-reveal="rideau">
-  <img src={image} alt={alt} loading="lazy" decoding="async" data-parallaxe="-0.12" />
-  <figure class="relative z-10 mx-auto max-w-4xl">
-    <span class="mx-auto mb-10 block h-14 w-px bg-dore-clair/80" data-reveal="filet-v" data-reveal-delai="1" aria-hidden="true"></span>
+<section class="citation media-cadre voile voile-plein sur-image zoom-lent section relative flex items-center justify-center text-center" data-reveal="rideau">
+  <Photo src={image} alt={alt} sizes="100vw" data-parallaxe="-0.12" />
+  <figure class="conteneur relative z-10">
+    <span class="mx-auto mb-8 block h-14 w-px bg-dore-clair" data-reveal="filet-v" data-reveal-delai="1" aria-hidden="true"></span>
     <blockquote>
-      <p class="font-[family-name:var(--font-titre)] text-[clamp(1.5rem,3.4vw,2.8rem)] leading-[1.25] font-extrabold tracking-[0.05em] uppercase" data-reveal-lignes>
+      <p class="citation-texte mx-auto" data-reveal-lignes>
         Votre métier, c’est de choisir les vins et de les faire découvrir, pas de compter des cartons.
       </p>
     </blockquote>
-    <figcaption class="signature mx-auto mt-6" data-reveal="ecriture" style="--d: 14">le suivi, Cuvée veut s’en charger</figcaption>
+    <figcaption class="surtitre mt-8" data-reveal data-reveal-delai="3">Le suivi, Cuvée veut s’en charger</figcaption>
   </figure>
 </section>
 
 <style>
+  .citation {
+    --voile-plein: 0.66;
+    min-height: min(80svh, 40rem);
+  }
   /* l'image dépasse du cadre pour que la parallaxe ne laisse jamais de bord vide */
-  .citation > img {
+  .citation :global(img) {
     inset: -15% 0 auto 0;
     height: 130%;
+  }
+  .citation-texte {
+    max-width: 24ch;
+    font-family: var(--font-titre);
+    font-size: clamp(1.625rem, 1rem + 2.6vw, 3rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-wrap: balance;
   }
 </style>

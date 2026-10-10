@@ -10,13 +10,12 @@ import FonctionnementScene from '../components/FonctionnementScene.astro';
 import Exemples from '../components/Exemples.astro';
 import GarderLaMain from '../components/GarderLaMain.astro';
 ---
-<Base titre="Comment ça marche · Cuvée" description="De la facture au bon de commande : comment Cuvée suit votre cave, repère les bouteilles qui dorment et prépare les commandes, avec vous aux commandes.">
+<Base titre="Comment ça marche : de la facture à la commande · Cuvée" description="De la facture au bon de commande : comment Cuvée suit votre cave, repère les bouteilles qui dorment et prépare les commandes, avec vous aux commandes.">
   <EnTete />
   <main id="contenu">
     <PageEntete
       surtitre="Comment ça marche"
       titre="De la facture au bon de commande, sans perdre la main."
-      signature="vous relisez, vous validez"
       chapo="Cuvée lit vos factures, suit votre stock et prépare vos commandes. Vous relisez, vous corrigez, vous validez."
       image="/media/vitrine-cave.jpg"
       numero="II"
@@ -26,7 +25,7 @@ import GarderLaMain from '../components/GarderLaMain.astro';
     <FonctionnementScene />
     <Exemples />
     <GarderLaMain />
-    <PageCta />
+    <PageCta image="/media/cave-voutee.jpg" />
   </main>
   <PiedDePage />
   <CtaMobile />

@@ -2,28 +2,40 @@
 /**
  * Vidéo d'ambiance muette, en boucle. Chargée et lancée seulement quand elle entre à l'écran,
  * mise en pause quand elle en sort. Avec « réduire les animations », seule l'affiche est montrée.
- * `prioritaire` : vidéo du haut de page, chargée tout de suite (avec son affiche).
+ * `prioritaire` : vidéo du haut de page, démarrée tout de suite ; son affiche est alors l'attribut `poster` (WebP 1600 px).
+ * `sizes` : largeur d'affichage de l'affiche des vidéos non prioritaires (défaut 100vw).
+ * Les affiches passent par les variantes optimisées de public/media/opt/ (voir Photo.astro).
  */
+import Photo from '../Photo.astro';
+import { medias } from '../../data/medias';
+
 interface Props {
   src: string;
   affiche: string;
   prioritaire?: boolean;
   class?: string;
+  sizes?: string;
 }
-const { src, affiche, prioritaire = false, class: classe = '' } = Astro.props;
+const { src, affiche, prioritaire = false, class: classe = '', sizes = '100vw' } = Astro.props;
+
+// L'attribut poster n'accepte qu'une URL : on prend la variante WebP la plus proche de 1600 px.
+const nomAffiche = /^\/media\/([^/]+)\.jpg$/i.exec(affiche)?.[1];
+const infos = nomAffiche ? medias[nomAffiche] : undefined;
+const largeurPoster = infos ? (infos.variantes.filter((w) => w <= 1600).pop() ?? infos.variantes[0]) : 0;
+const poster = infos ? `/media/opt/${nomAffiche}-${largeurPoster}.webp` : affiche;
 ---
 {
-  /* Vidéo non prioritaire : l'affiche est une <img> chargée paresseusement (l'attribut poster, lui, se télécharge
+  /* Vidéo non prioritaire : l'affiche est une image chargée paresseusement (l'attribut poster, lui, se télécharge
      toujours tout de suite). Elle reste visible sans JavaScript ou en mouvement réduit, la vidéo la recouvre ensuite. */
-  !prioritaire && <img src={affiche} alt="" loading="lazy" decoding="async" class={classe} />
+  !prioritaire && <Photo src={affiche} alt="" sizes={sizes} class={classe} />
 }
 <video
   class={classe}
   muted
   loop
   playsinline
-  preload={prioritaire ? 'auto' : 'none'}
-  poster={prioritaire ? affiche : undefined}
+  preload="none"
+  poster={prioritaire ? poster : undefined}
   aria-hidden="true"
   data-video
   data-src={src}

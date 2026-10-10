@@ -12,6 +12,7 @@
     "astro": "astro",
     "captures": "node scripts/captures.mjs",
     "images": "node scripts/generer-images.mjs",
+    "medias": "node scripts/optimiser-medias.mjs",
     "verifier": "node scripts/verifier.mjs"
   },
   "dependencies": {

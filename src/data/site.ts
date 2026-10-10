@@ -6,7 +6,7 @@ export const site = {
   nom: 'Cuvée',
   titre: 'Cuvée · Assistant de cave pour bars à vin et caves à manger',
   description:
-    'Assistant de cave en construction pour bars à vin et caves à manger : suivi du stock, bouteilles qui dorment, commandes prêtes à valider. Programme pilote ouvert.',
+    'Assistant de cave en construction pour bars à vin et caves à manger : suivi du stock, bouteilles qui dorment, commandes prêtes à valider. Pilote ouvert.',
   // TODO : adresse de contact affichée dans le footer et proposée si le formulaire échoue.
   emailContact: '',
   // TODO : passer à true une fois tous les [À COMPLÉTER] remplis. En attendant, les moteurs

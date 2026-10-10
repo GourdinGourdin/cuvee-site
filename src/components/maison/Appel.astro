@@ -2,17 +2,31 @@
 import Video from './Video.astro';
 import { lienInscription } from '../../data/site';
 ---
-<section class="grid bg-bordeaux text-creme lg:grid-cols-2" aria-labelledby="appel-titre" data-page-cta>
-  <div class="flex flex-col items-center justify-center px-6 py-24 text-center sm:px-12 lg:py-32">
-    <p class="surtitre text-dore-clair" data-reveal>Programme pilote</p>
-    <h2 id="appel-titre" class="mt-4 text-[clamp(1.8rem,3.4vw,2.8rem)]" data-reveal-lignes>Prêt à essayer avec nous&nbsp;?</h2>
-    <span class="signature mt-2 !text-dore-clair" data-reveal="ecriture" style="--d: 9">deux minutes, pas plus</span>
-    <p class="mt-8 max-w-md text-creme/85" data-reveal data-reveal-delai="2">
+<section class="appel grid bg-bordeaux text-creme lg:grid-cols-2" aria-labelledby="appel-titre" data-page-cta>
+  <div class="media-cadre order-last min-h-[56vh] lg:order-first lg:min-h-[78vh]" data-reveal="rideau">
+    <Video src="/media/casier-main.mp4" affiche="/media/casier-main-poster.jpg" sizes="(min-width: 1024px) 50vw, 100vw" />
+  </div>
+  <div class="appel-texte flex flex-col justify-center py-16 lg:py-24">
+    <div class="filet-double mb-8 w-20" aria-hidden="true" data-reveal="filet"></div>
+    <p class="surtitre" data-reveal>Programme pilote</p>
+    <h2 id="appel-titre" class="mt-4 max-w-[14ch] text-balance" data-reveal-lignes>Prêt à essayer avec nous&nbsp;?</h2>
+    <p class="texte-courant mt-6" data-reveal data-reveal-delai="2">
       Quelques lieux, quelques mois, et une équipe qui construit l’outil avec vous, pendant le service.
     </p>
-    <a href={lienInscription} class="btn btn-creme mt-10" data-reveal data-reveal-delai="3">Rejoindre le programme pilote</a>
-  </div>
-  <div class="media-cadre min-h-[70vh]" data-reveal="rideau">
-    <Video src="/media/casier-main.mp4" affiche="/media/casier-main-poster.jpg" />
+    <span class="signature mt-4" data-reveal="ecriture">deux minutes, pas plus</span>
+    <a href={lienInscription} class="btn btn-creme mt-8 self-start" data-reveal data-reveal-delai="3">Rejoindre le programme pilote</a>
   </div>
 </section>
+
+<style>
+  /* le texte s'aligne sur la grille du site : bord gauche du .conteneur côté mobile, marge intérieure en desktop */
+  .appel-texte {
+    padding-inline: var(--marge);
+  }
+  @media (min-width: 64rem) {
+    .appel-texte {
+      padding-inline: var(--space-9) max(var(--marge), calc((100vw - 75rem) / 2 + var(--marge)));
+      padding-left: var(--space-9);
+    }
+  }
+</style>

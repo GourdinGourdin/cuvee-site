@@ -2,22 +2,33 @@
 import ACompleter from '../ACompleter.astro';
 import { lienInscription } from '../../data/site';
 ---
-<section id="manifeste" class="px-4 py-28 text-center lg:py-40" aria-labelledby="manifeste-titre">
-  <div class="mx-auto flex max-w-3xl flex-col items-center">
-    <span class="mb-8 block h-16 w-px bg-dore" data-reveal="filet-v" aria-hidden="true"></span>
-    <p class="surtitre text-encre-douce" data-reveal>L’assistant de cave</p>
-    <h2 id="manifeste-titre" class="mt-5 text-[clamp(1.7rem,3.2vw,2.6rem)] text-bordeaux" data-reveal-lignes>Là où la cave se tient toute seule…</h2>
-    <span class="signature mt-2" data-reveal="ecriture" style="--d: 9">et vous, au comptoir</span>
-    <p class="mt-10 text-encre-douce" data-reveal data-reveal-delai="2">
-      Cuvée est un <strong class="font-semibold text-encre">assistant de cave</strong> conçu pour suivre votre stock à partir de
-      votre caisse et de vos factures, repérer <strong class="font-semibold text-encre">les bouteilles qui ne tournent plus</strong>{' '}
-      et préparer vos <strong class="font-semibold text-encre">commandes aux domaines</strong>. Vous relisez, vous validez :{' '}
-      <strong class="font-semibold text-encre">rien ne part sans vous.</strong>
-    </p>
-    <p class="mt-5 text-encre-douce" data-reveal data-reveal-delai="3">
-      Cuvée est en construction. Nous cherchons <ACompleter texte="nombre" /> bars à vin et caves à manger pour le mettre au
-      point avec nous, pendant le service.
-    </p>
-    <a href={lienInscription} class="btn btn-primaire mt-10" data-reveal data-reveal-delai="4">Rejoindre le programme pilote</a>
+<section id="manifeste" class="section bg-creme" aria-labelledby="manifeste-titre">
+  <div class="conteneur grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-x-16 xl:gap-x-24">
+    <div>
+      <p class="surtitre" data-reveal>L’assistant de cave</p>
+      <h2 id="manifeste-titre" class="mt-4 text-encre" data-reveal-lignes>
+        Là où la cave se tient toute seule…<span class="manifeste-suite block">et vous, au comptoir</span>
+      </h2>
+    </div>
+    <div>
+      <p class="chapo" data-reveal data-reveal-delai="1">
+        Cuvée est un <strong class="font-semibold text-encre">assistant de cave</strong> conçu pour suivre votre stock à partir de
+        votre caisse et de vos factures, repérer <strong class="font-semibold text-encre">les bouteilles qui ne tournent plus</strong>{' '}
+        et préparer vos <strong class="font-semibold text-encre">commandes aux domaines</strong>. Vous relisez, vous validez :{' '}
+        <strong class="font-semibold text-encre">rien ne part sans vous.</strong>
+      </p>
+      <p class="texte-courant mt-6" data-reveal data-reveal-delai="2">
+        Cuvée est en construction. Nous cherchons <ACompleter texte="nombre" /> bars à vin et caves à manger pour le mettre au
+        point avec nous, pendant le service.
+      </p>
+      <a href={lienInscription} class="btn btn-primaire mt-8" data-reveal data-reveal-delai="3">Rejoindre le programme pilote</a>
+    </div>
   </div>
 </section>
+
+<style>
+  /* la seconde moitié de la phrase, plus légère : même titre, deux temps */
+  .manifeste-suite {
+    font-weight: 400;
+  }
+</style>

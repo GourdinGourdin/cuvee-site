@@ -14,6 +14,8 @@ npm run build        # génère dist/ et liste les [À COMPLÉTER] restants
 npm run preview      # sert dist/ en local
 npm run captures     # captures mobile et desktop dans captures/ (site lancé au préalable)
 npm run images       # régénère public/og-image.png et public/apple-touch-icon.png
+npm run medias       # génère les variantes AVIF/WebP de public/media/*.jpg (public/media/opt/, manifeste src/data/medias.ts)
+npm run verifier     # suite de tests Playwright (site lancé sur :4321)
 ```
 
 ## Avant la mise en ligne
@@ -55,12 +57,12 @@ Les deux hébergeurs détectent Astro automatiquement. L'URL publique (balises O
 
 | Quoi | Où |
 | --- | --- |
-| Couleurs, typographie, composants de base | `src/styles/global.css` (kit médias plein cadre : `maison.css` ; transitions : `animations.css`) |
+| Charte graphique (typographie, couleurs, espacements, composants) | `docs/charte.md` ; implémentation : `src/styles/global.css` (kit médias plein cadre : `maison.css` ; transitions : `animations.css`) |
+| Photos (AVIF/WebP responsive) et vidéos | `src/components/Photo.astro`, `src/components/maison/Video.astro` ; après ajout d’un `.jpg` dans `public/media/`, lancer `npm run medias` |
 | Titre, description, contact, indexation, onglets du menu, lien d’inscription | `src/data/site.ts` |
 | En-tête (onglets, menu plein écran), pied de page, emblème | `src/components/maison/EnTete.astro`, `PiedDePage.astro`, `Embleme.astro` ; logotype : `src/components/Logo.astro` (charte : `docs/logo.md`) |
 | Bouton fixe mobile | `src/components/CtaMobile.astro` (absent de `/pilote`) |
 | En-tête de page plein cadre, appel au pilote, « Pourquoi nous » | `src/components/PageEntete.astro`, `PageCta.astro`, `PagePourquoi.astro` |
-| Intro « bouteille à déboucher » de l’accueil (`/?intro=1` pour la revoir) | `src/components/intro/IntroBouteille.astro`, `src/scripts/intro-bouteille.ts` |
 | Sections de l’accueil, vidéos | `src/components/maison/` (crédits : `docs/credits-medias.md`) |
 | Questions de la FAQ | `src/data/faq.ts` |
 | Conditions du pilote | `src/components/Pilote.astro` |
@@ -80,27 +82,28 @@ Au build, la typographie française (espaces insécables avant `? ! : ;`) est ap
 
 ## Animations
 
-Tout est dans `src/scripts/animations.ts` (JS léger, sans dépendance), `src/styles/animations.css` (transitions de page, rideau, flou) et la fin de `src/styles/global.css` (révélations de base). Sans JavaScript ou avec « réduire les animations », le contenu reste visible et immobile : le CSS n'applique les états cachés que sous `html.anim`.
+Tout est dans `src/scripts/animations.ts` (JS léger, sans dépendance), `src/styles/animations.css` (transitions de page, rideau, parallaxe) et la fin de `src/styles/global.css` (révélations de base, barre de lecture). Sans JavaScript ou avec « réduire les animations », le contenu reste visible et immobile : le CSS n'applique les états cachés que sous `html.anim`.
+
+Un seul langage de mouvement : fondu + montée de 14 px en 400 ms (`--duree-3`, `--ease-sortie`), cascade de 70 ms par cran. Un élément déjà passé au-dessus de l'écran (défilement rapide, ancre), qui reçoit le focus ou qui est imprimé est révélé aussitôt ; l'apparition démarre un peu avant l'entrée dans l'écran.
 
 | Attribut | Effet |
 | --- | --- |
-| `data-reveal` | fondu + légère montée au scroll |
-| `data-reveal="gauche"`, `"droite"`, `"echelle"` | variantes d'entrée |
-| `data-reveal="rideau"` | un volet s'ouvre sur le média et l'image se dézoome. À poser sur le **conteneur** de l'image (`.media-cadre`), pas sur l'`<img>`. Sens : `data-reveal-sens="bas"` (défaut), `"haut"`, `"gauche"`, `"droite"` |
-| `data-reveal="flou"` | apparition depuis un léger flou (titres, blocs de texte) |
-| `data-reveal-delai="1"` à `"6"` | cascade (90 ms par cran) |
-| `data-reveal-lignes` | titre révélé mot par mot (espaces insécables préservés) |
-| `data-compteur="1250"` | compte jusqu'à la valeur (`data-compteur-decimales="1"` en option) ; l'élément ne contient que le nombre |
-| `data-parallaxe="0.1"` | parallaxe douce (coefficient, négatif = sens inverse) |
-
-Pendant l'intro de l'accueil (`html.intro-active`), les révélations attendent l'événement `cuvee:intro-fin`.
+| `data-reveal` | apparition par défaut : fondu + montée de 14 px |
+| `data-reveal="gauche"`, `"droite"` | la même, avec une entrée latérale de 16 px |
+| `data-reveal="echelle"`, `"flou"` | alias presque identiques au défaut (échelle 0,985 / sans flou) ; à éviter dans le nouveau code |
+| `data-reveal="rideau"` | **réservé aux grands médias** : un volet s'ouvre (800 ms) et l'image se dézoome de 8 %. À poser sur le **conteneur** de l'image (`.media-cadre`), pas sur l'`<img>`. Sens : `data-reveal-sens="bas"` (défaut), `"haut"`, `"gauche"`, `"droite"` |
+| `data-reveal="ecriture"`, `"filet"`, `"filet-v"` | signature qui s'écrit, filet doré qui se trace (définis dans `maison/Ouverture.astro`) |
+| `data-reveal-delai="1"` à `"6"` | cascade (70 ms par cran) ; au-delà de 6, pas de délai supplémentaire |
+| `data-reveal-lignes` | titre révélé mot par mot (600 ms, cascade plafonnée à 280 ms, espaces insécables préservés) ; à réserver aux `h1`/`h2` |
+| `data-compteur="1250"` | compte jusqu'à la valeur en 1 s (`data-compteur-decimales="1"` en option) ; l'élément ne contient que le nombre |
+| `data-parallaxe="0.1"` | parallaxe douce sur une `<img>`/`<video>` d'un `.media-cadre` (coefficient, négatif = sens inverse) ; amplitude ±36 px au plus, désactivée sous 768 px et en mouvement réduit ; le média est agrandi de 72 px par le CSS pour ne jamais découvrir le cadre |
 
 Charpente commune à toutes les pages :
 
 - **En-tête** (`src/components/maison/EnTete.astro`, avec son propre script) : transparent sur l'image d'en-tête, fond crème après 60 px de défilement, masqué en descendant et réaffiché en remontant (jamais si le menu est ouvert ou si le focus clavier est dedans). Au-dessus de 1024 px, les onglets sont répartis autour de l'emblème (`aria-current="page"` sur l'onglet actif) et un filet doré glisse d'un onglet à l'autre. Le menu plein écran est un `<dialog>` natif : chiffres romains, panneau d'image qui change selon l'onglet survolé ou focalisé (grand écran), ouverture et fermeture animées, focus piégé, Échap, focus rendu au bouton, défilement bloqué.
-- **Pied de page** (`PiedDePage.astro`) : emblème, navigation, contact, liens légaux, crédit des médias, mention santé, lien « Revoir l'intro » (`/?intro=1`).
-- **Bouton mobile** (`src/components/CtaMobile.astro`) : apparaît après le premier écran, se cache sur le pied de page, sur toute section `[data-page-cta]`, pendant l'intro et sur `/pilote`.
-- **Barre de lecture** dorée (`data-progression`, posée dans `Base.astro`, masquée en mouvement réduit).
-- **Transitions de page** : `@view-transition` (CSS natif, déclaré dans `global.css`, pas de `<ClientRouter />`). L'ancienne page se fond et recule, la nouvelle monte ; l'en-tête reste en place (`view-transition-name: entete`). Le média d'en-tête d'une page se déploie depuis la carte de l'accueil via `view-transition-name: media-comment-ca-marche | media-pilote | media-equipe` (posé sur la carte de `Pistes.astro` et, par la prop `vt`, sur `PageEntete`) ; ce morphing n'est gardé que dans le sens accueil vers page, et seulement si la carte est à l'écran (écouteur `pageswap` dans `animations.ts`).
+- **Pied de page** (`PiedDePage.astro`) : emblème, navigation, contact, liens légaux, crédit des médias, mention santé.
+- **Bouton mobile** (`src/components/CtaMobile.astro`) : apparaît après le premier écran, se cache sur le pied de page, sur toute section `[data-page-cta]` et sur `/pilote`.
+- **Barre de lecture** dorée (`.progression[data-progression]`, posée dans `Base.astro`, 2 px, invisible tout en haut de page, masquée en mouvement réduit).
+- **Transitions de page** : `@view-transition` (CSS natif, déclaré dans `global.css`, pas de `<ClientRouter />`). L'ancienne page s'efface en 200 ms sur un fond crème (jamais de fond sombre visible), la nouvelle monte de 8 px en fondu (320 ms) ; l'en-tête reste en place, fondu croisé de 160 ms (`view-transition-name: entete`). Le média d'en-tête d'une page se déploie depuis la carte de l'accueil via `view-transition-name: media-comment-ca-marche | media-pilote | media-equipe` (posé sur la carte de `Pistes.astro` et, par la prop `vt`, sur `PageEntete`) ; ce morphing (420 ms, l'ancienne image reste opaque sous la nouvelle) n'est gardé que dans le sens accueil vers page, et seulement si la carte est à l'écran (écouteur `pageswap` dans `animations.ts`).
 
 Classes de micro-interaction : `.btn` (remplissage animé), `.lien` (souligné qui se dessine), `.papier` (se soulève au survol). Si `<ClientRouter />` est ajouté un jour, le script se réinitialise sur `astro:page-load`.

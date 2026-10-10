@@ -1,46 +1,46 @@
 ---
 import BonDeCommande from '../BonDeCommande.astro';
+import Photo from '../Photo.astro';
+
+const etapes = ['Vos ventes, lues depuis la caisse', 'Vos entrées, lues sur les factures', 'Votre feu vert, toujours'];
 ---
-<section id="proposition" class="relative overflow-hidden bg-creme" aria-labelledby="proposition-titre">
-  <div class="grid lg:grid-cols-[1.05fr_1fr]">
-    <div class="proposition-media relative lg:min-h-[100vh]">
-      <!-- mobile : la photo est un bandeau et le bon de commande vient le chevaucher ; grand écran : photo plein cadre sous le bon -->
-      <div class="proposition-photo media-cadre zoom-lent h-64 sm:h-80 lg:absolute lg:inset-0 lg:h-auto" data-reveal="rideau">
-        <img src="/media/mur-bouteilles.jpg" alt="" loading="lazy" decoding="async" data-parallaxe="-0.08" />
-        <div class="absolute inset-0 bg-chai/35" aria-hidden="true"></div>
-      </div>
-      <div
-        class="relative z-10 mx-auto -mt-24 flex max-w-md items-center px-4 pb-6 sm:-mt-28 sm:px-8 lg:mt-0 lg:min-h-[100vh] lg:max-w-lg lg:px-0 lg:py-24"
-        data-reveal="echelle"
-        data-reveal-delai="4"
-      >
-        <BonDeCommande />
-      </div>
-    </div>
-    <div class="flex flex-col justify-center px-6 py-20 sm:px-12 lg:px-20 xl:px-24">
-      <p class="surtitre text-encre-douce" data-reveal>Un exemple, lundi à 7 h 02</p>
-      <h2 id="proposition-titre" class="mt-5 text-[clamp(1.7rem,3vw,2.6rem)] text-bordeaux" data-reveal-lignes>
-        La commande est prête avant vous
-      </h2>
-      <span class="signature mt-2" data-reveal="ecriture" style="--d: 9">au carton près</span>
-      <p class="mt-8 max-w-lg text-encre-douce" data-reveal data-reveal-delai="2">
+<section id="proposition" class="section bg-creme" aria-labelledby="proposition-titre">
+  <div class="conteneur grid items-center gap-12 lg:grid-cols-2 lg:gap-x-16 xl:gap-x-24">
+    <div>
+      <p class="surtitre" data-reveal>Un exemple, lundi à 7 h 02</p>
+      <h2 id="proposition-titre" class="mt-4 text-encre" data-reveal-lignes>La commande est prête avant vous</h2>
+      <p class="texte-courant mt-6" data-reveal data-reveal-delai="2">
         Cuvée compare ce qui sort et ce qui reste, voit venir la rupture et prépare le bon pour le domaine,{' '}
         <strong class="font-semibold text-encre">franco compris</strong>. Vous ajustez une quantité, vous validez, il part par
         email ou WhatsApp.
       </p>
-      <ul class="mt-8 grid max-w-lg gap-3 text-encre-douce" role="list">
-        <li class="flex items-baseline gap-4 border-b border-dore/50 pb-3" data-reveal data-reveal-delai="3"><span class="chapitre-num !font-extrabold text-bordeaux">01</span> Vos ventes, lues depuis la caisse</li>
-        <li class="flex items-baseline gap-4 border-b border-dore/50 pb-3" data-reveal data-reveal-delai="4"><span class="chapitre-num !font-extrabold text-bordeaux">02</span> Vos entrées, lues sur les factures</li>
-        <li class="flex items-baseline gap-4 border-b border-dore/50 pb-3" data-reveal data-reveal-delai="5"><span class="chapitre-num !font-extrabold text-bordeaux">03</span> Votre feu vert, toujours</li>
-      </ul>
-      <a href="/comment-ca-marche" class="lien-cap mt-8 self-start text-encre" data-reveal data-reveal-delai="6">Voir le fonctionnement</a>
+      <ol class="mt-8 max-w-xl" role="list">
+        {
+          etapes.map((e, i) => (
+            <li class="flex items-baseline gap-4 border-b border-dore/50 py-3 text-encre-douce first:border-t" data-reveal data-reveal-delai={String(i + 3)}>
+              <span class="chiffres w-6 shrink-0 font-extrabold text-bordeaux">{String(i + 1).padStart(2, '0')}</span>
+              {e}
+            </li>
+          ))
+        }
+      </ol>
+      <a href="/comment-ca-marche" class="lien-cap mt-6" data-reveal data-reveal-delai="6">Voir le fonctionnement</a>
+    </div>
+
+    <!-- le bon de commande est posé sur la photo : le cadre rogne tout (rotation, feuille du dessous) -->
+    <div class="proposition-media media-cadre zoom-lent flex items-center justify-center px-3 py-8 sm:px-12 sm:py-14 lg:order-first lg:px-10 lg:py-14" data-reveal="rideau">
+      <Photo src="/media/mur-bouteilles.jpg" alt="" sizes="(min-width: 1024px) 50vw, 100vw" data-parallaxe="-0.08" class="proposition-photo" />
+      <div class="absolute inset-0 bg-chai/45" aria-hidden="true"></div>
+      <div class="relative z-10 w-full max-w-md">
+        <BonDeCommande />
+      </div>
     </div>
   </div>
 </section>
 
 <style>
   /* l'image dépasse du cadre pour que la parallaxe ne laisse jamais de bord vide */
-  .proposition-photo > img {
+  .proposition-media :global(.proposition-photo) {
     inset: -10% 0 auto 0;
     height: 120%;
   }

@@ -7,7 +7,6 @@ import '../styles/maison.css';
 import '../styles/animations.css';
 import outfitWoff2 from '@fontsource-variable/outfit/files/outfit-latin-wght-normal.woff2?url';
 import josefinWoff2 from '@fontsource-variable/josefin-sans/files/josefin-sans-latin-wght-normal.woff2?url';
-import dafoeWoff2 from '@fontsource/mr-dafoe/files/mr-dafoe-latin-400-normal.woff2?url';
 import { site } from '../data/site';
 
 interface Props {
@@ -18,16 +17,40 @@ interface Props {
 const { titre = site.titre, description = site.description } = Astro.props;
 const canonique = new URL(Astro.url.pathname, Astro.site);
 const imageOg = new URL('/og-image.png', Astro.site);
+// Données structurées : uniquement des informations déjà publiques sur le site (nom, URL, logo, description).
+const racine = new URL('/', Astro.site).href;
+const donneesStructurees = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${racine}#organisation`,
+      name: site.nom,
+      url: racine,
+      logo: new URL('/apple-touch-icon.png', Astro.site).href,
+      description: site.description,
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${racine}#site`,
+      name: site.nom,
+      url: racine,
+      description: site.description,
+      inLanguage: 'fr-FR',
+      publisher: { '@id': `${racine}#organisation` },
+    },
+  ],
+};
 ---
 <!doctype html>
 <html lang="fr">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {/* polices du premier rendu : titres (Outfit), texte (Josefin Sans), signature (Mr Dafoe) */}
+    {/* polices du premier rendu : Outfit (titres et texte) puis Josefin Sans (surtitres, nav, boutons).
+        Mr Dafoe (signature) n'est pas préchargé : elle est rare et sous la ligne de flottaison sur la plupart des pages. */}
     <link rel="preload" href={outfitWoff2} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={josefinWoff2} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={dafoeWoff2} as="font" type="font/woff2" crossorigin />
     <title>{titre}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonique} />
@@ -49,6 +72,7 @@ const imageOg = new URL('/og-image.png', Astro.site);
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="theme-color" content="#f5e9e4" />
+    <script type="application/ld+json" set:html={JSON.stringify(donneesStructurees)} />
 
     <script is:inline>
       // Test de message : ?v=b affiche le second titre du hero. Posé avant le rendu, sans clignotement.
@@ -67,7 +91,7 @@ const imageOg = new URL('/og-image.png', Astro.site);
       }
     </script>
   </head>
-  <body class="maison bg-creme font-sans text-encre antialiased">
+  <body class="maison bg-creme text-encre antialiased">
     <a href="#contenu" class="lien-evitement">Aller au contenu</a>
     <div class="progression" aria-hidden="true" data-progression></div>
     <slot />

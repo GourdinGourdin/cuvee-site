@@ -1,6 +1,6 @@
 ---
+import TitreSection from './TitreSection.astro';
 import ACompleter from './ACompleter.astro';
-import PiloteSceau from './PiloteSceau.astro';
 import { avecPlaceholders } from '../lib/texte';
 
 // TODO : conditions du pilote à valider par l’équipe (durée, prix, nombre de places, rythme des échanges).
@@ -16,49 +16,42 @@ const demande = [
   'Un court échange régulier ([À COMPLÉTER : fréquence et durée]) pour nous dire ce qui marche et ce qui coince.',
   'Votre franc-parler : si quelque chose ne sert à rien, dites-le. C’est le plus utile pour nous.',
 ];
-const fiches = [
-  { titre: 'Ce que nous vous proposons', items: propose, sombre: false },
-  { titre: 'Ce que nous vous demandons', items: demande, sombre: true },
+const colonnes = [
+  { id: 'propose-titre', titre: 'Ce que nous vous proposons', items: propose },
+  { id: 'demande-titre', titre: 'Ce que nous vous demandons', items: demande },
 ];
 ---
-<section id="pilote" aria-labelledby="invitation-titre" class="bg-creme py-24 lg:py-32">
-  <div class="mx-auto max-w-[76rem] px-6 sm:px-10">
-    <div class="text-center">
-      <div class="sceau-ouvre inline-block" data-reveal><PiloteSceau taille={76} /></div>
-      <p class="surtitre mt-7 text-bordeaux" data-reveal>Une invitation</p>
-      <h2 id="invitation-titre" class="mx-auto mt-5 max-w-3xl text-[clamp(1.8rem,3.6vw,3rem)] text-encre" data-reveal data-reveal-delai="1">
-        Construisons-le ensemble, chez vous
-      </h2>
-      <span class="signature mt-3" data-reveal data-reveal-delai="2">l’équipe Cuvée</span>
-      <p class="mx-auto mt-8 max-w-2xl text-encre-douce" data-reveal data-reveal-delai="3">
-        Nous cherchons <ACompleter texte="nombre" /> bars à vin et caves à manger indépendants pour essayer Cuvée pendant
-        le service, à partir de <ACompleter texte="mois de démarrage" />. Les conditions ci-dessous sont encore à valider
-        par l’équipe.
-      </p>
-      <!-- TODO : n’afficher ce cartouche que si le nombre de places est réellement limité. -->
-      <p class="surtitre mt-8 inline-block border border-dore px-5 py-2.5 text-encre" data-reveal="echelle" data-reveal-delai="4">
-        <ACompleter texte="N" /> places
-      </p>
+<section id="pilote" aria-labelledby="invitation-titre" class="section bg-creme">
+  <div class="conteneur">
+    <div class="invitation-tete">
+      <TitreSection libelle="Une invitation" id="invitation-titre" titre="Construisons-le ensemble, chez vous" />
+      <div class="invitation-intro">
+        <p class="texte-courant" data-reveal data-reveal-delai="3">
+          Nous cherchons <ACompleter texte="nombre" /> bars à vin et caves à manger indépendants pour essayer Cuvée pendant
+          le service, à partir de <ACompleter texte="mois de démarrage" />. Les conditions ci-dessous sont encore à valider
+          par l’équipe.
+        </p>
+        <!-- TODO : n’afficher ce cartouche que si le nombre de places est réellement limité. -->
+        <p class="surtitre mt-6 inline-block border border-dore px-4 py-2 text-encre" data-reveal data-reveal-delai="4">
+          <ACompleter texte="N" /> places
+        </p>
+      </div>
     </div>
 
-    <div class="mt-16 grid gap-6 lg:mt-20 lg:grid-cols-2 lg:gap-8">
+    <div class="fiche invitation-fiche mt-12 lg:mt-16" data-reveal data-reveal-delai="2">
       {
-        fiches.map((f, k) => (
-          <article class:list={['fiche relative', f.sombre ? 'fiche-sombre sur-fond-sombre bg-bordeaux text-creme' : 'papier text-encre']} data-reveal data-reveal-delai={String(k + 1)}>
-            <span class="fiche-cadre pointer-events-none absolute inset-2.5 border border-dore/55" aria-hidden="true"></span>
-            <div class="relative px-7 py-10 sm:px-12 sm:py-14">
-              <h3 class:list={['text-[clamp(1.15rem,1.7vw,1.4rem)]', f.sombre ? 'text-creme' : 'text-bordeaux']}>{f.titre}</h3>
-              <span class="mt-5 block h-px w-14 bg-dore" aria-hidden="true"></span>
-              <ul role="list" class="mt-8 grid gap-0">
-                {f.items.map((item, i) => (
-                  <li class:list={['fiche-item grid grid-cols-[2.4rem_1fr] gap-x-2 border-b py-4 first:pt-0 last:border-b-0 last:pb-0', f.sombre ? 'border-creme/20 text-creme/90' : 'border-filet text-encre-douce']}>
-                    <span class:list={['chapitre-num pt-[0.2rem] !tracking-[0.12em]', f.sombre ? 'text-dore-clair' : 'text-bordeaux']} aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                    <span set:html={avecPlaceholders(item)} />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </article>
+        colonnes.map((c) => (
+          <section class="invitation-col" aria-labelledby={c.id}>
+            <h3 id={c.id}>{c.titre}</h3>
+            <ol role="list" class="invitation-liste">
+              {c.items.map((item, i) => (
+                <li>
+                  <span class="invitation-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <p class="texte-courant" set:html={avecPlaceholders(item)} />
+                </li>
+              ))}
+            </ol>
+          </section>
         ))
       }
     </div>
@@ -66,10 +59,42 @@ const fiches = [
 </section>
 
 <style is:global>
-  .fiche { box-shadow: 0 24px 50px -34px rgb(42 34 32 / 0.55); }
-  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    .fiche { transition: translate 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease; }
-    .fiche:hover { translate: 0 -4px; box-shadow: 0 32px 60px -34px rgb(42 34 32 / 0.65); }
+  .invitation-tete { display: grid; gap: var(--space-5); }
+  .invitation-intro .texte-courant { max-width: 52ch; }
+  @media (min-width: 64rem) {
+    .invitation-tete { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--space-7); align-items: end; }
   }
-  .fiche-sombre .fiche-cadre { border-color: rgb(233 221 191 / 0.4); }
+
+  .invitation-fiche { padding: 0; display: grid; }
+  .invitation-col { padding: var(--space-5) var(--space-5) var(--space-6); }
+  .invitation-col + .invitation-col { border-top: 1px solid var(--color-filet); }
+  @media (min-width: 40rem) { .invitation-col { padding: var(--space-7); } }
+  @media (min-width: 64rem) {
+    .invitation-fiche { grid-template-columns: 1fr 1fr; }
+    .invitation-col { padding: var(--space-8); }
+    .invitation-col + .invitation-col { border-top: 0; border-left: 1px solid var(--color-filet); }
+  }
+
+  .invitation-col h3 { color: var(--color-encre); }
+  .invitation-liste { list-style: none; margin: var(--space-5) 0 0; padding: 0; }
+  .invitation-liste li {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    column-gap: var(--space-3);
+    padding-block: var(--space-4);
+    border-top: 1px solid var(--color-filet);
+  }
+  .invitation-liste li:first-child { border-top: 0; padding-top: 0; }
+  .invitation-liste li:last-child { padding-bottom: 0; }
+  .invitation-num {
+    font-family: var(--font-label);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    line-height: calc(1.65 * 1.0625rem);
+    color: var(--color-bordeaux);
+    font-variant-numeric: tabular-nums;
+  }
+  .invitation-liste .texte-courant { margin: 0; }
+  .invitation-liste mark { box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 </style>
