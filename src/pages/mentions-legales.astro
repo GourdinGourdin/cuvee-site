@@ -1,26 +1,28 @@
 ---
 import PageTexte from '../layouts/PageTexte.astro';
-import ACompleter from '../components/ACompleter.astro';
+import { site } from '../data/site';
 ---
 <PageTexte titre="Mentions légales" surtitre="Informations" titreSeo="Mentions légales du site Cuvée, assistant de cave · Cuvée" description="Mentions légales du site Cuvée, assistant de cave pour bars à vin et caves à manger : éditeur, hébergeur et informations de contact du site.">
   <p>
-    <ACompleter texte="à faire relire : les informations ci-dessous dépendent du statut juridique du projet" />
+    Cuvée est un projet étudiant mené dans le cadre d’un cours de master à HEC Paris. Il n’est pas encore constitué en
+    société.
   </p>
 
   <h2>Éditeur du site</h2>
   <ul>
-    <li>Nom ou dénomination sociale : <ACompleter texte="nom de la société ou des personnes éditrices" /></li>
-    <li>Forme juridique et capital : <ACompleter texte="ex. SAS au capital de …, ou projet étudiant non immatriculé" /></li>
-    <li>Adresse : <ACompleter texte="adresse du siège" /></li>
-    <li>Immatriculation : <ACompleter texte="RCS / SIREN, si applicable" /></li>
-    <li>Contact : <ACompleter texte="email de contact" /></li>
+    <li>Éditeur : l’équipe du projet Cuvée, à titre non professionnel</li>
+    <li>Statut : projet étudiant non immatriculé, sans siège social ni numéro SIREN</li>
+    <li>Contact : <a href={`mailto:${site.emailContact}`} class="lien">{site.emailContact}</a></li>
   </ul>
 
-  <h2>Directeur ou directrice de la publication</h2>
-  <p><ACompleter texte="prénom et nom" /></p>
+  <h2>Directeur de la publication</h2>
+  <p>Victor Vallée</p>
 
   <h2>Hébergement</h2>
-  <p><ACompleter texte="nom, adresse et téléphone de l’hébergeur (Vercel ou Netlify, selon le choix de déploiement)" /></p>
+  <p>
+    Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis. Site&nbsp;:{' '}
+    <a href="https://vercel.com" class="lien">vercel.com</a>.
+  </p>
 
   <h2>Propriété intellectuelle</h2>
   <p>

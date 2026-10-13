@@ -2,13 +2,12 @@
 import TitreSection from './TitreSection.astro';
 import { avecPlaceholders } from '../lib/texte';
 
-// TODO : étapes et durées à valider par l’équipe ; seules les étapes déjà décrites sur le site sont rédigées.
 const etapes = [
   { titre: 'Votre inscription', texte: 'Vous remplissez le bon ci-dessous, en deux minutes.', quand: '' },
-  { titre: 'Un premier échange', texte: 'Nous faisons connaissance et vérifions que Cuvée peut vous être utile. Sinon, nous vous le disons avant de commencer.', quand: '[À COMPLÉTER : délai après l’inscription]' },
-  { titre: 'La mise en place', texte: 'Nous connectons votre caisse, lisons quelques factures fournisseurs récentes et montons l’inventaire de départ, que vous relisez.', quand: '[À COMPLÉTER : durée de mise en place]' },
-  { titre: 'Le pilote en service', texte: 'Vous utilisez Cuvée pendant le service. Rien d’engageant ne part sans votre validation.', quand: '[À COMPLÉTER : durée du pilote]' },
-  { titre: 'Le bilan', texte: '[À COMPLÉTER : format du bilan et suite proposée aux lieux pilotes]', quand: '' },
+  { titre: 'Un premier échange', texte: 'Nous faisons connaissance et vérifions que Cuvée peut vous être utile. Sinon, nous vous le disons avant de commencer.', quand: 'Sous une semaine' },
+  { titre: 'La mise en place', texte: 'Nous connectons votre caisse, lisons quelques factures fournisseurs récentes et montons l’inventaire de départ, que vous relisez.', quand: 'Environ deux semaines' },
+  { titre: 'Le pilote en service', texte: 'Vous utilisez Cuvée pendant le service. Rien d’engageant ne part sans votre validation.', quand: 'Trois mois' },
+  { titre: 'Le bilan', texte: 'Nous passons une heure ensemble pour voir ce qui vous a aidé et ce qui manque. Ensuite, vous décidez librement de continuer au tarif pilote ou d’arrêter, et vous repartez avec votre inventaire exporté.', quand: 'Fin du pilote' },
 ];
 ---
 <section aria-labelledby="frise-titre" class="section bg-creme">

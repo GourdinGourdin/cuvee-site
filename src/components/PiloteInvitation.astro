@@ -1,19 +1,17 @@
 ---
 import TitreSection from './TitreSection.astro';
-import ACompleter from './ACompleter.astro';
 import { avecPlaceholders } from '../lib/texte';
 
-// TODO : conditions du pilote à valider par l’équipe (durée, prix, nombre de places, rythme des échanges).
 const propose = [
-  'Cuvée [À COMPLÉTER : offert / à prix réduit] pendant toute la durée du pilote ([À COMPLÉTER : durée]).',
+  'Cuvée offert pendant toute la durée du pilote (trois mois).',
   'La mise en place faite avec vous : on reprend votre inventaire actuel, même s’il est sur Excel ou dans un carnet.',
   'Un contact direct avec l’équipe : vos remarques sont lues par ceux qui construisent l’outil.',
-  '[À COMPLÉTER : conditions après le pilote, par exemple un tarif préférentiel pour les lieux pilotes ?]',
+  'Après le pilote, si vous continuez : un tarif préférentiel de −50 % pendant vos 12 premiers mois. Rien n’est facturé sans votre accord explicite.',
 ];
 const demande = [
   'Être un lieu indépendant qui travaille le vin : cave à manger, bar à vin ou restaurant avec une vraie carte des vins, entre 100 et 600 références.',
   'Nous laisser connecter votre caisse et nous transmettre vos factures fournisseurs pendant le pilote.',
-  'Un court échange régulier ([À COMPLÉTER : fréquence et durée]) pour nous dire ce qui marche et ce qui coince.',
+  'Un court échange régulier (20 minutes toutes les deux semaines, au comptoir ou en visio) pour nous dire ce qui marche et ce qui coince.',
   'Votre franc-parler : si quelque chose ne sert à rien, dites-le. C’est le plus utile pour nous.',
 ];
 const colonnes = [
@@ -27,13 +25,11 @@ const colonnes = [
       <TitreSection libelle="Une invitation" id="invitation-titre" titre="Construisons-le ensemble, chez vous" />
       <div class="invitation-intro">
         <p class="texte-courant" data-reveal data-reveal-delai="3">
-          Nous cherchons <ACompleter texte="nombre" /> bars à vin et caves à manger indépendants pour essayer Cuvée pendant
-          le service, à partir de <ACompleter texte="mois de démarrage" />. Les conditions ci-dessous sont encore à valider
-          par l’équipe.
+          Nous cherchons 8 bars à vin et caves à manger indépendants pour essayer Cuvée pendant
+          le service, à partir de janvier 2027.
         </p>
-        <!-- TODO : n’afficher ce cartouche que si le nombre de places est réellement limité. -->
         <p class="surtitre mt-6 inline-block border border-dore px-4 py-2 text-encre" data-reveal data-reveal-delai="4">
-          <ACompleter texte="N" /> places
+          8 places
         </p>
       </div>
     </div>

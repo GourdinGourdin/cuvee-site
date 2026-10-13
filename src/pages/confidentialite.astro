@@ -1,6 +1,6 @@
 ---
 import PageTexte from '../layouts/PageTexte.astro';
-import ACompleter from '../components/ACompleter.astro';
+import { site } from '../data/site';
 ---
 <PageTexte
   titre="Confidentialité"
@@ -14,7 +14,11 @@ import ACompleter from '../components/ACompleter.astro';
   </p>
 
   <h2>Responsable du traitement</h2>
-  <p><ACompleter texte="nom de la structure ou des personnes responsables, et adresse email de contact" /></p>
+  <p>
+    L’équipe du projet Cuvée (projet étudiant non immatriculé, voir les <a href="/mentions-legales" class="lien">mentions
+    légales</a>), représentée par Victor Vallée. Contact&nbsp;:{' '}
+    <a href={`mailto:${site.emailContact}`} class="lien">{site.emailContact}</a>.
+  </p>
 
   <h2>Données collectées</h2>
   <ul>
@@ -34,17 +38,22 @@ import ACompleter from '../components/ACompleter.astro';
     parlent le mieux aux professionnels. Ces données ne sont ni vendues ni utilisées à d’autres fins.
   </p>
   <p>
-    Base légale : les mesures précontractuelles prises à votre demande, puisque c’est vous qui nous contactez.
-    <ACompleter texte="à valider" />
+    Base légale : les mesures précontractuelles prises à votre demande, puisque c’est vous qui nous contactez. Pour les
+    informations techniques sur votre visite (version du titre, paramètres « utm »), notre intérêt légitime à comprendre
+    quels messages sont utiles.
   </p>
 
   <h2>Durée de conservation</h2>
-  <p><ACompleter texte="ex. 3 ans après le dernier contact, puis suppression" /></p>
+  <p>
+    Trois ans à compter de notre dernier échange, puis suppression. Si vous n’êtes pas retenu pour le pilote, vous pouvez
+    demander la suppression immédiate de vos données.
+  </p>
 
   <h2>Qui y a accès</h2>
   <p>
-    L’équipe Cuvée uniquement, ainsi que le service qui reçoit les formulaires :
-    <ACompleter texte="nom du prestataire (ex. Formspree), pays d’hébergement et garanties en cas de transfert hors UE" />
+    L’équipe Cuvée uniquement, ainsi que deux prestataires techniques&nbsp;: Formspree, Inc. (États-Unis), qui reçoit
+    les formulaires, et Vercel Inc. (États-Unis), qui héberge le site. Les transferts hors de l’Union européenne sont
+    encadrés par les clauses contractuelles types de la Commission européenne.
   </p>
 
   <h2>Cookies</h2>
@@ -56,7 +65,8 @@ import ACompleter from '../components/ACompleter.astro';
   <h2>Vos droits</h2>
   <p>
     Vous pouvez à tout moment demander l’accès à vos données, leur rectification ou leur suppression, ou vous opposer à
-    leur utilisation, en écrivant à <ACompleter texte="email de contact" />. Si vous estimez que vos droits ne sont pas
+    leur utilisation, en écrivant à{' '}
+    <a href={`mailto:${site.emailContact}`} class="lien">{site.emailContact}</a>. Si vous estimez que vos droits ne sont pas
     respectés, vous pouvez adresser une réclamation à la CNIL (cnil.fr).
   </p>
 </PageTexte>

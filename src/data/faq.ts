@@ -13,7 +13,7 @@ export const faq: Question[] = [
     theme: 'Démarrage',
     question: 'Ça marche avec ma caisse ?',
     reponse: [
-      "Ce sont Lightspeed, Zelty et L’Addition que nous visons en premier. [À COMPLÉTER : caisses réellement connectées au démarrage du pilote]",
+      "Ce sont Lightspeed, Zelty et L’Addition que nous visons en premier. La compatibilité de votre caisse est vérifiée lors du premier échange ; si elle n’est pas encore connectée, un export hebdomadaire de vos ventes (fichier CSV) suffit pour démarrer.",
       "Vous utilisez autre chose ? Indiquez-le dans le formulaire : c’est ce qui nous aide à choisir les caisses à brancher ensuite. Et si nous ne pouvons pas encore vous être utiles, nous vous le dirons avant de commencer.",
     ],
   },
@@ -28,7 +28,7 @@ export const faq: Question[] = [
     theme: 'Démarrage',
     question: 'Combien de temps pour démarrer, et que dois-je faire ?',
     reponse: [
-      "[À COMPLÉTER : durée réaliste de mise en place] Notre objectif : que vous n’ayez rien à ressaisir à la main.",
+      "Comptez environ deux semaines, dont une à deux heures de votre temps pour relire l’inventaire de départ. Notre objectif : que vous n’ayez rien à ressaisir à la main.",
       "De votre côté : nous laisser connecter votre caisse, nous envoyer quelques factures fournisseurs récentes et relire l’inventaire de départ.",
     ],
   },
@@ -36,8 +36,8 @@ export const faq: Question[] = [
     theme: 'Prix',
     question: 'Combien ça coûte ?',
     reponse: [
-      "Pendant le pilote : [À COMPLÉTER : gratuit ou prix réduit]. Le tarif d’après n’est pas encore fixé : nous voulons le définir avec les premiers lieux, pas à leur place.",
-      '[À COMPLÉTER : principe tarifaire envisagé, et engagement de ne rien facturer sans accord préalable ?]',
+      "Pendant le pilote : gratuit, c’est offert pendant les trois mois. Le tarif d’après n’est pas encore fixé : nous voulons le définir avec les premiers lieux, pas à leur place.",
+      "Notre principe : un abonnement mensuel sans engagement, annoncé avant la fin du pilote. Les lieux pilotes conservent −50 % pendant leurs 12 premiers mois. Rien ne vous est facturé sans votre accord explicite.",
     ],
   },
   {
@@ -45,7 +45,7 @@ export const faq: Question[] = [
     question: "Qui voit mes chiffres de vente et mes prix d’achat ?",
     reponse: [
       "L’équipe Cuvée, uniquement pour faire fonctionner l’outil pour votre lieu. Notre principe : vos données ne sont jamais vendues, et vous pouvez les récupérer ou les faire supprimer quand vous voulez.",
-      "[À COMPLÉTER : principe à valider par l’équipe, puis à reprendre dans la politique de confidentialité ; hébergement des données et prestataire d’IA utilisés]",
+      "Vos données restent les vôtres. Elles sont hébergées dans l’Union européenne, jamais revendues et jamais utilisées pour entraîner des modèles d’IA. Le prestataire d’IA que nous utilisons est nommé dans la politique de confidentialité avant le début du pilote.",
     ],
   },
   {
@@ -53,7 +53,7 @@ export const faq: Question[] = [
     question: 'Mes fournisseurs peuvent-ils recevoir un message sans mon accord ?',
     reponse: [
       "Non. Une commande ou une relance ne part qu’après votre validation, et vous pouvez tout réécrire avant l’envoi. Chaque envoi est noté dans le journal.",
-      "[À COMPLÉTER : les messages partent-ils de votre adresse et de votre numéro, ou de ceux de Cuvée ?]",
+      "Les commandes partent de votre propre adresse e-mail, après votre validation : Cuvée prépare le message, c’est vous qui l’envoyez. Rien ne part au nom de Cuvée.",
     ],
   },
   {
@@ -68,7 +68,7 @@ export const faq: Question[] = [
     theme: 'Pilote',
     question: "Et si j’arrête en cours de pilote ?",
     reponse: [
-      'Notre intention : que vous puissiez arrêter à tout moment. [À COMPLÉTER : à confirmer, et ce que deviennent vos données en fin de pilote : export, suppression]',
+      'Vous pouvez arrêter à tout moment, sans frais. En fin de pilote, vous recevez un export de votre inventaire (tableur), et vos données sont supprimées sous 30 jours sur simple demande.',
     ],
   },
   {

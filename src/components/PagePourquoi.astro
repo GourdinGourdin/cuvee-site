@@ -1,11 +1,10 @@
 ---
-import ACompleter from './ACompleter.astro';
 import Photo from './Photo.astro';
 
 const citations = [
-  { libelle: 'Le déclic', contenu: 'l’histoire personnelle : le déclic, le lieu ou la personne qui a montré le problème de la cave' },
-  { libelle: 'Ce que nous avons observé', contenu: 'ce que vous avez observé chez les cavistes et sommeliers, sans chiffre inventé' },
-  { libelle: 'Ce que Cuvée doit changer', contenu: 'ce que vous voulez que Cuvée change concrètement pour un lieu indépendant' },
+  { libelle: 'Le déclic', contenu: 'La cave est souvent le premier actif d’un lieu à vin, et pourtant le moins suivi : un carnet, un tableur, un recomptage tard le soir après le service. C’est de ce constat qu’est née l’idée de Cuvée.' },
+  { libelle: 'Ce que nous avons observé', contenu: 'Des commandes passées de mémoire, des références qui manquent un vendredi soir, des bouteilles qui dorment au fond de la cave pendant que la trésorerie s’y immobilise. Les outils existants sont pensés pour les grands groupes ou pour le commerce de détail, pas pour un petit lieu.' },
+  { libelle: 'Ce que Cuvée doit changer', contenu: 'Rendre du temps et de la visibilité aux lieux indépendants : une cave qui se suit toute seule, des commandes prêtes à valider, et le dernier mot toujours à la personne derrière le comptoir.' },
 ];
 ---
 <section aria-labelledby="pourquoi-titre" class="pourquoi section media-cadre voile voile-plein sur-image sur-fond-sombre zoom-lent">
@@ -25,7 +24,7 @@ const citations = [
           <li class="pourquoi-carte" data-reveal data-reveal-delai={String(i + 1)}>
             <p class="chapitre-num text-dore-clair">{['I', 'II', 'III'][i]}</p>
             <h3 class="mt-2">{c.libelle}</h3>
-            <p class="texte-courant mt-4"><ACompleter texte={c.contenu} /></p>
+            <p class="texte-courant mt-4">{c.contenu}</p>
           </li>
         ))
       }

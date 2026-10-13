@@ -167,12 +167,10 @@ const caisses = [
     <p class="surtitre mt-6">Demande reçue</p>
     <h2 class="mt-4" tabindex="-1" data-succes-titre>Merci !</h2>
     <p class="texte-courant mx-auto mt-6">
-      Votre demande est bien arrivée. Nous vous recontactons sous <mark class="a-completer"
-        >[À COMPLÉTER : délai de recontact]</mark
-      > pour un premier échange.
+      Votre demande est bien arrivée. Nous vous recontactons sous trois jours ouvrés pour un premier échange.
     </p>
     <p class="texte-courant mx-auto mt-4">
-      Une question d’ici là ?
+      Une question d’ici là ?{' '}
       {
         contact ? (
           <a href={`mailto:${contact}`} class="lien">{contact}</a>
@@ -394,7 +392,7 @@ const caisses = [
     }
 
     function afficherErreurEnvoi(nonConfigure: boolean) {
-      const adresse = contact || '[À COMPLÉTER : email de contact]';
+      const adresse = contact || 'l’adresse indiquée en bas de page';
       erreurEnvoi.textContent = nonConfigure
         ? `Les inscriptions en ligne ne sont pas encore ouvertes. Écrivez-nous en attendant : ${adresse}`
         : `L’envoi n’a pas fonctionné. Réessayez dans un instant, ou écrivez-nous : ${adresse}`;
